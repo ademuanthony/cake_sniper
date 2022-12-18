@@ -50,7 +50,7 @@ var BIG_BNB_TRANSFER bool = false
 ///////// SNIPE CONFIG //////////
 
 // activate or not the liquidity sniping
-var Sniping bool = true
+var Sniping bool = false
 var PCS_ADDLIQ bool = Sniping
 
 // address of the Trigger smart contract
@@ -61,47 +61,52 @@ var TOKENPAIRED = WBNB_ADDRESS
 var Snipe SnipeConfiguration
 
 // targeted token to buy (BEP20 address)
-var TTB = "0x9412F9AB702AfBd805DECe8e0627427461eF0602"
+var TTB = "0x97A143545c0F8200222C051aC0a2Fc93ACBE6bA2"
 
 // ML= minimum liquidity expected when dev add liquidity. We don't want to snipe if the team doesn't add the min amount of liq we expect. it's an important question to solve in the telegram of the project. You can also mmonitor bscscan and see the repartition of WBNB among the address that hold the targeted token and deduce the WBNB liq that wiill be added.
 var ML = 200
 
 ///////// SANDWICH CONFIG (Be careful: not profitable!) ////////////
 
-var Sandwicher bool = false
+var Sandwicher bool = true
 
 // allows spectator mode for tx that would have been profitable if sandwich realised successfully
-var MonitorModeOnly bool = false
+var MonitorModeOnly bool = true
 
 // max slippage we allow in % for our sandwich in tx
 var SandwichInMaxSlippage = 0.5
 
-// gas price for our sandwich in tx in multiples of victim-s tx gas. Must be high enough for favourable ordering inside the block.
+// gas price for our sandwich in tx in multiples of victim-s tx gas. 
+// Must be high enough for favourable ordering inside the block.
 var SandwichInGasPriceMultiplier = 10
 
 // max number of WBNB we are ok to spend in the sandwich in tx
-var Sandwicher_maxbound = 15 //  BNB
+var Sandwicher_maxbound = 1.5 //  BNB
 // min number of WBNB we are ok to spend in the sandwich in tx
-var Sandwicher_minbound = 1    //  BNB
-var Sandwicher_baseunit = 0.02 //  BNB
+var Sandwicher_minbound = 0.02    //  BNB
+var Sandwicher_baseunit = 0.01 //  BNB
 // min profit expected in bnb to be worth launching a sandwich attack
-var Sandwicher_minprofit = 0.015 //  BNB
+var Sandwicher_minprofit = 0.005 //  BNB
 // min liquidity of the pool on which we want to perform sandwich
-var Sandwicher_acceptable_liq = 100 // BNB
+var Sandwicher_acceptable_liq = 5 // BNB
 // stop everything and panic if we lose cumulated > 2 BNB on the different attacks
 var Sandwicher_stop_loss = 2
 
-// we basicaly calculate the max amount of BNB we can enter on a sandwich without breaking victim's slippage. Then substract Sandwich_margin_amountIn to it to be sure
-var Sandwich_margin_amountIn = 0.01 // BNB
+// we basicaly calculate the max amount of BNB we can enter on a sandwich without breaking victim's slippage. 
+// Then substract Sandwich_margin_amountIn to it to be sure
+var Sandwich_margin_amountIn = 0.005 // BNB
 // max gas price we tolerate for a sandwich in tx
 var Sandwich_max_gwei_to_pay = 1000
 
-// sandwich book contains all the authorised markets, which means markets I can ggo in and out without stupid sell taxes that are widespread among meme tokens
+// sandwich book contains all the authorised markets, which means markets I can ggo in and out without 
+// stupid sell taxes that are widespread among meme tokens
 var SANDWICH_BOOK = make(map[common.Address]Market)
 var IN_SANDWICH_BOOK = make(map[common.Address]bool)
 var NewMarketAdded = make(map[common.Address]bool)
 
-// The sandwich ladder is a graduation going from MINBOUND to MAXBOUND with a BASE_UNIT interval. I use it to do a binary search to determmine what is the optimal amount of BNB I can use to do the sandwich in tx without breaking the slippage of the victim.
+// The sandwich ladder is a graduation going from MINBOUND to MAXBOUND with a BASE_UNIT interval. 
+// I use it to do a binary search to determmine what is the optimal amount of BNB I can use to do 
+// the sandwich in tx without breaking the slippage of the victim.
 var SANDWICHER_LADDER []*big.Int
 
 // List of bots that fucked me on almost all sandwich attacks attempts.. The list is defined in ennemmy_book.json

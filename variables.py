@@ -3,7 +3,7 @@ from brownie import *
 #///////////// TESTS ////////////////////////////////////////
 
 # i always used the BUNNY token to do tests
-bunny = "0xc9849e6fdb743d08faee3e34dd2d1bc69ea11a51"
+bunny = "0x97A143545c0F8200222C051aC0a2Fc93ACBE6bA2"
 
 
 #///////////// EXPECTATIONS //////////////////////////////////////
@@ -38,14 +38,14 @@ BEEBOOKPATH  = "./dark_forester/global/bee_book.json"
 BEEBOOKTEMPPATH = "./dark_forester/global/bee_book_temp.json"
 
 SELLERROUNDS = 3
-SELLERNUMBERBNB = 1
+SELLERNUMBERBNB = 0
 SELLERBOOKPATH = "./dark_forester/global/seller_book.json"
 SELLERBOOKTEMPPATH = "./dark_forester/global/seller_book_temp.json"
 
 #///////////// SNIPE VARIABLES ///////////////////////////////
 
 # ERC20 addy of the token you want to snipe 
-TOKEN_TO_BUY_ADDRESS = web3.toChecksumAddress("0x39695B38c6d4e5F73acE974Fd0f9F6766c2E5544")
+TOKEN_TO_BUY_ADDRESS = web3.toChecksumAddress("0x97A143545c0F8200222C051aC0a2Fc93ACBE6bA2")
 # How many of wbnb you want to use for the snipe
 AMOUNT_IN_WBNB = 150*10**18
 # How many tokens you expect from the snipe as a minimal

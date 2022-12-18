@@ -100,6 +100,6 @@ func handleWatchedAddressTx(tx *types.Transaction, client *ethclient.Client) {
 	fmt.Println("Gas : ", tx.Gas()*1000000000)
 	fmt.Println("Value : ", formatEthWeiToEther(tx.Value()))
 	fmt.Println("To : ", tx.To())
-	fmt.Println("Hash : ", tx.Hash(), "\n")
+	fmt.Println("Hash : ", tx.Hash())
 
 }

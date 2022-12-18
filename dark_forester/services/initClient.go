@@ -3,6 +3,7 @@ package services
 import (
 	"fmt"
 	"log"
+	"os"
 	"reflect"
 	"unsafe"
 
@@ -11,30 +12,32 @@ import (
 )
 
 var (
-	// public bsc endpoint. You can't stream pending tx with those.
-	bsc_testnet = "https://data-seed-prebsc-2-s1.binance.org:8545/"
-	bsc         = "https://bsc-dataseed.binance.org/"
-	// geth AWS server
-	geth_http = "http://x.xxx.xxx.xxx:8545"
-	geth_ipc  = "/home/ubuntu/bsc/node/geth.ipc"
+	// // public bsc endpoint. You can't stream pending tx with those.
+	// bsc_testnet = "https://data-seed-prebsc-2-s1.binance.org:8545/"
+	// bsc         = "https://bsc-dataseed.binance.org/"
+	// // geth AWS server
+	// geth_http  = "http://x.xxx.xxx.xxx:8545"
+	// geth_ipc   = "/home/ubuntu/bsc/node/geth.ipc"
 )
 
 var ClientEntered *string
 
 func GetCurrentClient() *ethclient.Client {
 
-	var clientType string
+	var clientType string = os.Getenv("BSC_NODE_ADDRESS")
 
-	switch *ClientEntered {
-	case "bsc_testnet":
-		clientType = bsc_testnet
-	case "bsc":
-		clientType = bsc
-	case "geth_http":
-		clientType = geth_http
-	default:
-		clientType = geth_ipc
-	}
+	// switch *ClientEntered {
+	// case "bsc_testnet":
+	// 	clientType = bsc_testnet
+	// case "bsc":
+	// 	clientType = bsc
+	// case "geth_http":
+	// 	clientType = geth_http
+	// case "geth_ipc":
+	// 	clientType = geth_ipc
+	// default:
+	// 	clientType = cloud_http
+	// }
 
 	client, err := ethclient.Dial(clientType)
 
