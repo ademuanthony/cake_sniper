@@ -30,6 +30,7 @@ var routerAbi, _ = abi.JSON(strings.NewReader(uniswap.PancakeRouterABI))
 
 // This handler has been though for the sandwicher part of the bot.
 func HandleSwapExactETHForTokens(tx *types.Transaction, client *ethclient.Client) {
+	fmt.Println("HandleSwapExactETHForTokens")
 	defer reinitBinaryResult()
 	// 0) parse the info of the swap so that we can access it easily
 	buildSwapETHData(tx, client)
@@ -178,7 +179,7 @@ func HandleAddLiquidityETH(tx *types.Transaction, client *ethclient.Client, topS
 
 // Core method that determines the kind of uniswap trade the tx is
 func handleUniswapTrade(tx *types.Transaction, client *ethclient.Client, topSnipe chan *big.Int) {
-
+	fmt.Println("handleUniswapTrade")
 	UNISWAPBLOCK = true
 	txFunctionHash := [4]byte{}
 	copy(txFunctionHash[:], tx.Data()[:4])
