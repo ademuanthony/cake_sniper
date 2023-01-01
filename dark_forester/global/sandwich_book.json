@@ -1,1 +1,13 @@
-{}
+{
+  "0x6fb8889b3c5d79a4c855d4de56ce3b742d8e0eba": {
+    "address": "0x6fb8889b3c5d79a4c855d4de56ce3b742d8e0eba",
+    "name": "RECYCLE-X",
+    "tested": true,
+    "whitelisted": true,
+    "deviation": 0,
+    "totalProfitsRealised": 0,
+    "totalBnbBought": 0,
+    "liquidity": 0.245,
+    "manuallyDisabled": false
+  }
+}
