@@ -139,8 +139,12 @@ func StreamNewTxs(client *ethclient.Client, rpcClient *rpc.Client) {
 		tx, is_pending, _ := client.TransactionByHash(context.Background(), common.HexToHash(msg.Payload))
 		// If tx is valid and still unconfirmed
 		if is_pending {
+
+			fmt.Println("fresh tx")
 			_, _ = signer.Sender(tx)
 			handleTransaction(tx, client)
+		} else {
+			fmt.Println("old tx")
 		}
 
 		// select {
