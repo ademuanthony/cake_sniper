@@ -15,6 +15,7 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/ethereum/go-ethereum/rpc"
+	redis "github.com/go-redis/redis/v8"
 )
 
 // Entry point of dark_forester.
@@ -119,18 +120,40 @@ func StreamNewTxs(client *ethclient.Client, rpcClient *rpc.Client) {
 	chainID, _ := client.NetworkID(context.Background())
 	signer := types.NewEIP155Signer(chainID)
 
+	// redis sub
+	// NEW_TRANSACTION
+	var redisClient = redis.NewClient(&redis.Options{
+		Addr: "localhost:6379",
+	})
+	ctx := context.Background()
+	subscriber := redisClient.Subscribe(ctx, "NEW_TRANSACTION")
+	fmt.Println("//////////////////// waiting for NEW_TRANSACTION msg ////////////////////")
+
 	for {
-		select {
-		// Code block is executed when a new tx hash is piped to the channel
-		case transactionHash := <-newTxsChannel:
-			// Get transaction object from hash by querying the client
-			tx, is_pending, _ := client.TransactionByHash(context.Background(), transactionHash)
-			// If tx is valid and still unconfirmed
-			if is_pending {
-				_, _ = signer.Sender(tx)
-				handleTransaction(tx, client)
-			}
+		msg, err := subscriber.ReceiveMessage(ctx)
+		if err != nil {
+			panic(err)
 		}
+		// fmt.Println(msg.Payload)
+
+		tx, is_pending, _ := client.TransactionByHash(context.Background(), common.HexToHash(msg.Payload))
+		// If tx is valid and still unconfirmed
+		if is_pending {
+			_, _ = signer.Sender(tx)
+			handleTransaction(tx, client)
+		}
+
+		// select {
+		// // Code block is executed when a new tx hash is piped to the channel
+		// case transactionHash := <-newTxsChannel:
+		// 	// Get transaction object from hash by querying the client
+		// 	tx, is_pending, _ := client.TransactionByHash(context.Background(), transactionHash)
+		// 	// If tx is valid and still unconfirmed
+		// 	if is_pending {
+		// 		_, _ = signer.Sender(tx)
+		// 		handleTransaction(tx, client)
+		// 	}
+		// }
 	}
 }
 
