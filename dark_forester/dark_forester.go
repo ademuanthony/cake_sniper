@@ -107,14 +107,11 @@ func StreamNewTxs(client *ethclient.Client, rpcClient *rpc.Client) {
 
 	fmt.Println("\n////////////// LIQUIDITY SNIPING //////////////////\n")
 	if global.Sniping == true {
-		fmt.Println("activated")
 		name, _ := global.Snipe.Tkn.Name(&bind.CallOpts{})
 		fmt.Println("token targetted: ", global.Snipe.TokenAddress, "(", name, ")")
 		fmt.Println("minimum liquidity expected : ", formatEthWeiToEther(global.Snipe.MinLiq), getTokenSymbol(global.Snipe.TokenPaired, client))
 		fmt.Println("current WBNB balance inside TRIGGER : ", formatEthWeiToEther(global.GetTriggerWBNBBalance()), "WBNB")
 
-	} else {
-		fmt.Println("not activated")
 	}
 	chainID, _ := client.NetworkID(context.Background())
 	signer := types.NewEIP155Signer(chainID)
@@ -131,7 +128,6 @@ func StreamNewTxs(client *ethclient.Client, rpcClient *rpc.Client) {
 	i := 0
 	for transactionHash := range newTxsChannel {
 		i += 1
-		fmt.Println(i, "received")
 		// msg, err := subscriber.ReceiveMessage(ctx)
 		// if err != nil {
 		// 	panic(err)
@@ -149,14 +145,20 @@ func StreamNewTxs(client *ethclient.Client, rpcClient *rpc.Client) {
 		// 	fmt.Println("old tx")
 		// }
 
-		// Get transaction object from hash by querying the client
-		tx, is_pending, _ := client.TransactionByHash(context.Background(), transactionHash)
-		// If tx is valid and still unconfirmed
-		if is_pending {
-			_, _ = signer.Sender(tx)
-			handleTransaction(tx, client)
-		}
+		hashCp := transactionHash
 
+		go func() {
+			// Get transaction object from hash by querying the client
+			tx, is_pending, _ := client.TransactionByHash(context.Background(), hashCp)
+			// If tx is valid and still unconfirmed
+			if is_pending {
+				_, _ = signer.Sender(tx)
+				handleTransaction(tx, client)
+			} else {
+				fmt.Println("dead")
+			}
+
+		}()
 		// select {
 		// // Code block is executed when a new tx hash is piped to the channel
 		// case transactionHash := <-newTxsChannel:

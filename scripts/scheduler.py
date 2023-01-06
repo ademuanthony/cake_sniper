@@ -347,5 +347,3 @@ def main():
     sendGlobalToDarkForester()
     print("\n///////////// TRIGGER CONFIGURATION PHASE /////////////////////\n")
     configureTrigger()
-
-main()

@@ -3,9 +3,7 @@ from brownie import *
 from variables import *
 
 
-# open the analytic file. consolidate tne totalProfitsRealised / totalBnbBought for each market. 
-# Then extract data pulled from the sandwich monitor mode of dark_forester. 
-# Append all unknowned / to be tested  market to sandwich_book.json.
+# open the analytic file. consolidate tne totalProfitsRealised / totalBnbBought for each market. Then extract data pulled from the sandwich monitor mode of dark_forester. Append all unknowned / to be tested  market to sandwich_book.json.
 
 def refineSandwichBook():
 
@@ -183,7 +181,6 @@ def regul():
 # look into sandwich_book.json for untested market. If untested, test it. Enter deviation, bnbBought, bnbSold and tested.
 # then we enter whitelisting à la mano depending on deviation and cumulated profit.
 def main():
-    print('starting from the beginning')
     printCurrrentWhitelisted()
     refineSandwichBook()
     testMarket()
@@ -191,7 +188,7 @@ def main():
     sanitizeBook()
 #     # regul()
 
-main()
+
 # def main():
 #     me = accounts.load("bsc2")
 #     trigger = interface.ITrigger2(TRIGGER_ADDRESS_MAINNET)
