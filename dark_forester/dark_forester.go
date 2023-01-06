@@ -137,14 +137,16 @@ func StreamNewTxs(client *ethclient.Client, rpcClient *rpc.Client, redisClient *
 
 		txHash := msg.Payload
 
-		tx, is_pending, _ := client.TransactionByHash(context.Background(), common.HexToHash(txHash))
-		// If tx is valid and still unconfirmed
-		if is_pending {
-			_, _ = signer.Sender(tx)
-			go handleTransaction(tx, client)
-		} else {
-			fmt.Println("dead tx")
-		}
+		go func() {
+			tx, is_pending, _ := client.TransactionByHash(context.Background(), common.HexToHash(txHash))
+			// If tx is valid and still unconfirmed
+			if is_pending {
+				_, _ = signer.Sender(tx)
+				go handleTransaction(tx, client)
+			} else {
+				fmt.Println("dead tx")
+			}
+		}()
 		// TODO: should we wait for others to pick? How many tx should this process at a go
 	}
 

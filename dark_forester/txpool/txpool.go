@@ -127,7 +127,6 @@ func setupWorkerRegistry(redisClient redis.Client) {
 }
 
 func removeItem(slice []string, i int) []string {
-	fmt.Println(len(slice), i)
 	if len(slice)-1 == i {
 		return slice[:i]
 	}
