@@ -3,6 +3,7 @@ package services
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"math/big"
 	"strings"
 
@@ -13,6 +14,7 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
+	"github.com/go-redis/redis"
 )
 
 // listing of pcs/uni function selectors of interest. We use the bytes version as we want to be super fast
@@ -83,8 +85,16 @@ func HandleSwapExactETHForTokens(tx *types.Transaction, client *ethclient.Client
 					formatEthWeiToEther(Rbnb0),
 					false,
 				}
-				global.NewMarketAdded[SwapData.Token] = true
-				_flushNewmarket(&newMarketContent)
+				content, err := json.Marshal(newMarketContent)
+				if err != nil {
+					log.Fatalf("Cannot marshal new market %v", err)
+				} else {
+					var redisClient = redis.NewClient(&redis.Options{
+						Addr: "localhost:6379",
+					})
+
+					redisClient.Publish("NEW_MARKET", string(content))
+				}
 			}
 		}
 	}

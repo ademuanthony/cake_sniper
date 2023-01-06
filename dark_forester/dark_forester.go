@@ -8,6 +8,8 @@ import (
 	"flag"
 	"fmt"
 	"math/big"
+	"os"
+	"os/signal"
 	"sync"
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -15,6 +17,8 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/ethereum/go-ethereum/rpc"
+	"github.com/go-redis/redis"
+	"github.com/google/uuid"
 )
 
 // Entry point of dark_forester.
@@ -22,6 +26,8 @@ import (
 
 var wg = sync.WaitGroup{}
 var TopSnipe = make(chan *big.Int)
+
+var workerID string
 
 // convert WEI to ETH
 func formatEthWeiToEther(etherAmount *big.Int) float64 {
@@ -41,20 +47,20 @@ func getTokenSymbol(tokenAddress common.Address, client *ethclient.Client) strin
 }
 
 // main loop of the bot
-func StreamNewTxs(client *ethclient.Client, rpcClient *rpc.Client) {
+func StreamNewTxs(client *ethclient.Client, rpcClient *rpc.Client, redisClient *redis.Client) {
 
-	// Go channel to pipe data from client subscription
-	newTxsChannel := make(chan common.Hash)
+	// // Go channel to pipe data from client subscription
+	// newTxsChannel := make(chan common.Hash)
 
-	// Subscribe to receive one time events for new txs
-	_, err := rpcClient.EthSubscribe(
-		context.Background(), newTxsChannel, "newPendingTransactions", // no additional args
-	)
+	// // Subscribe to receive one time events for new txs
+	// _, err := rpcClient.EthSubscribe(
+	// 	context.Background(), newTxsChannel, "newPendingTransactions", // no additional args
+	// )
 
-	if err != nil {
-		fmt.Println("error while subscribing: ", err)
-	}
-	fmt.Println("\nSubscribed to mempool txs!\n")
+	// if err != nil {
+	// 	fmt.Println("error while subscribing: ", err)
+	// }
+	// fmt.Println("\nSubscribed to mempool txs!\n")
 
 	fmt.Println("\n////////////// BIG TRANSFERS //////////////////\n")
 	if global.BIG_BNB_TRANSFER == true {
@@ -116,61 +122,76 @@ func StreamNewTxs(client *ethclient.Client, rpcClient *rpc.Client) {
 	chainID, _ := client.NetworkID(context.Background())
 	signer := types.NewEIP155Signer(chainID)
 
-	// // redis sub
-	// // NEW_TRANSACTION
-	// var redisClient = redis.NewClient(&redis.Options{
-	// 	Addr: "localhost:6379",
-	// })
-	// ctx := context.Background()
-	// subscriber := redisClient.Subscribe(ctx, "NEW_TRANSACTION")
-	// fmt.Println("//////////////////// waiting for NEW_TRANSACTION msg ////////////////////")
+	// redis sub
+	// NEW_TRANSACTION
 
-	i := 0
-	for transactionHash := range newTxsChannel {
-		i += 1
-		// msg, err := subscriber.ReceiveMessage(ctx)
-		// if err != nil {
-		// 	panic(err)
-		// }
-		// // fmt.Println(msg.Payload)
+	workerID = uuid.New().String()
+	redisClient.Publish("REGISTER_WORKER", workerID)
+	subscriber := redisClient.Subscribe("NEW_TRANSACTION_" + workerID)
 
-		// tx, is_pending, _ := client.TransactionByHash(context.Background(), common.HexToHash(msg.Payload))
-		// // If tx is valid and still unconfirmed
-		// if is_pending {
+	for {
+		msg, err := subscriber.ReceiveMessage()
+		if err != nil {
+			panic(err)
+		}
 
-		// 	fmt.Println("fresh tx")
-		// 	_, _ = signer.Sender(tx)
-		// 	go handleTransaction(tx, client)
-		// } else {
-		// 	fmt.Println("old tx")
-		// }
+		txHash := msg.Payload
 
-		hashCp := transactionHash
-
-		go func() {
-			// Get transaction object from hash by querying the client
-			tx, is_pending, _ := client.TransactionByHash(context.Background(), hashCp)
-			// If tx is valid and still unconfirmed
-			if is_pending {
-				_, _ = signer.Sender(tx)
-				handleTransaction(tx, client)
-			} else {
-				fmt.Println("dead")
-			}
-
-		}()
-		// select {
-		// // Code block is executed when a new tx hash is piped to the channel
-		// case transactionHash := <-newTxsChannel:
-		// 	// Get transaction object from hash by querying the client
-		// 	tx, is_pending, _ := client.TransactionByHash(context.Background(), transactionHash)
-		// 	// If tx is valid and still unconfirmed
-		// 	if is_pending {
-		// 		_, _ = signer.Sender(tx)
-		// 		handleTransaction(tx, client)
-		// 	}
-		// }
+		tx, is_pending, _ := client.TransactionByHash(context.Background(), common.HexToHash(txHash))
+		// If tx is valid and still unconfirmed
+		if is_pending {
+			_, _ = signer.Sender(tx)
+			go handleTransaction(tx, client)
+		} else {
+			fmt.Println("dead tx")
+		}
+		// TODO: should we wait for others to pick? How many tx should this process at a go
 	}
+
+	// for transactionHash := range newTxsChannel {
+	// 	// msg, err := subscriber.ReceiveMessage(ctx)
+	// 	// if err != nil {
+	// 	// 	panic(err)
+	// 	// }
+	// 	// // fmt.Println(msg.Payload)
+
+	// 	// tx, is_pending, _ := client.TransactionByHash(context.Background(), common.HexToHash(msg.Payload))
+	// 	// // If tx is valid and still unconfirmed
+	// 	// if is_pending {
+
+	// 	// 	fmt.Println("fresh tx")
+	// 	// 	_, _ = signer.Sender(tx)
+	// 	// 	go handleTransaction(tx, client)
+	// 	// } else {
+	// 	// 	fmt.Println("old tx")
+	// 	// }
+
+	// 	hashCp := transactionHash
+
+	// 	go func() {
+	// 		// Get transaction object from hash by querying the client
+	// 		tx, is_pending, _ := client.TransactionByHash(context.Background(), hashCp)
+	// 		// If tx is valid and still unconfirmed
+	// 		if is_pending {
+	// 			_, _ = signer.Sender(tx)
+	// 			handleTransaction(tx, client)
+	// 		} else {
+	// 			fmt.Println("dead")
+	// 		}
+
+	// 	}()
+	// 	// select {
+	// 	// // Code block is executed when a new tx hash is piped to the channel
+	// 	// case transactionHash := <-newTxsChannel:
+	// 	// 	// Get transaction object from hash by querying the client
+	// 	// 	tx, is_pending, _ := client.TransactionByHash(context.Background(), transactionHash)
+	// 	// 	// If tx is valid and still unconfirmed
+	// 	// 	if is_pending {
+	// 	// 		_, _ = signer.Sender(tx)
+	// 	// 		handleTransaction(tx, client)
+	// 	// 	}
+	// 	// }
+	// }
 }
 
 func handleTransaction(tx *types.Transaction, client *ethclient.Client) {
@@ -197,7 +218,24 @@ func main() {
 		}()
 	}
 
+	var redisClient = redis.NewClient(&redis.Options{
+		Addr: "localhost:6379",
+	})
+
+	shutdownSignal := make(chan os.Signal, 1)
+	signal.Notify(shutdownSignal, os.Interrupt)
+
+	// Block until a signal is received.
+
+	go func() {
+		for range shutdownSignal {
+			fmt.Println("\nShut down requested. Un-registering worker")
+			redisClient.Publish("REMOVE_WORKER", workerID)
+			os.Exit(0)
+		}
+	}()
+
 	// Launch txpool streamer
-	StreamNewTxs(client, rpcClient)
+	StreamNewTxs(client, rpcClient, redisClient)
 
 }
