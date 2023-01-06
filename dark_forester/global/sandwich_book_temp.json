@@ -1,112 +1,24 @@
 {
-  "0xe6df015f66653ece085a5fbba8d42c356114ce4f": {
-    "address": "0xe6df015f66653ece085a5fbba8d42c356114ce4f",
-    "name": "Pyrrho",
+  "0x4027d91ecd3140e53ae743d657549adfeebb27ab": {
+    "address": "0x4027d91ecd3140e53ae743d657549adfeebb27ab",
+    "name": "Chain of Legends Token",
     "tested": true,
     "whitelisted": false,
-    "deviation": 0.499375,
+    "deviation": 0.4993751,
     "totalProfitsRealised": 0,
     "totalBnbBought": 0,
-    "liquidity": 136.19109131500053,
+    "liquidity": 167.4975206173723,
     "manuallyDisabled": false
   },
-  "0x9e4a33c1be27582ec8ad66450bfaf683a1691b53": {
-    "address": "0x9e4a33c1be27582ec8ad66450bfaf683a1691b53",
-    "name": "RobustToken",
+  "0xf33893de6eb6ae9a67442e066ae9abd228f5290c": {
+    "address": "0xf33893de6eb6ae9a67442e066ae9abd228f5290c",
+    "name": "GroveC",
     "tested": true,
     "whitelisted": false,
-    "deviation": 0.5384446,
+    "deviation": 3.6780153,
     "totalProfitsRealised": 0,
     "totalBnbBought": 0,
-    "liquidity": 166.2790893146101,
-    "manuallyDisabled": false
-  },
-  "0xd1e756a5868fcf56a01befc41a8163a6b4f67f43": {
-    "address": "0xd1e756a5868fcf56a01befc41a8163a6b4f67f43",
-    "name": "Stylike Governance",
-    "tested": true,
-    "whitelisted": false,
-    "deviation": 0,
-    "totalProfitsRealised": 0,
-    "totalBnbBought": 0,
-    "liquidity": 87.0637620478098,
-    "manuallyDisabled": false
-  },
-  "0x7cce20380094ff84d5fd322b38402209087d4b14": {
-    "address": "0x7cce20380094ff84d5fd322b38402209087d4b14",
-    "name": "Ichimoku Inu",
-    "tested": true,
-    "whitelisted": false,
-    "deviation": 0,
-    "totalProfitsRealised": 0,
-    "totalBnbBought": 0,
-    "liquidity": 34.736740948908626,
-    "manuallyDisabled": false
-  },
-  "0x76e112203ef59d445452ef7556386dd2df3ed914": {
-    "address": "0x76e112203ef59d445452ef7556386dd2df3ed914",
-    "name": "Canadian Inuit Dog V2",
-    "tested": true,
-    "whitelisted": false,
-    "deviation": 0,
-    "totalProfitsRealised": 0,
-    "totalBnbBought": 0,
-    "liquidity": 247.08387571533814,
-    "manuallyDisabled": false
-  },
-  "0x2f499c6da2c84063bb7e0cb1c478687210cdb615": {
-    "address": "0x2f499c6da2c84063bb7e0cb1c478687210cdb615",
-    "name": "ReflexV2",
-    "tested": true,
-    "whitelisted": false,
-    "deviation": 0,
-    "totalProfitsRealised": 0,
-    "totalBnbBought": 0,
-    "liquidity": 619.2084925971094,
-    "manuallyDisabled": false
-  },
-  "0x42981d0bfbaf196529376ee702f2a9eb9092fcb5": {
-    "address": "0x42981d0bfbaf196529376ee702f2a9eb9092fcb5",
-    "name": "SafeMoon",
-    "tested": true,
-    "whitelisted": false,
-    "deviation": 0,
-    "totalProfitsRealised": 0,
-    "totalBnbBought": 0,
-    "liquidity": 31.950322771510805,
-    "manuallyDisabled": false
-  },
-  "0x57c81885faad67fc4de892102f6fead3b9215f6b": {
-    "address": "0x57c81885faad67fc4de892102f6fead3b9215f6b",
-    "name": "Zenith Coin",
-    "tested": true,
-    "whitelisted": false,
-    "deviation": 0.499375,
-    "totalProfitsRealised": 0,
-    "totalBnbBought": 0,
-    "liquidity": 21.276108981024414,
-    "manuallyDisabled": false
-  },
-  "0xab287e6d370c61f105630e656b5468acb4d00423": {
-    "address": "0xab287e6d370c61f105630e656b5468acb4d00423",
-    "name": "BinStarter",
-    "tested": true,
-    "whitelisted": false,
-    "deviation": 0,
-    "totalProfitsRealised": 0,
-    "totalBnbBought": 0,
-    "liquidity": 1113.8598009501704,
-    "manuallyDisabled": false
-  },
-  "0x465707181acba42ed01268a33f0507e320a154bd": {
-    "address": "0x465707181acba42ed01268a33f0507e320a154bd",
-    "name": "Step",
-    "tested": true,
-    "whitelisted": false,
-    "deviation": 0,
-    "totalProfitsRealised": 0,
-    "totalBnbBought": 0,
-    "liquidity": 233.35490984768194,
+    "liquidity": 1727.6264516951335,
     "manuallyDisabled": false
   }
 }

@@ -79,7 +79,7 @@ var SandwichInMaxSlippage = 0.5
 
 // gas price for our sandwich in tx in multiples of victim-s tx gas. 
 // Must be high enough for favourable ordering inside the block.
-var SandwichInGasPriceMultiplier = 4
+var SandwichInGasPriceMultiplier = 5
 
 // max number of WBNB we are ok to spend in the sandwich in tx
 var Sandwicher_maxbound = 1.2 //  BNB

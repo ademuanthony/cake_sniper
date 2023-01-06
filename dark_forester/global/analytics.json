@@ -368,23 +368,4 @@
     "isCancelledTx": true,
     "realisedProfits": 0
   }
-]{
-	"infos": {
-		"name": "RobustToken",
-		"pairAddr": "0x329bc383486a11bdf5900105e0961b155cda27e8",
-		"tokenAddr": "0x9e4a33c1be27582ec8ad66450bfaf683a1691b53",
-		"victimHash": "0xd0b12ab95cdca17fd054fc052db5f32041778d8efbb9e4e5f0c0a519d62a84cb",
-		"colsolidated": false,
-		"oldBalanceTrigger": 1.2892807720330053,
-		"newBalanceTrigger": 1.2892807720330053,
-		"execTime": 4737
-	},
-	"frontrunHash": "0x3f2d712d90850eca1391def33ed20e8a7f889816ad567f6f34b0ee492134d3c9",
-	"backrunHash": "0x40ceac4471166cb22e1b4c42602b53aa35c1910e38aa0c667276a2a532f3f222",
-	"RevertedFront": false,
-	"RevertedBack": true,
-	"bnbSent": 0.9995,
-	"gasPriceFront": 10,
-	"expectedProfits": 0.2734991855179355,
-	"realisedProfits": 0
-},
+]

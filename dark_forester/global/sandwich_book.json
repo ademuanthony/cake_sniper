@@ -141,5 +141,27 @@
     "totalBnbBought": 0,
     "liquidity": 233.35490984768194,
     "manuallyDisabled": false
+  },
+  "0x4027d91ecd3140e53ae743d657549adfeebb27ab": {
+    "address": "0x4027d91ecd3140e53ae743d657549adfeebb27ab",
+    "name": "Chain of Legends Token",
+    "tested": true,
+    "whitelisted": true,
+    "deviation": 0.4993751,
+    "totalProfitsRealised": 0,
+    "totalBnbBought": 0,
+    "liquidity": 167.4975206173723,
+    "manuallyDisabled": false
+  },
+  "0xf33893de6eb6ae9a67442e066ae9abd228f5290c": {
+    "address": "0xf33893de6eb6ae9a67442e066ae9abd228f5290c",
+    "name": "GroveC",
+    "tested": true,
+    "whitelisted": false,
+    "deviation": 3.6780153,
+    "totalProfitsRealised": 0,
+    "totalBnbBought": 0,
+    "liquidity": 1727.6264516951335,
+    "manuallyDisabled": false
   }
 }
