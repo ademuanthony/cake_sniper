@@ -256,6 +256,7 @@
         "absolutePath": "contracts/IERC20.sol",
         "file": "./IERC20.sol",
         "id": 593,
+        "nameLocation": "-1:-1:-1",
         "nodeType": "ImportDirective",
         "scope": 616,
         "sourceUnit": 591,
@@ -270,6 +271,9 @@
             "baseName": {
               "id": 595,
               "name": "IERC20",
+              "nameLocations": [
+                "197:6:3"
+              ],
               "nodeType": "IdentifierPath",
               "referencedDeclaration": 590,
               "src": "197:6:3"
@@ -279,9 +283,8 @@
             "src": "197:6:3"
           }
         ],
-        "contractDependencies": [
-          590
-        ],
+        "canonicalName": "IERC20Metadata",
+        "contractDependencies": [],
         "contractKind": "interface",
         "documentation": {
           "id": 594,
@@ -296,6 +299,7 @@
           590
         ],
         "name": "IERC20Metadata",
+        "nameLocation": "179:14:3",
         "nodeType": "ContractDefinition",
         "nodes": [
           {
@@ -311,6 +315,7 @@
             "kind": "function",
             "modifiers": [],
             "name": "name",
+            "nameLocation": "278:4:3",
             "nodeType": "FunctionDefinition",
             "parameters": {
               "id": 598,
@@ -327,6 +332,7 @@
                   "id": 600,
                   "mutability": "mutable",
                   "name": "",
+                  "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
                   "scope": 602,
                   "src": "308:13:3",
@@ -370,6 +376,7 @@
             "kind": "function",
             "modifiers": [],
             "name": "symbol",
+            "nameLocation": "399:6:3",
             "nodeType": "FunctionDefinition",
             "parameters": {
               "id": 604,
@@ -386,6 +393,7 @@
                   "id": 606,
                   "mutability": "mutable",
                   "name": "",
+                  "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
                   "scope": 608,
                   "src": "431:13:3",
@@ -429,6 +437,7 @@
             "kind": "function",
             "modifiers": [],
             "name": "decimals",
+            "nameLocation": "531:8:3",
             "nodeType": "FunctionDefinition",
             "parameters": {
               "id": 610,
@@ -445,6 +454,7 @@
                   "id": 612,
                   "mutability": "mutable",
                   "name": "",
+                  "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
                   "scope": 614,
                   "src": "565:5:3",
@@ -477,7 +487,8 @@
           }
         ],
         "scope": 616,
-        "src": "169:405:3"
+        "src": "169:405:3",
+        "usedErrors": []
       }
     ],
     "src": "33:541:3"
@@ -490,7 +501,7 @@
       "enabled": true,
       "runs": 200
     },
-    "version": "0.8.0+commit.c7dfd78e"
+    "version": "0.8.17+commit.8df45f5f"
   },
   "contractName": "IERC20Metadata",
   "coverageMap": {

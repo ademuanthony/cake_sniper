@@ -112,7 +112,6 @@ func setupWorkerRegistry(redisClient redis.Client) {
 			workerMutex.Lock()
 			workers = append(workers, msg.Payload)
 			for i, w := range workers {
-				fmt.Println("worker", w)
 				if w == msg.Payload {
 					workers = removeItem(workers, i)
 					registeredWorkers[w] = false

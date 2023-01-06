@@ -36,7 +36,8 @@ The bot is made up of different parts:
 
 HOW TO SETUP THE BOT:
 
-I created the script scheduler.py which will run you through all the necessary steps to configure the bot. The configuration file of the scheduler is variables.py, so please be sure to adapt everything in variables.py to your own configuration. 
+I created the script scheduler.py which will run you through all the necessary steps to configure the bot. 
+The configuration file of the scheduler is variables.py, so please be sure to adapt everything in variables.py to your own configuration. 
 
 The scheduler walk you through 4 phases :
 - Expectations : helps you calculate the minimal amount of tokens you can expect with the snipe depending on the liquidity addition and your amount of WBNB. Feel free to tweak the variables according to your case and relaunch the script multiples times to test amountOutMin expectations. 
@@ -45,7 +46,8 @@ The scheduler walk you through 4 phases :
 
 - Send the dark_forester/global folder to the AWS server (you might not need it)
 
-(Forget about the "sellers book" that i introduced for the sandwicher and never really used. It was designed to randomise the sender of the backrunning tx so that other bots that might listen mine get duped)
+(Forget about the "sellers book" that i introduced for the sandwicher and never really used. 
+It was designed to randomise the sender of the backrunning tx so that other bots that might listen mine get duped)
 
 - Trigger2 configuration: call configureSnipe on Trigger2 to armm the bot. 
 

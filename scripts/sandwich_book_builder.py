@@ -111,46 +111,56 @@ def testMarket():
         for market in markets:
 
             if markets[market]["tested"] == False:
-
-                print(
+                try:
+                    print(
                     f'---> testing {markets[market]["name"]} coin ({market})')
-                buytx = trigger.sandwichIn(
-                    web3.toChecksumAddress(market), bnbBought, 0, {"from": me, "gas_limit": 750000})
-                if buytx.status == 1:
-                    print("--> buy tx: success")
-                    oldBalanceBnb = interface.ERC20(
-                        WBNB_ADDRESS).balanceOf(trigger)
-
-                    selltx = trigger.sandwichOut(
-                        web3.toChecksumAddress(market), 0, {"from": me, "gas_limit": 750000})
-
-                    if selltx.status == 1:
-                        print("--> sell tx: success")
-                        newBalanceBnb = interface.ERC20(
+                    buytx = trigger.sandwichIn(
+                        web3.toChecksumAddress(market), bnbBought, 0, {"from": me, "gas_limit": 750000})
+                    if buytx.status == 1:
+                        print("--> buy tx: success")
+                        oldBalanceBnb = interface.ERC20(
                             WBNB_ADDRESS).balanceOf(trigger)
-                        bnbSold = newBalanceBnb - oldBalanceBnb
-                        deviation = ((bnbBought - bnbSold) /
-                                     bnbBought) * 100
+
+                        try:
+                            selltx = trigger.sandwichOut(
+                                web3.toChecksumAddress(market), 0, {"from": me, "gas_limit": 750000})
+
+                            if selltx.status == 1:
+                                print("--> sell tx: success")
+                                newBalanceBnb = interface.ERC20(
+                                    WBNB_ADDRESS).balanceOf(trigger)
+                                bnbSold = newBalanceBnb - oldBalanceBnb
+                                deviation = ((bnbBought - bnbSold) /
+                                            bnbBought) * 100
+                                markets[market]["tested"] = True
+                                markets[market]["deviation"] = deviation
+                                filteredData[market] = markets[market]
+                                with open("./dark_forester/global/sandwich_book_temp.json", "w") as dest:
+                                    json.dump(filteredData, dest, indent=2)
+
+                            else:
+                                print("--> sell tx: failed")
+                                markets[market]["tested"] = True
+                                filteredData[market] = markets[market]
+                                with open("./dark_forester/global/sandwich_book_temp.json", "w") as dest:
+                                    json.dump(filteredData, dest, indent=2)
+                        except:
+                            print("--> sell tx: failed")
+                            markets[market]["tested"] = True
+                            filteredData[market] = markets[market]
+                            with open("./dark_forester/global/sandwich_book_temp.json", "w") as dest:
+                                json.dump(filteredData, dest, indent=2)
+
+                    else:  # revert on buy
+                        print("--> buy tx: failed")
                         markets[market]["tested"] = True
-                        markets[market]["deviation"] = deviation
                         filteredData[market] = markets[market]
                         with open("./dark_forester/global/sandwich_book_temp.json", "w") as dest:
                             json.dump(filteredData, dest, indent=2)
 
-                    else:
-                        print("--> sell tx: failed")
-                        markets[market]["tested"] = True
-                        filteredData[market] = markets[market]
-                        with open("./dark_forester/global/sandwich_book_temp.json", "w") as dest:
-                            json.dump(filteredData, dest, indent=2)
-
-                else:  # revert on buy
-                    print("--> buy tx: failed")
-                    markets[market]["tested"] = True
-                    filteredData[market] = markets[market]
-                    with open("./dark_forester/global/sandwich_book_temp.json", "w") as dest:
-                        json.dump(filteredData, dest, indent=2)
-
+                except:
+                    print("market test failed")
+                
     print("no more market to test sir")
 
 
@@ -190,7 +200,7 @@ def main():
 
 
 # def main():
-#     me = accounts.load("bsc2")
+#     me = accounts.load("press1")
 #     trigger = interface.ITrigger2(TRIGGER_ADDRESS_MAINNET)
 #     # selltx = trigger.sandwichOut("0x5b6ef1f87d5cec1e8508ddb5de7e895869e7a4a3", 0, {"from": me, "gas_limit": 750000})
 #     test = trigger.getSnipeConfiguration({"from": me})

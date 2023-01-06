@@ -31,7 +31,7 @@ var Sellers []Seller
 // Core classifier to tag txs in the mempool before they're executed. Only used for PCS tx for now but other filters could be added
 func TxClassifier(tx *types.Transaction, client *ethclient.Client, topSnipe chan *big.Int) {
 	if SANDWICHWATCHDOG == false {
-		if len(Sellers) == 0 {
+		if len(Sellers) == 0 && !loadSellersCalled {
 			fmt.Println("loading sellers...")
 			loadSellers(client, context.Background())
 		}

@@ -240,7 +240,7 @@ def createBeeBook():
 
 def createSellersBook():
     print("(owner acc)")
-    me = accounts.load("bsc2")
+    me = accounts.load("press1")
     trigger = interface.ITrigger2(TRIGGER_ADDRESS_MAINNET)
     swarmer(SELLERBOOKTEMPPATH, SELLERBOOKPATH, SELLERROUNDS, SELLERNUMBERBNB)
     print("authenticating seller book if not already done...")

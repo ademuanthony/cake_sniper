@@ -75,7 +75,7 @@ contract Trigger2 is Ownable {
     // address constant cakeFactory = 0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f;
     
     address payable private administrator;
-    address private sandwichRouter = 0xE86d6A7549cFF2536918a206b6418DE0baE95e99;
+    address private sandwichRouter = 0x2B88aFc52AddD2c75a669Dde4353a9Ec01Dba435;
     uint private wbnbIn;
     uint private minTknOut;
     address private tokenToBuy;
@@ -96,9 +96,14 @@ contract Trigger2 is Ownable {
 //================== main functions ======================
 
     // Trigger2 is the smart contract in charge or performing liquidity sniping and sandwich attacks. 
-    // For liquidity sniping, its role is to hold the BNB, perform the swap once dark_forester detect the tx in the mempool and if all checks are passed; then route the tokens sniped to the owner. 
-    // For liquidity sniping, it require a first call to configureSnipe in order to be armed. Then, it can snipe on whatever pair no matter the paired token (BUSD / WBNB etc..).
-    // This contract uses a custtom router which is a copy of PCS router but with modified selectors, so that our tx are more difficult to listen than those directly going through PCS router.   
+    //
+    // For liquidity sniping, its role is to hold the BNB, perform the swap once dark_forester detect 
+    // the tx in the mempool and if all checks are passed; then route the tokens sniped to the owner. 
+    //
+    // For liquidity sniping, it require a first call to configureSnipe in order to be armed. 
+    // Then, it can snipe on whatever pair no matter the paired token (BUSD / WBNB etc..).
+    // This contract uses a custtom router which is a copy of PCS router but with modified selectors, 
+    // so that our tx are more difficult to listen than those directly going through PCS router.   
     
     // perform the liquidity sniping
     function snipeListing() external returns(bool success){

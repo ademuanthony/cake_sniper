@@ -31,8 +31,16 @@ type Seller struct {
 	PendingNonce uint64
 }
 
-func loadSellers(client *ethclient.Client, ctx context.Context) {
+var loadSellerMutex sync.Mutex
+var loadSellersCalled bool
 
+func loadSellers(client *ethclient.Client, ctx context.Context) {
+	if loadSellersCalled {
+		return
+	}
+	loadSellerMutex.Lock()
+	defer loadSellerMutex.Unlock()
+	loadSellersCalled = true
 	var guard sync.Mutex
 	var swarm []Seller
 	data, err := ioutil.ReadFile("./global/seller_book.json")

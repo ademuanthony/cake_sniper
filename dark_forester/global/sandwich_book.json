@@ -1,13 +1,145 @@
 {
-  "0x6fb8889b3c5d79a4c855d4de56ce3b742d8e0eba": {
-    "address": "0x6fb8889b3c5d79a4c855d4de56ce3b742d8e0eba",
-    "name": "RECYCLE-X",
+  "0xe6df015f66653ece085a5fbba8d42c356114ce4f": {
+    "address": "0xe6df015f66653ece085a5fbba8d42c356114ce4f",
+    "name": "Pyrrho",
     "tested": true,
     "whitelisted": true,
+    "deviation": 0.499375,
+    "totalProfitsRealised": 0,
+    "totalBnbBought": 0,
+    "liquidity": 136.19109131500053,
+    "manuallyDisabled": false
+  },
+  "0x9e4a33c1be27582ec8ad66450bfaf683a1691b53": {
+    "address": "0x9e4a33c1be27582ec8ad66450bfaf683a1691b53",
+    "name": "RobustToken",
+    "tested": true,
+    "whitelisted": true,
+    "deviation": 0.5384446,
+    "totalProfitsRealised": 0,
+    "totalBnbBought": 0,
+    "liquidity": 166.2790893146101,
+    "manuallyDisabled": false
+  },
+  "0x2842602a26844229ebfb6d4a12772027653ece84": {
+    "address": "0x2842602a26844229ebfb6d4a12772027653ece84",
+    "name": "AlienSquid",
+    "tested": false,
+    "whitelisted": false,
     "deviation": 0,
     "totalProfitsRealised": 0,
     "totalBnbBought": 0,
-    "liquidity": 0.245,
+    "liquidity": 63.62689702161841,
+    "manuallyDisabled": false
+  },
+  "0xd1e756a5868fcf56a01befc41a8163a6b4f67f43": {
+    "address": "0xd1e756a5868fcf56a01befc41a8163a6b4f67f43",
+    "name": "Stylike Governance",
+    "tested": true,
+    "whitelisted": false,
+    "deviation": 0,
+    "totalProfitsRealised": 0,
+    "totalBnbBought": 0,
+    "liquidity": 87.0637620478098,
+    "manuallyDisabled": false
+  },
+  "0x7bbcac014aef5aed394ddf3175a9815b977670f9": {
+    "address": "0x7bbcac014aef5aed394ddf3175a9815b977670f9",
+    "name": "Etheria",
+    "tested": false,
+    "whitelisted": false,
+    "deviation": 0,
+    "totalProfitsRealised": 0,
+    "totalBnbBought": 0,
+    "liquidity": 14,
+    "manuallyDisabled": false
+  },
+  "0x2033f3599e070c3becd09b0b28988a9c45a059d5": {
+    "address": "0x2033f3599e070c3becd09b0b28988a9c45a059d5",
+    "name": "Token SHELBY",
+    "tested": false,
+    "whitelisted": false,
+    "deviation": 0,
+    "totalProfitsRealised": 0,
+    "totalBnbBought": 0,
+    "liquidity": 240.84873368361647,
+    "manuallyDisabled": false
+  },
+  "0x7cce20380094ff84d5fd322b38402209087d4b14": {
+    "address": "0x7cce20380094ff84d5fd322b38402209087d4b14",
+    "name": "Ichimoku Inu",
+    "tested": true,
+    "whitelisted": false,
+    "deviation": 0,
+    "totalProfitsRealised": 0,
+    "totalBnbBought": 0,
+    "liquidity": 34.736740948908626,
+    "manuallyDisabled": false
+  },
+  "0x76e112203ef59d445452ef7556386dd2df3ed914": {
+    "address": "0x76e112203ef59d445452ef7556386dd2df3ed914",
+    "name": "Canadian Inuit Dog V2",
+    "tested": true,
+    "whitelisted": false,
+    "deviation": 0,
+    "totalProfitsRealised": 0,
+    "totalBnbBought": 0,
+    "liquidity": 247.08387571533814,
+    "manuallyDisabled": false
+  },
+  "0x2f499c6da2c84063bb7e0cb1c478687210cdb615": {
+    "address": "0x2f499c6da2c84063bb7e0cb1c478687210cdb615",
+    "name": "ReflexV2",
+    "tested": true,
+    "whitelisted": false,
+    "deviation": 0,
+    "totalProfitsRealised": 0,
+    "totalBnbBought": 0,
+    "liquidity": 619.2084925971094,
+    "manuallyDisabled": false
+  },
+  "0x42981d0bfbaf196529376ee702f2a9eb9092fcb5": {
+    "address": "0x42981d0bfbaf196529376ee702f2a9eb9092fcb5",
+    "name": "SafeMoon",
+    "tested": true,
+    "whitelisted": false,
+    "deviation": 0,
+    "totalProfitsRealised": 0,
+    "totalBnbBought": 0,
+    "liquidity": 31.950322771510805,
+    "manuallyDisabled": false
+  },
+  "0x57c81885faad67fc4de892102f6fead3b9215f6b": {
+    "address": "0x57c81885faad67fc4de892102f6fead3b9215f6b",
+    "name": "Zenith Coin",
+    "tested": true,
+    "whitelisted": true,
+    "deviation": 0.499375,
+    "totalProfitsRealised": 0,
+    "totalBnbBought": 0,
+    "liquidity": 21.276108981024414,
+    "manuallyDisabled": false
+  },
+  "0xab287e6d370c61f105630e656b5468acb4d00423": {
+    "address": "0xab287e6d370c61f105630e656b5468acb4d00423",
+    "name": "BinStarter",
+    "tested": true,
+    "whitelisted": false,
+    "deviation": 0,
+    "totalProfitsRealised": 0,
+    "totalBnbBought": 0,
+    "liquidity": 1113.8598009501704,
+    "manuallyDisabled": false
+  },
+  "0x465707181acba42ed01268a33f0507e320a154bd": {
+    "address": "0x465707181acba42ed01268a33f0507e320a154bd",
+    "name": "Step",
+    "tested": true,
+    "whitelisted": false,
+    "deviation": 0,
+    "totalProfitsRealised": 0,
+    "totalBnbBought": 0,
+    "liquidity": 233.35490984768194,
     "manuallyDisabled": false
   }
 }

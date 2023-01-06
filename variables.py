@@ -13,7 +13,7 @@ RESERVE_IN = 300 # amount of BNB liquidity that will be added on PCS by the team
 RESERVE_OUT = 88888 # amount of token liquidity that will be added on PCS by the team
 
 #///////////// CONSTANT ////////////////////////////////////////
-TRIGGER_ADDRESS_MAINNET = "0x39695B38c6d4e5F73acE974Fd0f9F6766c2E5544" # addy changed for public repo
+TRIGGER_ADDRESS_MAINNET = "0x9D153DadeE68FC4881C6F9aCFe6648d80f103eb7" # addy changed for public repo
 TRIGGER_ADDRESS_TESTNET = "0x39695B38c6d4e5F73acE974Fd0f9F6766c2E5544" # addy changed for public repo
 CAKE_FACTORY_ADDRESS = "0xcA143Ce32Fe78f1f7019d7d551a6402fC5350c73"
 CAKE_ROUTER_ADDRESS = "0x10ED43C718714eb63d5aA57B78B54704E256024E"
@@ -32,13 +32,13 @@ BUSD_ADDRESS = "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56"
 # 8 --> 256 accounts
 # 9 --> 512 accounts
 TEST = False
-BEEROUNDS = 4 # swarming : number of dispersion rounds 
+BEEROUNDS = 3 # swarming : number of dispersion rounds 
 BEENUMBERBNB = 1 # swarming : number of BNB to spread
 BEEBOOKPATH  = "./dark_forester/global/bee_book.json"
 BEEBOOKTEMPPATH = "./dark_forester/global/bee_book_temp.json"
 
 SELLERROUNDS = 3
-SELLERNUMBERBNB = 0
+SELLERNUMBERBNB = 0.15
 SELLERBOOKPATH = "./dark_forester/global/seller_book.json"
 SELLERBOOKTEMPPATH = "./dark_forester/global/seller_book_temp.json"
 
@@ -55,11 +55,11 @@ PAIRED_TOKEN = WBNB_ADDRESS
 
 # those accounts name are supposed to be registered in your eth-brownie setup files 
 DISPERSER_ACCOUNT = "press1"
-TRIGGER_OWNER = "bsc2"
+TRIGGER_OWNER = "press1" #//bsc2
 TRIGGER_ADMIN = "press1"
 MANUAL_EXECUTOR_SELL_SLIPPAGE = 5 # %
 MANUAL_EXECUTOR_EMMERGENCY_BUY_ALLOCATION = 1 # BNB
 
 
 #///////////// SANDWICHER VARIABLES ////////////////////////
-SANDWICH_BOOK_MINLIQ_MARKET = 100 #min BNB in liq pool
+SANDWICH_BOOK_MINLIQ_MARKET = 10 #min BNB in liq pool

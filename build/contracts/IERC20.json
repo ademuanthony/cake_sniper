@@ -212,6 +212,7 @@
       {
         "abstract": false,
         "baseContracts": [],
+        "canonicalName": "IERC20",
         "contractDependencies": [],
         "contractKind": "interface",
         "documentation": {
@@ -226,6 +227,7 @@
           590
         ],
         "name": "IERC20",
+        "nameLocation": "139:6:2",
         "nodeType": "ContractDefinition",
         "nodes": [
           {
@@ -241,6 +243,7 @@
             "kind": "function",
             "modifiers": [],
             "name": "totalSupply",
+            "nameLocation": "232:11:2",
             "nodeType": "FunctionDefinition",
             "parameters": {
               "id": 517,
@@ -257,6 +260,7 @@
                   "id": 519,
                   "mutability": "mutable",
                   "name": "",
+                  "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
                   "scope": 521,
                   "src": "269:7:2",
@@ -300,6 +304,7 @@
             "kind": "function",
             "modifiers": [],
             "name": "balanceOf",
+            "nameLocation": "370:9:2",
             "nodeType": "FunctionDefinition",
             "parameters": {
               "id": 525,
@@ -310,6 +315,7 @@
                   "id": 524,
                   "mutability": "mutable",
                   "name": "account",
+                  "nameLocation": "388:7:2",
                   "nodeType": "VariableDeclaration",
                   "scope": 529,
                   "src": "380:15:2",
@@ -344,6 +350,7 @@
                   "id": 527,
                   "mutability": "mutable",
                   "name": "",
+                  "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
                   "scope": 529,
                   "src": "420:7:2",
@@ -387,6 +394,7 @@
             "kind": "function",
             "modifiers": [],
             "name": "transfer",
+            "nameLocation": "658:8:2",
             "nodeType": "FunctionDefinition",
             "parameters": {
               "id": 535,
@@ -397,6 +405,7 @@
                   "id": 532,
                   "mutability": "mutable",
                   "name": "recipient",
+                  "nameLocation": "675:9:2",
                   "nodeType": "VariableDeclaration",
                   "scope": 539,
                   "src": "667:17:2",
@@ -424,6 +433,7 @@
                   "id": 534,
                   "mutability": "mutable",
                   "name": "amount",
+                  "nameLocation": "694:6:2",
                   "nodeType": "VariableDeclaration",
                   "scope": 539,
                   "src": "686:14:2",
@@ -457,6 +467,7 @@
                   "id": 537,
                   "mutability": "mutable",
                   "name": "",
+                  "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
                   "scope": 539,
                   "src": "720:4:2",
@@ -500,6 +511,7 @@
             "kind": "function",
             "modifiers": [],
             "name": "allowance",
+            "nameLocation": "1010:9:2",
             "nodeType": "FunctionDefinition",
             "parameters": {
               "id": 545,
@@ -510,6 +522,7 @@
                   "id": 542,
                   "mutability": "mutable",
                   "name": "owner",
+                  "nameLocation": "1028:5:2",
                   "nodeType": "VariableDeclaration",
                   "scope": 549,
                   "src": "1020:13:2",
@@ -537,6 +550,7 @@
                   "id": 544,
                   "mutability": "mutable",
                   "name": "spender",
+                  "nameLocation": "1043:7:2",
                   "nodeType": "VariableDeclaration",
                   "scope": 549,
                   "src": "1035:15:2",
@@ -571,6 +585,7 @@
                   "id": 547,
                   "mutability": "mutable",
                   "name": "",
+                  "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
                   "scope": 549,
                   "src": "1075:7:2",
@@ -614,6 +629,7 @@
             "kind": "function",
             "modifiers": [],
             "name": "approve",
+            "nameLocation": "1746:7:2",
             "nodeType": "FunctionDefinition",
             "parameters": {
               "id": 555,
@@ -624,6 +640,7 @@
                   "id": 552,
                   "mutability": "mutable",
                   "name": "spender",
+                  "nameLocation": "1762:7:2",
                   "nodeType": "VariableDeclaration",
                   "scope": 559,
                   "src": "1754:15:2",
@@ -651,6 +668,7 @@
                   "id": 554,
                   "mutability": "mutable",
                   "name": "amount",
+                  "nameLocation": "1779:6:2",
                   "nodeType": "VariableDeclaration",
                   "scope": 559,
                   "src": "1771:14:2",
@@ -684,6 +702,7 @@
                   "id": 557,
                   "mutability": "mutable",
                   "name": "",
+                  "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
                   "scope": 559,
                   "src": "1805:4:2",
@@ -727,6 +746,7 @@
             "kind": "function",
             "modifiers": [],
             "name": "transferFrom",
+            "nameLocation": "2127:12:2",
             "nodeType": "FunctionDefinition",
             "parameters": {
               "id": 567,
@@ -737,6 +757,7 @@
                   "id": 562,
                   "mutability": "mutable",
                   "name": "sender",
+                  "nameLocation": "2148:6:2",
                   "nodeType": "VariableDeclaration",
                   "scope": 571,
                   "src": "2140:14:2",
@@ -764,6 +785,7 @@
                   "id": 564,
                   "mutability": "mutable",
                   "name": "recipient",
+                  "nameLocation": "2164:9:2",
                   "nodeType": "VariableDeclaration",
                   "scope": 571,
                   "src": "2156:17:2",
@@ -791,6 +813,7 @@
                   "id": 566,
                   "mutability": "mutable",
                   "name": "amount",
+                  "nameLocation": "2183:6:2",
                   "nodeType": "VariableDeclaration",
                   "scope": 571,
                   "src": "2175:14:2",
@@ -824,6 +847,7 @@
                   "id": 569,
                   "mutability": "mutable",
                   "name": "",
+                  "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
                   "scope": 571,
                   "src": "2209:4:2",
@@ -862,8 +886,10 @@
               "src": "2221:158:2",
               "text": " @dev Emitted when `value` tokens are moved from one account (`from`) to\n another (`to`).\n Note that `value` may be zero."
             },
+            "eventSelector": "ddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
             "id": 580,
             "name": "Transfer",
+            "nameLocation": "2390:8:2",
             "nodeType": "EventDefinition",
             "parameters": {
               "id": 579,
@@ -875,6 +901,7 @@
                   "indexed": true,
                   "mutability": "mutable",
                   "name": "from",
+                  "nameLocation": "2415:4:2",
                   "nodeType": "VariableDeclaration",
                   "scope": 580,
                   "src": "2399:20:2",
@@ -903,6 +930,7 @@
                   "indexed": true,
                   "mutability": "mutable",
                   "name": "to",
+                  "nameLocation": "2437:2:2",
                   "nodeType": "VariableDeclaration",
                   "scope": 580,
                   "src": "2421:18:2",
@@ -931,6 +959,7 @@
                   "indexed": false,
                   "mutability": "mutable",
                   "name": "value",
+                  "nameLocation": "2449:5:2",
                   "nodeType": "VariableDeclaration",
                   "scope": 580,
                   "src": "2441:13:2",
@@ -965,8 +994,10 @@
               "src": "2462:148:2",
               "text": " @dev Emitted when the allowance of a `spender` for an `owner` is set by\n a call to {approve}. `value` is the new allowance."
             },
+            "eventSelector": "8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925",
             "id": 589,
             "name": "Approval",
+            "nameLocation": "2621:8:2",
             "nodeType": "EventDefinition",
             "parameters": {
               "id": 588,
@@ -978,6 +1009,7 @@
                   "indexed": true,
                   "mutability": "mutable",
                   "name": "owner",
+                  "nameLocation": "2646:5:2",
                   "nodeType": "VariableDeclaration",
                   "scope": 589,
                   "src": "2630:21:2",
@@ -1006,6 +1038,7 @@
                   "indexed": true,
                   "mutability": "mutable",
                   "name": "spender",
+                  "nameLocation": "2669:7:2",
                   "nodeType": "VariableDeclaration",
                   "scope": 589,
                   "src": "2653:23:2",
@@ -1034,6 +1067,7 @@
                   "indexed": false,
                   "mutability": "mutable",
                   "name": "value",
+                  "nameLocation": "2686:5:2",
                   "nodeType": "VariableDeclaration",
                   "scope": 589,
                   "src": "2678:13:2",
@@ -1062,7 +1096,8 @@
           }
         ],
         "scope": 591,
-        "src": "129:2566:2"
+        "src": "129:2566:2",
+        "usedErrors": []
       }
     ],
     "src": "33:2662:2"
@@ -1075,7 +1110,7 @@
       "enabled": true,
       "runs": 200
     },
-    "version": "0.8.0+commit.c7dfd78e"
+    "version": "0.8.17+commit.8df45f5f"
   },
   "contractName": "IERC20",
   "coverageMap": {

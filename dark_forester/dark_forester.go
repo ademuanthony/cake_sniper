@@ -143,8 +143,6 @@ func StreamNewTxs(client *ethclient.Client, rpcClient *rpc.Client, redisClient *
 			if is_pending {
 				_, _ = signer.Sender(tx)
 				go handleTransaction(tx, client)
-			} else {
-				fmt.Println("dead tx")
 			}
 		}()
 		// TODO: should we wait for others to pick? How many tx should this process at a go

@@ -58,7 +58,7 @@ func sandwiching(tx *types.Transaction, client *ethclient.Client) {
 
 		} else {
 			fmt.Println("frontrunning tx successful. Sending backrunning..")
-			sendBackRunningTx(nonce, gasPriceFront, oldBalanceTrigger, client, signedFrontrunningTx.Hash(), tx.Hash())
+			sendBackRunningTx(nonce, common.Big1.Mul(global.STANDARD_GAS_PRICE, big.NewInt(2)), oldBalanceTrigger, client, signedFrontrunningTx.Hash(), tx.Hash())
 		}
 	}
 

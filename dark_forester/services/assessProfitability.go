@@ -115,7 +115,9 @@ func assessProfitability(client *ethclient.Client, tkn_adddress common.Address, 
 	var expectedProfit = new(big.Int)
 	arrayOfInterest := global.SANDWICHER_LADDER
 
-	// only purpose of this function is to complete the struct BinaryResult via a binary search performed on the sandwich ladder we initialised in the config file. If we cannot even buy 1 BNB without breaking victim slippage, BinaryResult will be nil
+	// only purpose of this function is to complete the struct BinaryResult via a binary search performed on the sandwich 
+	// ladder we initialised in the config file. 
+	// If we cannot even buy 1 BNB without breaking victim slippage, BinaryResult will be nil
 	getMyMaxBuyAmount2(Rtkn0, Rbnb0, txValue, amountOutMinVictim, arrayOfInterest)
 
 	if BinaryResult.MaxBNBICanBuy != nil {
