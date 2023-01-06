@@ -208,3 +208,91 @@
 	"liquidity": 60.39406291424132,
 	"manuallyDisabled": false
 },
+{
+	"address": "0x777994409c6b7e2393f6098a33a9cd8b7e9d0d28",
+	"name": "Cryptotem",
+	"tested": false,
+	"whitelisted": false,
+	"deviation": 0,
+	"totalProfitsRealised": 0,
+	"totalBnbBought": 0,
+	"liquidity": 178.57585611016447,
+	"manuallyDisabled": false
+},
+{
+	"address": "0x6ec90334d89dbdc89e08a133271be3d104128edb",
+	"name": "WIKI CAT",
+	"tested": false,
+	"whitelisted": false,
+	"deviation": 0,
+	"totalProfitsRealised": 0,
+	"totalBnbBought": 0,
+	"liquidity": 83.83604381629719,
+	"manuallyDisabled": false
+},
+{
+	"address": "0xe9a9513ba94c4edbde243abf0abdf9d42fc90f60",
+	"name": "Shared Dao",
+	"tested": false,
+	"whitelisted": false,
+	"deviation": 0,
+	"totalProfitsRealised": 0,
+	"totalBnbBought": 0,
+	"liquidity": 29.390061595462427,
+	"manuallyDisabled": false
+},
+{
+	"address": "0x51e91e3e1e87b923d087cc94ab6678854567c745",
+	"name": "Control2XY",
+	"tested": false,
+	"whitelisted": false,
+	"deviation": 0,
+	"totalProfitsRealised": 0,
+	"totalBnbBought": 0,
+	"liquidity": 66.90974202183564,
+	"manuallyDisabled": false
+},
+{
+	"address": "0xa0e1399de9edf5a85a06a5ce34f8810eb62ef40e",
+	"name": "CBFINU",
+	"tested": false,
+	"whitelisted": false,
+	"deviation": 0,
+	"totalProfitsRealised": 0,
+	"totalBnbBought": 0,
+	"liquidity": 24.430053477161565,
+	"manuallyDisabled": false
+},
+{
+	"address": "0xc3af16eb716d49f78769b4a202d37bcc2ca69076",
+	"name": "2023",
+	"tested": false,
+	"whitelisted": false,
+	"deviation": 0,
+	"totalProfitsRealised": 0,
+	"totalBnbBought": 0,
+	"liquidity": 226.3452673458138,
+	"manuallyDisabled": false
+},
+{
+	"address": "0xb1957bdba889686ebde631df970ece6a7571a1b6",
+	"name": "Defi Tiger",
+	"tested": false,
+	"whitelisted": false,
+	"deviation": 0,
+	"totalProfitsRealised": 0,
+	"totalBnbBought": 0,
+	"liquidity": 33.923791343981506,
+	"manuallyDisabled": false
+},
+{
+	"address": "0xbe637debeeddf0606f07ec14530399c40b5d9910",
+	"name": "Architron",
+	"tested": false,
+	"whitelisted": false,
+	"deviation": 0,
+	"totalProfitsRealised": 0,
+	"totalBnbBought": 0,
+	"liquidity": 14,
+	"manuallyDisabled": false
+},
