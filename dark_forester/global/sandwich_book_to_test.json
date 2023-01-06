@@ -186,3 +186,25 @@
 	"liquidity": 80.42279171230865,
 	"manuallyDisabled": false
 },
+{
+	"address": "0x25b24b3c47918b7962b3e49c4f468367f73cc0e0",
+	"name": "AXL INU",
+	"tested": false,
+	"whitelisted": false,
+	"deviation": 0,
+	"totalProfitsRealised": 0,
+	"totalBnbBought": 0,
+	"liquidity": 723.4342048023815,
+	"manuallyDisabled": false
+},
+{
+	"address": "0x5dae35f04488a7f7f01244f6d8ccdf1ecf0182f2",
+	"name": "SaveTheWorld",
+	"tested": false,
+	"whitelisted": false,
+	"deviation": 0,
+	"totalProfitsRealised": 0,
+	"totalBnbBought": 0,
+	"liquidity": 60.39406291424132,
+	"manuallyDisabled": false
+},
