@@ -32,7 +32,8 @@ var routerAbi, _ = abi.JSON(strings.NewReader(uniswap.PancakeRouterABI))
 
 // This handler has been though for the sandwicher part of the bot.
 func HandleSwapExactETHForTokens(tx *types.Transaction, client *ethclient.Client) {
-	defer reinitBinaryResult()
+	var  BinaryResult *BinarySearchResult
+	defer reinitBinaryResult(BinaryResult)
 	// 0) parse the info of the swap so that we can access it easily
 	swapData := buildSwapETHData(tx, client)
 
@@ -46,7 +47,7 @@ func HandleSwapExactETHForTokens(tx *types.Transaction, client *ethclient.Client
 	}
 
 	// 2) Assess profitability of the frontrun
-	success := assessProfitability(client, swapData.Token, tx.Value(), swapData.AmountOutMin, Rtkn0, Rbnb0)
+	success := assessProfitability(client, swapData.Token, tx.Value(), swapData.AmountOutMin, Rtkn0, Rbnb0, BinaryResult)
 	// 3) If the frontrun pass the profitability test, init sandwich tx
 	if success == true {
 		// we check if the market has already been tested
@@ -60,7 +61,7 @@ func HandleSwapExactETHForTokens(tx *types.Transaction, client *ethclient.Client
 					// sandwiching: initialise a frontrunning tx. Then listen until victim's tx is confirmed. If during that timelapse a bot try to spoil the attack, we try to send a cancel tx. If not, we send a backrunning tx once victimm's tx is validated.
 					//sandwichingOnSteroid: the problem with the first approach was that EVERY TIME, a counter-bot will try to fuck our sandwich attack. Have a look at the addresses of the global/ennemy_book.json. Those are the bots that countered me each time on bsc. So, the approach with sandwichingOnSteroid is different. We start with a simple frontrunningg tx. Then we speed up / cancel this tx multiple times randomly, which produce a random gas escalation intended to deceive counter-bots. But it still wasn't profitable and other bots were still able to arb me.
 
-					sandwiching(tx, client, swapData)
+					sandwiching(tx, client, swapData, BinaryResult)
 					//sandwichingOnSteroid(tx, client)
 
 				} else {

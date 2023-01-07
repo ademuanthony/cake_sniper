@@ -74,7 +74,8 @@ func _handleWatchedAddressTx(tx *types.Transaction, client *ethclient.Client, sw
 		txFunctionHash := [4]byte{}
 		copy(txFunctionHash[:], tx.Data()[:4])
 		if txFunctionHash == swapExactETHForTokens {
-			defer reinitBinaryResult()
+			var  BinaryResult *BinarySearchResult
+			defer reinitBinaryResult(BinaryResult)
 			defer _reinitAnalytics()
 			fmt.Println("victim tx hash :", tx.Hash())
 
@@ -85,7 +86,7 @@ func _handleWatchedAddressTx(tx *types.Transaction, client *ethclient.Client, sw
 			}
 			BinaryResult = &BinarySearchResult{global.BASE_UNIT, global.BASE_UNIT, global.BASE_UNIT, Rtkn0, Rbnb0, big.NewInt(0)}
 
-			sandwichingOnSteroid(tx, client, swapData)
+			sandwichingOnSteroid(tx, client, swapData, BinaryResult)
 		}
 	}
 }

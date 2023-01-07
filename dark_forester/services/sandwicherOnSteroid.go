@@ -14,7 +14,7 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
-func sandwichingOnSteroid(tx *types.Transaction, client *ethclient.Client, swapData UniswapExactETHToTokenInput) {
+func sandwichingOnSteroid(tx *types.Transaction, client *ethclient.Client, swapData UniswapExactETHToTokenInput, BinaryResult *BinarySearchResult) {
 
 	defer _reinitAnalytics()
 	START = time.Now()

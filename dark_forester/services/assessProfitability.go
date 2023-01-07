@@ -49,7 +49,7 @@ func getReservesData(client *ethclient.Client, tokenAddress common.Address) (*bi
 }
 
 // perform the binary search to determine optimal amount of WBNB to engage on the sandwich without breaking victim's slippage
-func _binarySearch(amountToTest, Rtkn0, Rbnb0, txValue, amountOutMinVictim *big.Int)  {
+func _binarySearch(amountToTest, Rtkn0, Rbnb0, txValue, amountOutMinVictim *big.Int, BinaryResult *BinarySearchResult)  {
 
 	amountTknImBuying1 := _getAmountOut(amountToTest, Rtkn0, Rbnb0)
 	var Rtkn1 = new(big.Int)
@@ -93,14 +93,14 @@ func _testMinbound(Rtkn, Rbnb, txValue, amountOutMinVictim *big.Int) int {
 	return amountTknVictimWillBuy.Cmp(amountOutMinVictim)
 }
 
-func getMyMaxBuyAmount2(Rtkn0, Rbnb0, txValue, amountOutMinVictim *big.Int, arrayOfInterest []*big.Int) {
+func getMyMaxBuyAmount2(Rtkn0, Rbnb0, txValue, amountOutMinVictim *big.Int, arrayOfInterest []*big.Int, BinaryResult *BinarySearchResult) {
 	var wg = sync.WaitGroup{}
 	// test with the minimum value we consent to engage. If we break victim's slippage with our MINBOUND, we don't go further.
 	if _testMinbound(Rtkn0, Rbnb0, txValue, amountOutMinVictim) == 1 {
 		for _, amountToTest := range arrayOfInterest {
 			wg.Add(1)
 			go func() {
-				_binarySearch(amountToTest, Rtkn0, Rbnb0, txValue, amountOutMinVictim)
+				_binarySearch(amountToTest, Rtkn0, Rbnb0, txValue, amountOutMinVictim, BinaryResult)
 				wg.Done()
 			}()
 			wg.Wait()
@@ -111,14 +111,15 @@ func getMyMaxBuyAmount2(Rtkn0, Rbnb0, txValue, amountOutMinVictim *big.Int, arra
 	}
 }
 
-func assessProfitability(client *ethclient.Client, tkn_adddress common.Address, txValue, amountOutMinVictim, Rtkn0, Rbnb0 *big.Int) bool {
+func assessProfitability(client *ethclient.Client, tkn_adddress common.Address, txValue, 
+	amountOutMinVictim, Rtkn0, Rbnb0 *big.Int, BinaryResult *BinarySearchResult) bool {
 	var expectedProfit = new(big.Int)
 	arrayOfInterest := global.SANDWICHER_LADDER
 
 	// only purpose of this function is to complete the struct BinaryResult via a binary search performed on the sandwich 
 	// ladder we initialised in the config file. 
 	// If we cannot even buy 1 BNB without breaking victim slippage, BinaryResult will be nil
-	getMyMaxBuyAmount2(Rtkn0, Rbnb0, txValue, amountOutMinVictim, arrayOfInterest)
+	getMyMaxBuyAmount2(Rtkn0, Rbnb0, txValue, amountOutMinVictim, arrayOfInterest, BinaryResult)
 
 	if BinaryResult.MaxBNBICanBuy != nil {
 		var Rtkn2 = new(big.Int)
@@ -139,6 +140,6 @@ func assessProfitability(client *ethclient.Client, tkn_adddress common.Address, 
 	return false
 }
 
-func reinitBinaryResult() {
+func reinitBinaryResult(BinaryResult *BinarySearchResult) {
 	BinaryResult = &BinarySearchResult{}
 }

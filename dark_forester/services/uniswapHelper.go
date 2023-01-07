@@ -217,7 +217,7 @@ type NewMarketContent struct {
 	ManuallyDisabled     bool           `json:"manuallyDisabled"`
 }
 
-var BinaryResult *BinarySearchResult
+// var BinaryResult *BinarySearchResult
 
 type BinarySearchResult struct {
 	MaxBNBICanBuy          *big.Int
