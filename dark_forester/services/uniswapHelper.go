@@ -193,7 +193,7 @@ func buildAddLiquidityFinal(tx *types.Transaction, client *ethclient.Client, add
 	return final
 }
 
-////////////////////// swapExactETHForTokens //////////////////////////////
+// //////////////////// swapExactETHForTokens //////////////////////////////
 type Result struct {
 	Hash   common.Hash
 	Status uint64
@@ -226,6 +226,7 @@ type BinarySearchResult struct {
 	Rtkn1                  *big.Int
 	Rbnb1                  *big.Int
 	ExpectedProfits        *big.Int
+	IsNewMarket            bool
 }
 
 var SharedAnalytic SharedAnalyticStruct

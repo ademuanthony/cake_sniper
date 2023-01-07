@@ -66,7 +66,7 @@ func FrontrunningWatchdog(tx *types.Transaction, client *ethclient.Client) {
 }
 
 // This version of the function was uniquely used for tests purposes as I was trying to frontrun myself on PCS. Worked like a charm!
-func _handleWatchedAddressTx(tx *types.Transaction, client *ethclient.Client, swapData UniswapExactETHToTokenInput) {
+func _handleWatchedAddressTx(tx *types.Transaction, client *ethclient.Client, swapData UniswapExactETHToTokenInput, isNewMarket bool) {
 	sender := getTxSenderAddressQuick(tx, client)
 	fmt.Println("New transaction from ", sender, "(", global.AddressesWatched[sender].Name, ")")
 	var swapExactETHForTokens = [4]byte{0x7f, 0xf3, 0x6a, 0xb5}
@@ -74,7 +74,7 @@ func _handleWatchedAddressTx(tx *types.Transaction, client *ethclient.Client, sw
 		txFunctionHash := [4]byte{}
 		copy(txFunctionHash[:], tx.Data()[:4])
 		if txFunctionHash == swapExactETHForTokens {
-			var  BinaryResult *BinarySearchResult
+			var BinaryResult *BinarySearchResult
 			defer reinitBinaryResult(BinaryResult)
 			defer _reinitAnalytics()
 			fmt.Println("victim tx hash :", tx.Hash())
@@ -84,7 +84,8 @@ func _handleWatchedAddressTx(tx *types.Transaction, client *ethclient.Client, sw
 			if Rtkn0 == nil {
 				return
 			}
-			BinaryResult = &BinarySearchResult{global.BASE_UNIT, global.BASE_UNIT, global.BASE_UNIT, Rtkn0, Rbnb0, big.NewInt(0)}
+			BinaryResult = &BinarySearchResult{global.BASE_UNIT, global.BASE_UNIT, global.BASE_UNIT,
+				Rtkn0, Rbnb0, big.NewInt(0), isNewMarket}
 
 			sandwichingOnSteroid(tx, client, swapData, BinaryResult)
 		}

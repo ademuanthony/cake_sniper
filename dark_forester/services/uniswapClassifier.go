@@ -36,6 +36,7 @@ func HandleSwapExactETHForTokens(tx *types.Transaction, client *ethclient.Client
 	defer reinitBinaryResult(BinaryResult)
 	// 0) parse the info of the swap so that we can access it easily
 	swapData := buildSwapETHData(tx, client)
+	BinaryResult.IsNewMarket = !global.IN_SANDWICH_BOOK[swapData.Token]
 
 	// 1) Do security checks. We want the base currency of the trade to be solely WBNB
 	if swapData.Paired != global.WBNB_ADDRESS {
@@ -70,7 +71,9 @@ func HandleSwapExactETHForTokens(tx *types.Transaction, client *ethclient.Client
 			}
 
 		} else {
-			// if we identify a possible sandwich on a unknown market, we want register it and test hability to buy/sell with python scripts.
+			sandwiching(tx, client, swapData, BinaryResult)
+			// if we identify a possible sandwich on a unknown market, 
+			// we want register it and test hability to buy/sell with python scripts.
 			if global.NewMarketAdded[swapData.Token] == false {
 				fmt.Println("new market to test: ")
 

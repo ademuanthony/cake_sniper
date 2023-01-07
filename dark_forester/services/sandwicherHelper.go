@@ -79,9 +79,14 @@ func _prepareFrontrun(nonce uint64, tx *types.Transaction, client *ethclient.Cli
 	if txGasPrice.Cmp(global.STANDARD_GAS_PRICE) == -1 { // if victim's tx gas Price < 5 GWEI, abort.
 		return nil, nil
 	}
-	gasPriceFront := big.NewInt(global.SANDWICHIN_GASPRICE_MULTIPLIER)
-	gasPriceFront.Mul(gasPriceFront, txGasPrice)
-	gasPriceFront.Div(gasPriceFront, big.NewInt(1000000))
+	var gasPriceFront *big.Int
+	if BinaryResult.IsNewMarket {
+		gasPriceFront = global.STANDARD_GAS_PRICE
+	} else {
+		gasPriceFront = big.NewInt(global.SANDWICHIN_GASPRICE_MULTIPLIER)
+		gasPriceFront.Mul(gasPriceFront, txGasPrice)
+		gasPriceFront.Div(gasPriceFront, big.NewInt(1000000))
+	}
 
 	// 0x6c c8 28 89
 	// []byte{0x6d, 0xb7, 0xb0, 0x60}
@@ -310,6 +315,35 @@ func _flushNewmarket(newMarket *NewMarketContent) {
 	}
 	out, _ = json.MarshalIndent(newMarket, "", "\t")
 	fmt.Println(string(out))
+}
+
+func addNewMarket(swapData UniswapExactETHToTokenInput, name string, lp float64) {
+	global.IN_SANDWICH_BOOK[swapData.Token] = true
+	// save to json file
+	var sandwichBook = map[common.Address]global.Market{}
+	filename := "./global/sandwich_book.json"
+	if err := ReadFile(filename, &sandwichBook); err != nil {
+		fmt.Println("error in reading book from file", filename, err)
+	}
+
+	market := global.Market{
+		Tested: true,
+		Whitelisted: true,
+		Address: swapData.Token,
+		Name: name,
+		Liquidity: lp,
+	}
+	
+	sandwichBook[swapData.Token] = market
+
+	out, err := json.MarshalIndent(sandwichBook, "", "\t")
+	if err != nil {
+		fmt.Println("error in encoding markets", err)
+		return
+	}
+	if err := ReplaceFileContent(filename, out); err != nil {
+		fmt.Println("Error in writing", filename, err)
+	}
 }
 
 func showPairAddress(tokenAddress common.Address) common.Address {
