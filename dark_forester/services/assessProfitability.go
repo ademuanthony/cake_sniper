@@ -28,8 +28,8 @@ func _getAmountOut(myMaxBuy, reserveOut, reserveIn *big.Int) *big.Int {
 }
 
 // get reserves of a PCS pair an return it
-func getReservesData(client *ethclient.Client) (*big.Int, *big.Int) {
-	pairAddress, _ := global.FACTORY.GetPair(&bind.CallOpts{}, SwapData.Token, global.WBNB_ADDRESS)
+func getReservesData(client *ethclient.Client, tokenAddress common.Address) (*big.Int, *big.Int) {
+	pairAddress, _ := global.FACTORY.GetPair(&bind.CallOpts{}, tokenAddress, global.WBNB_ADDRESS)
 	PAIR, _ := uniswap.NewIPancakePair(pairAddress, client)
 	reservesData, _ := PAIR.GetReserves(&bind.CallOpts{})
 	if reservesData.Reserve0 == nil {
@@ -49,7 +49,7 @@ func getReservesData(client *ethclient.Client) (*big.Int, *big.Int) {
 }
 
 // perform the binary search to determine optimal amount of WBNB to engage on the sandwich without breaking victim's slippage
-func _binarySearch(amountToTest, Rtkn0, Rbnb0, txValue, amountOutMinVictim *big.Int) {
+func _binarySearch(amountToTest, Rtkn0, Rbnb0, txValue, amountOutMinVictim *big.Int)  {
 
 	amountTknImBuying1 := _getAmountOut(amountToTest, Rtkn0, Rbnb0)
 	var Rtkn1 = new(big.Int)

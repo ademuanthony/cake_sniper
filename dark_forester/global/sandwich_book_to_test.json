@@ -1,23 +1,90 @@
 [
-{
-	"address": "0x4027d91ecd3140e53ae743d657549adfeebb27ab",
-	"name": "Chain of Legends Token",
-	"tested": false,
-	"whitelisted": false,
-	"deviation": 0,
-	"totalProfitsRealised": 0,
-	"totalBnbBought": 0,
-	"liquidity": 167.4975206173723,
-	"manuallyDisabled": false
-},
-{
-	"address": "0xf33893de6eb6ae9a67442e066ae9abd228f5290c",
-	"name": "GroveC",
-	"tested": false,
-	"whitelisted": false,
-	"deviation": 0,
-	"totalProfitsRealised": 0,
-	"totalBnbBought": 0,
-	"liquidity": 1727.6264516951335,
-	"manuallyDisabled": false
-}]
+	{
+		"address": "0xd47b15c560e9f8356a94c6fee7efe1d799b49088",
+		"name": "ReadOn",
+		"tested": false,
+		"whitelisted": false,
+		"deviation": 0,
+		"totalProfitsRealised": 0,
+		"totalBnbBought": 0,
+		"liquidity": 32.51526497036226,
+		"manuallyDisabled": false
+	},
+	{
+		"address": "0x45b503be335b5c3bfd4ce3487c8a230a28ce563f",
+		"name": "XSHIBFINANCE",
+		"tested": false,
+		"whitelisted": false,
+		"deviation": 0,
+		"totalProfitsRealised": 0,
+		"totalBnbBought": 0,
+		"liquidity": 313.26044454554267,
+		"manuallyDisabled": false
+	},
+	{
+		"address": "0x96d7fba51b5890c7b72865cec54b49baed713ad3",
+		"name": "Star Pos Coin",
+		"tested": false,
+		"whitelisted": false,
+		"deviation": 0,
+		"totalProfitsRealised": 0,
+		"totalBnbBought": 0,
+		"liquidity": 15.4,
+		"manuallyDisabled": false
+	},
+	{
+		"address": "0xc1cab66fd835e5ff50fb08d9a7e18cd2eafa8995",
+		"name": "PiDAO",
+		"tested": false,
+		"whitelisted": false,
+		"deviation": 0,
+		"totalProfitsRealised": 0,
+		"totalBnbBought": 0,
+		"liquidity": 31.77944798495253,
+		"manuallyDisabled": false
+	},
+	{
+		"address": "0x8a878318fca97408788dd71de6ffdbacbbd1abc0",
+		"name": "Runology",
+		"tested": false,
+		"whitelisted": false,
+		"deviation": 0,
+		"totalProfitsRealised": 0,
+		"totalBnbBought": 0,
+		"liquidity": 39.10677834679279,
+		"manuallyDisabled": false
+	},
+	{
+		"address": "0x7791d80425cb542937fa499afe835d26ee7284fb",
+		"name": "Rabbit2023",
+		"tested": false,
+		"whitelisted": false,
+		"deviation": 0,
+		"totalProfitsRealised": 0,
+		"totalBnbBought": 0,
+		"liquidity": 154.46691122998035,
+		"manuallyDisabled": false
+	},
+	{
+		"address": "0x4f5713a9bfda48da6d3607b3e2c80cc829607041",
+		"name": "MeraWorld",
+		"tested": false,
+		"whitelisted": false,
+		"deviation": 0,
+		"totalProfitsRealised": 0,
+		"totalBnbBought": 0,
+		"liquidity": 13.184286378635859,
+		"manuallyDisabled": false
+	},
+	{
+		"address": "0xd001bce575be0ae5317209c78822c19b5e9112a3",
+		"name": "2023 Zilla",
+		"tested": false,
+		"whitelisted": false,
+		"deviation": 0,
+		"totalProfitsRealised": 0,
+		"totalBnbBought": 0,
+		"liquidity": 10.01818222943263,
+		"manuallyDisabled": false
+	}
+]

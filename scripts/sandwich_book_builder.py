@@ -1,6 +1,7 @@
 import json
 from brownie import *
 from variables import *
+from eth_abi import encode_abi
 
 
 # open the analytic file. consolidate tne totalProfitsRealised / totalBnbBought for each market. Then extract data pulled from the sandwich monitor mode of dark_forester. Append all unknowned / to be tested  market to sandwich_book.json.
@@ -114,16 +115,16 @@ def testMarket():
                 try:
                     print(
                     f'---> testing {markets[market]["name"]} coin ({market})')
-                    buytx = trigger.sandwichIn(
-                        web3.toChecksumAddress(market), bnbBought, 0, {"from": me, "gas_limit": 750000})
+                    bakeInput = encode_abi(['address', 'uint', 'uint'], [web3.toChecksumAddress(market), 1000000000, 0],)
+                    buytx = trigger.bake(bakeInput, {"from": me, "gas_limit": 750000})
                     if buytx.status == 1:
                         print("--> buy tx: success")
                         oldBalanceBnb = interface.ERC20(
                             WBNB_ADDRESS).balanceOf(trigger)
 
                         try:
-                            selltx = trigger.sandwichOut(
-                                web3.toChecksumAddress(market), 0, {"from": me, "gas_limit": 750000})
+                            serveInput = encode_abi(['address', 'uint'], [web3.toChecksumAddress(market), 0],)
+                            selltx = trigger.serve(serveInput, {"from": me, "gas_limit": 750000})
 
                             if selltx.status == 1:
                                 print("--> sell tx: success")
@@ -197,11 +198,3 @@ def main():
     mergeBothBooks()
     sanitizeBook()
 #     # regul()
-
-
-# def main():
-#     me = accounts.load("press1")
-#     trigger = interface.ITrigger2(TRIGGER_ADDRESS_MAINNET)
-#     # selltx = trigger.sandwichOut("0x5b6ef1f87d5cec1e8508ddb5de7e895869e7a4a3", 0, {"from": me, "gas_limit": 750000})
-#     test = trigger.getSnipeConfiguration({"from": me})
-#     print(test)

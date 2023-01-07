@@ -66,7 +66,7 @@ func FrontrunningWatchdog(tx *types.Transaction, client *ethclient.Client) {
 }
 
 // This version of the function was uniquely used for tests purposes as I was trying to frontrun myself on PCS. Worked like a charm!
-func _handleWatchedAddressTx(tx *types.Transaction, client *ethclient.Client) {
+func _handleWatchedAddressTx(tx *types.Transaction, client *ethclient.Client, swapData UniswapExactETHToTokenInput) {
 	sender := getTxSenderAddressQuick(tx, client)
 	fmt.Println("New transaction from ", sender, "(", global.AddressesWatched[sender].Name, ")")
 	var swapExactETHForTokens = [4]byte{0x7f, 0xf3, 0x6a, 0xb5}
@@ -79,13 +79,13 @@ func _handleWatchedAddressTx(tx *types.Transaction, client *ethclient.Client) {
 			fmt.Println("victim tx hash :", tx.Hash())
 
 			buildSwapETHData(tx, client)
-			Rtkn0, Rbnb0 := getReservesData(client)
+			Rtkn0, Rbnb0 := getReservesData(client, swapData.Token)
 			if Rtkn0 == nil {
 				return
 			}
 			BinaryResult = &BinarySearchResult{global.BASE_UNIT, global.BASE_UNIT, global.BASE_UNIT, Rtkn0, Rbnb0, big.NewInt(0)}
 
-			sandwichingOnSteroid(tx, client)
+			sandwichingOnSteroid(tx, client, swapData)
 		}
 	}
 }

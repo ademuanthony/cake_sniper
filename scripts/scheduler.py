@@ -8,6 +8,7 @@ import json
 import os
 import concurrent.futures
 from pynput.keyboard import Key, Controller
+from eth_abi import encode_abi
 
 
 counter = itertools.count()

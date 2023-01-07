@@ -1,15 +1,12 @@
 package main
 
 import (
-	"bufio"
 	"context"
 	"dark_forester/global"
 	"dark_forester/services"
 	"encoding/json"
 	"flag"
 	"fmt"
-	"log"
-	"os"
 	"sync"
 
 	"github.com/ethereum/go-ethereum/common"
@@ -133,20 +130,24 @@ func removeItem(slice []string, i int) []string {
 }
 
 func _flushNewmarket(newMarket *services.NewMarketContent) {
-	out, _ := json.MarshalIndent(newMarket, "", "\t")
-	file, err := os.OpenFile("../global/sandwich_book_to_test.json", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
-		log.Fatal(err)
+	var markets []services.NewMarketContent
+	filename := "../global/sandwich_book_to_test.json"
+	if services.FileExist(filename) {
+		if err := services.ReadFile(filename, &markets); err != nil {
+			fmt.Println("Error is reading", filename, err)
+		}
 	}
-	writer := bufio.NewWriter(file)
-	_, err = writer.WriteString(string(out))
+
+	markets = append(markets, *newMarket)
+
+	out, err := json.MarshalIndent(markets, "", "\t")
 	if err != nil {
-		log.Fatalf("Got error while writing to a file. Err: %s", err.Error())
+		fmt.Println("error in encoding markets", err)
+		return
 	}
-	_, err = writer.WriteString(",\n")
-	if err != nil {
-		log.Fatalf("Got error while writing to a file. Err: %s", err.Error())
+	if err := services.ReplaceFileContent(filename, out); err != nil {
+		fmt.Println("Error in writing", filename, err)
 	}
-	writer.Flush()
+	out, _ = json.MarshalIndent(newMarket, "", "\t")
 	fmt.Println(string(out))
 }

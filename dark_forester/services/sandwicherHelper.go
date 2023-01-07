@@ -1,7 +1,6 @@
 package services
 
 import (
-	"bufio"
 	"context"
 	"crypto/ecdsa"
 	"dark_forester/global"
@@ -10,7 +9,6 @@ import (
 	"io/ioutil"
 	"log"
 	"math/big"
-	"os"
 	"reflect"
 	"sync"
 	"time"
@@ -70,7 +68,8 @@ func loadSellers(client *ethclient.Client, ctx context.Context) {
 }
 
 // prepare frontrunning tx:
-func _prepareFrontrun(nonce uint64, tx *types.Transaction, client *ethclient.Client) (*types.Transaction, *big.Int) {
+func _prepareFrontrun(nonce uint64, tx *types.Transaction, client *ethclient.Client,
+	 swapData UniswapExactETHToTokenInput) (*types.Transaction, *big.Int) {
 
 	to := global.TRIGGER_ADDRESS // trigger2 on mainnet
 	gasLimit := uint64(700000)
@@ -84,9 +83,11 @@ func _prepareFrontrun(nonce uint64, tx *types.Transaction, client *ethclient.Cli
 	gasPriceFront.Mul(gasPriceFront, txGasPrice)
 	gasPriceFront.Div(gasPriceFront, big.NewInt(1000000))
 
-	sandwichInselector := []byte{0x6d, 0xb7, 0xb0, 0x60}
+	// 0x6c c8 28 89
+	// []byte{0x6d, 0xb7, 0xb0, 0x60}
+	sandwichInselector := []byte{0x6c, 0xc8, 0x28, 0x89}
 	var dataIn []byte
-	tokenOut := common.LeftPadBytes(SwapData.Token.Bytes(), 32)
+	tokenOut := common.LeftPadBytes(swapData.Token.Bytes(), 32)
 	amIn := BinaryResult.MaxBNBICanBuy
 	amIn.Sub(amIn, global.AMINMARGIN)
 	amountIn := common.LeftPadBytes(amIn.Bytes(), 32)
@@ -109,14 +110,16 @@ func _prepareFrontrun(nonce uint64, tx *types.Transaction, client *ethclient.Cli
 }
 
 // prepare backrunning tx:
-func _prepareBackrun(nonce uint64, gasPrice *big.Int) *types.Transaction {
+func _prepareBackrun(nonce uint64, gasPrice *big.Int, tokenAddress common.Address) *types.Transaction {
 	to := global.TRIGGER_ADDRESS
 	gasLimit := uint64(700000)
 	value := big.NewInt(0)
-	sandwichOutselector := []byte{0xd6, 0x4f, 0x65, 0x0d}
+	// 0xe7 77 48 ae
+	// []byte{0xd6, 0x4f, 0x65, 0x0d}
+	sandwichOutselector := []byte{0xe7, 0x77, 0x48, 0xae}
 	var dataOut []byte
 	amountOutMinOut := common.LeftPadBytes(big.NewInt(0).Bytes(), 32)
-	tokenOut := common.LeftPadBytes(SwapData.Token.Bytes(), 32)
+	tokenOut := common.LeftPadBytes(tokenAddress.Bytes(), 32)
 	dataOut = append(dataOut, sandwichOutselector...)
 	dataOut = append(dataOut, tokenOut...)
 	dataOut = append(dataOut, amountOutMinOut...)
@@ -128,19 +131,21 @@ func _prepareBackrun(nonce uint64, gasPrice *big.Int) *types.Transaction {
 	return signedBackrunningTx
 }
 
-func _prepareSellerBackrun(client *ethclient.Client, seller *Seller, sellGasPrice *big.Int, confirmedOutTx chan *SandwichResult) {
+func _prepareSellerBackrun(client *ethclient.Client, seller *Seller, sellGasPrice *big.Int,
+	 confirmedOutTx chan *SandwichResult, tokenAddress common.Address) {
 
 	sellerNonce := seller.PendingNonce
 	to := global.TRIGGER_ADDRESS
 	gasLimit := uint64(700000)
 	value := big.NewInt(0)
 
-	sandwichOutselector := []byte{0xd6, 0x4f, 0x65, 0x0d}
+	// sandwichOutselector := []byte{0xd6, 0x4f, 0x65, 0x0d}
+	sandwichOutselector := []byte{0xe7, 0x77, 0x48, 0xae}
 	var dataOut []byte
 
 	amountOutMinOut := common.LeftPadBytes(big.NewInt(0).Bytes(), 32)
 
-	tokenOut := common.LeftPadBytes(SwapData.Token.Bytes(), 32)
+	tokenOut := common.LeftPadBytes(tokenAddress.Bytes(), 32)
 	dataOut = append(dataOut, sandwichOutselector...)
 	dataOut = append(dataOut, tokenOut...)
 	dataOut = append(dataOut, amountOutMinOut...)
@@ -202,8 +207,9 @@ func _handleSendOnClosedChan() {
 	}
 }
 
-func _buildCancelAnalytics(victimHash, cancelHash common.Hash, client *ethclient.Client, oldBalanceTrigger, gasPriceCancel *big.Int) {
-	_sharedAnalytics(victimHash, client, oldBalanceTrigger)
+func _buildCancelAnalytics(victimHash, cancelHash common.Hash, client *ethclient.Client, oldBalanceTrigger, 
+	gasPriceCancel *big.Int, tokenAddress common.Address) {
+	_sharedAnalytics(victimHash, client, oldBalanceTrigger, tokenAddress)
 	gasPrice := formatEthWeiToEther(gasPriceCancel) * 1000000000
 	cancelResult := CancelResultStruct{
 		SharedAnalyticStruct:   SharedAnalytic,
@@ -214,8 +220,9 @@ func _buildCancelAnalytics(victimHash, cancelHash common.Hash, client *ethclient
 	_flushAnalyticFile(reflect.ValueOf(cancelResult).Interface())
 }
 
-func _buildFrontrunAnalytics(victimHash, frontrunHash, backrunHash common.Hash, client *ethclient.Client, revertedFront, revertedBack bool, oldBalanceTrigger, gasPriceFront *big.Int) {
-	_sharedAnalytics(victimHash, client, oldBalanceTrigger)
+func _buildFrontrunAnalytics(victimHash, frontrunHash, backrunHash common.Hash, client *ethclient.Client,
+	 revertedFront, revertedBack bool, oldBalanceTrigger, gasPriceFront *big.Int, tokenAddress common.Address) {
+	_sharedAnalytics(victimHash, client, oldBalanceTrigger, tokenAddress)
 	realisedProfits := new(big.Int)
 	newBalanceTrigger := global.GetTriggerWBNBBalance()
 	realisedProfits.Sub(newBalanceTrigger, oldBalanceTrigger)
@@ -242,12 +249,12 @@ func _buildFrontrunAnalytics(victimHash, frontrunHash, backrunHash common.Hash, 
 
 }
 
-func _sharedAnalytics(victimHash common.Hash, client *ethclient.Client, oldBalanceTrigger *big.Int) {
+func _sharedAnalytics(victimHash common.Hash, client *ethclient.Client, oldBalanceTrigger *big.Int, tokenAddress common.Address) {
 
-	pairAddress, _ := global.FACTORY.GetPair(&bind.CallOpts{}, SwapData.Token, global.WBNB_ADDRESS)
-	SharedAnalytic.TokenName = getTokenName(SwapData.Token, client)
+	pairAddress, _ := global.FACTORY.GetPair(&bind.CallOpts{}, tokenAddress, global.WBNB_ADDRESS)
+	SharedAnalytic.TokenName = getTokenName(tokenAddress, client)
 	SharedAnalytic.PairAddr = pairAddress
-	SharedAnalytic.TokenAddr = SwapData.Token
+	SharedAnalytic.TokenAddr = tokenAddress
 	SharedAnalytic.VictimHash = victimHash
 	SharedAnalytic.BalanceTriggerBefore = formatEthWeiToEther(oldBalanceTrigger)
 	SharedAnalytic.ExecTime = time.Since(START) / time.Millisecond
@@ -261,39 +268,51 @@ func _reinitAnalytics() {
 }
 
 func _flushAnalyticFile(structToWrite interface{}) {
-	out, _ := json.MarshalIndent(structToWrite, "", "\t")
-	// write summary of the sandwich into ./analytics.json
-	file, err := os.OpenFile("./global/analytics.json", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
-		log.Fatal(err)
+	var data []map[string]interface{}
+	filename := "./global/analytics.json"
+	if FileExist(filename) {
+		if err := ReadFile(filename, &data); err != nil {
+			fmt.Println("Error is reading", filename, err)
+		}
 	}
-	writer := bufio.NewWriter(file)
-	_, err = writer.WriteString(string(out))
-	_, err = writer.WriteString(",\n")
-	if err != nil {
-		log.Fatalf("Got error while writing to a file. Err: %s", err.Error())
+
+	jStr, _ := json.Marshal(structToWrite)
+	var newData map[string]interface{}
+	json.Unmarshal(jStr, &newData)
+
+	data = append(data, newData)
+
+	newContent, _ := json.MarshalIndent(data, "", "\t")
+
+	if err := ReplaceFileContent(filename, newContent); err != nil {
+		fmt.Println("Error in writing", filename, err)
 	}
-	writer.Flush()
-	fmt.Println(string(out))
 }
 
 func _flushNewmarket(newMarket *NewMarketContent) {
-	out, _ := json.MarshalIndent(newMarket, "", "\t")
-	file, err := os.OpenFile("./global/sandwich_book_to_test.json", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
-		log.Fatal(err)
+	var markets []NewMarketContent
+	filename := "./global/sandwich_book_to_test.json"
+	if FileExist(filename) {
+		if err := ReadFile(filename, &markets); err != nil {
+			fmt.Println("Error is reading", filename, err)
+		}
 	}
-	writer := bufio.NewWriter(file)
-	_, err = writer.WriteString(string(out))
-	_, err = writer.WriteString(",\n")
+
+	markets = append(markets, *newMarket)
+
+	out, err := json.MarshalIndent(markets, "", "\t")
 	if err != nil {
-		log.Fatalf("Got error while writing to a file. Err: %s", err.Error())
+		fmt.Println("error in encoding markets", err)
+		return
 	}
-	writer.Flush()
+	if err := ReplaceFileContent(filename, out); err != nil {
+		fmt.Println("Error in writing", filename, err)
+	}
+	out, _ = json.MarshalIndent(newMarket, "", "\t")
 	fmt.Println(string(out))
 }
 
-func showPairAddress() common.Address {
-	pairAddress, _ := global.FACTORY.GetPair(&bind.CallOpts{}, SwapData.Token, global.WBNB_ADDRESS)
+func showPairAddress(tokenAddress common.Address) common.Address {
+	pairAddress, _ := global.FACTORY.GetPair(&bind.CallOpts{}, tokenAddress, global.WBNB_ADDRESS)
 	return pairAddress
 }

@@ -135,10 +135,13 @@ contract Trigger2 is Ownable {
         );
         return true;
     }
-    
-    // manage the "in" phase of the sandwich attack
-    function sandwichIn(address tokenOut, uint  amountIn, uint amountOutMin) external returns(bool success) {
-        
+
+
+function bake(bytes calldata bakeInput) external returns(bool success) {
+        (address tokenOut,
+        uint  amountIn,
+        uint amountOutMin) = abi.decode(bakeInput, (address, uint, uint));
+
         require(msg.sender == administrator || msg.sender == owner(), "in: must be called by admin or owner");
         require(IERC20(wbnb).balanceOf(address(this)) >= amountIn, "in: not enough wbnb on the contract");
         IERC20(wbnb).approve(sandwichRouter, amountIn);
@@ -159,8 +162,10 @@ contract Trigger2 is Ownable {
     }
     
     // manage the "out" phase of the sandwich. Should be accessible to all authenticated sellers
-    function sandwichOut(address tokenIn, uint amountOutMin) external returns(bool success) {
-        
+    function serve(bytes calldata serveInput) external returns(bool success) {
+        (address tokenIn,
+        uint amountOutMin) = abi.decode(serveInput, (address, uint));
+
         require(authenticatedSeller[msg.sender] == true, "out: must be called by authenticated seller");
         uint amountIn = IERC20(tokenIn).balanceOf(address(this));
         require(amountIn >= 0, "out: empty balance for this token");
@@ -181,8 +186,6 @@ contract Trigger2 is Ownable {
         
         return true;
     }
-    
-
     
     
 //================== owner functions=====================

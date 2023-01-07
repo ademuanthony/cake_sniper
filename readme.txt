@@ -51,4 +51,9 @@ It was designed to randomise the sender of the backrunning tx so that other bots
 
 - Trigger2 configuration: call configureSnipe on Trigger2 to armm the bot. 
 
-That's it! the bot should be ready to snipe! The bot is currently defined to work with BSC and PancakeSwap. But you can adapt is to whatever EVM blockchain with its equivalent copy of Uniswap V2. To do this, just change the variables in the files variables.py and dark_forester/global/config.go
+That's it! the bot should be ready to snipe! The bot is currently defined to work with BSC and PancakeSwap. 
+But you can adapt is to whatever EVM blockchain with its equivalent copy of Uniswap V2. 
+To do this, just change the variables in the files variables.py and dark_forester/global/config.go
+
+Automatic sandswich book building works by conducting test tx on every new token found and adding the address to the 
+book if not found previously.

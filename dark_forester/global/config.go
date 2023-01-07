@@ -79,15 +79,15 @@ var SandwichInMaxSlippage = 0.5
 
 // gas price for our sandwich in tx in multiples of victim-s tx gas. 
 // Must be high enough for favourable ordering inside the block.
-var SandwichInGasPriceMultiplier = 5
+var SandwichInGasPriceMultiplier = 6
 
 // max number of WBNB we are ok to spend in the sandwich in tx
-var Sandwicher_maxbound = 1.2 //  BNB
+var Sandwicher_maxbound = 1.4 //  BNB
 // min number of WBNB we are ok to spend in the sandwich in tx
 var Sandwicher_minbound = 0.05    //  BNB
 var Sandwicher_baseunit = 0.01 //  BNB
 // min profit expected in bnb to be worth launching a sandwich attack
-var Sandwicher_minprofit = 0.003 //  BNB
+var Sandwicher_minprofit = 0.006 //  BNB
 // min liquidity of the pool on which we want to perform sandwich
 var Sandwicher_acceptable_liq = 10 // BNB
 // stop everything and panic if we lose cumulated > 2 BNB on the different attacks
@@ -97,7 +97,7 @@ var Sandwicher_stop_loss = 0.5
 // Then substract Sandwich_margin_amountIn to it to be sure
 var Sandwich_margin_amountIn = 0.005 // BNB
 // max gas price we tolerate for a sandwich in tx
-var Sandwich_max_gwei_to_pay = 500
+var Sandwich_max_gwei_to_pay = 1000
 
 // sandwich book contains all the authorised markets, which means markets I can ggo in and out without 
 // stupid sell taxes that are widespread among meme tokens
@@ -163,8 +163,12 @@ type Account struct {
 	RawPk   *ecdsa.PrivateKey
 }
 
+var clientCp *ethclient.Client
+
 ///////////// INITIIALISER FUNCS /////////////////
 func _initConst(client *ethclient.Client) {
+	clientCp = client
+
 	accountAddress = os.Getenv("DARK_FORESTER_ACCOUNT_ADDRESS")
 	accountPk = os.Getenv("DARK_FORESTER_ACCOUNT_PK")
 	accountPk = strings.TrimPrefix(accountPk, "0x")
@@ -337,4 +341,12 @@ func GetTriggerWBNBBalance() *big.Int {
 		log.Fatalln("couldn't fetch wbnb balance of trigger: ", err)
 	}
 	return balance
+}
+
+func GetTriggerTokenBalance(tokenAddress common.Address) (*big.Int, error) {
+	token, err := erc20.NewErc20(tokenAddress, clientCp)
+	if err != nil {
+		log.Fatalln("InitFilters: couldn't fetch WBNB token: ", err)
+	}
+	return token.BalanceOf(&bind.CallOpts{}, TRIGGER_ADDRESS)
 }

@@ -34,25 +34,25 @@ var routerAbi, _ = abi.JSON(strings.NewReader(uniswap.PancakeRouterABI))
 func HandleSwapExactETHForTokens(tx *types.Transaction, client *ethclient.Client) {
 	defer reinitBinaryResult()
 	// 0) parse the info of the swap so that we can access it easily
-	buildSwapETHData(tx, client)
+	swapData := buildSwapETHData(tx, client)
 
 	// 1) Do security checks. We want the base currency of the trade to be solely WBNB
-	if SwapData.Paired != global.WBNB_ADDRESS {
+	if swapData.Paired != global.WBNB_ADDRESS {
 		return
 	}
-	Rtkn0, Rbnb0 := getReservesData(client)
+	Rtkn0, Rbnb0 := getReservesData(client, swapData.Token)
 	if Rbnb0 == nil || Rbnb0.Cmp(global.ACCEPTABLELIQ) == -1 {
 		return
 	}
 
 	// 2) Assess profitability of the frontrun
-	success := assessProfitability(client, SwapData.Token, tx.Value(), SwapData.AmountOutMin, Rtkn0, Rbnb0)
+	success := assessProfitability(client, swapData.Token, tx.Value(), swapData.AmountOutMin, Rtkn0, Rbnb0)
 	// 3) If the frontrun pass the profitability test, init sandwich tx
 	if success == true {
 		// we check if the market has already been tested
-		if global.IN_SANDWICH_BOOK[SwapData.Token] == true {
+		if global.IN_SANDWICH_BOOK[swapData.Token] == true {
 			// we check if the test has been successful as we don't want to snipe on a coin that implement stupid seller tax
-			if global.SANDWICH_BOOK[SwapData.Token].Whitelisted == true && global.SANDWICH_BOOK[SwapData.Token].ManuallyDisabled == false {
+			if global.SANDWICH_BOOK[swapData.Token].Whitelisted == true && global.SANDWICH_BOOK[swapData.Token].ManuallyDisabled == false {
 				// reminder: if MonitorModeOnly == true in the config file, we remain spectator only. We identify sandwich without performing them.
 				if global.MonitorModeOnly == false {
 
@@ -60,22 +60,22 @@ func HandleSwapExactETHForTokens(tx *types.Transaction, client *ethclient.Client
 					// sandwiching: initialise a frontrunning tx. Then listen until victim's tx is confirmed. If during that timelapse a bot try to spoil the attack, we try to send a cancel tx. If not, we send a backrunning tx once victimm's tx is validated.
 					//sandwichingOnSteroid: the problem with the first approach was that EVERY TIME, a counter-bot will try to fuck our sandwich attack. Have a look at the addresses of the global/ennemy_book.json. Those are the bots that countered me each time on bsc. So, the approach with sandwichingOnSteroid is different. We start with a simple frontrunningg tx. Then we speed up / cancel this tx multiple times randomly, which produce a random gas escalation intended to deceive counter-bots. But it still wasn't profitable and other bots were still able to arb me.
 
-					sandwiching(tx, client)
+					sandwiching(tx, client, swapData)
 					//sandwichingOnSteroid(tx, client)
 
 				} else {
-					fmt.Println("MonitorModeOnly: new sandwich possible: ", getTokenName(SwapData.Token, client), SwapData.Token)
+					fmt.Println("MonitorModeOnly: new sandwich possible: ", getTokenName(swapData.Token, client), swapData.Token)
 				}
 			}
 
 		} else {
 			// if we identify a possible sandwich on a unknown market, we want register it and test hability to buy/sell with python scripts.
-			if global.NewMarketAdded[SwapData.Token] == false {
+			if global.NewMarketAdded[swapData.Token] == false {
 				fmt.Println("new market to test: ")
 
 				newMarketContent := NewMarketContent{
-					SwapData.Token,
-					getTokenName(SwapData.Token, client),
+					swapData.Token,
+					getTokenName(swapData.Token, client),
 					false,
 					false,
 					0,
@@ -93,6 +93,8 @@ func HandleSwapExactETHForTokens(tx *types.Transaction, client *ethclient.Client
 					})
 
 					redisClient.Publish("NEW_MARKET", string(content))
+
+					global.NewMarketAdded[swapData.Token] = true
 				}
 			}
 		}

@@ -13,7 +13,7 @@ RESERVE_IN = 300 # amount of BNB liquidity that will be added on PCS by the team
 RESERVE_OUT = 88888 # amount of token liquidity that will be added on PCS by the team
 
 #///////////// CONSTANT ////////////////////////////////////////
-TRIGGER_ADDRESS_MAINNET = "0x9D153DadeE68FC4881C6F9aCFe6648d80f103eb7" # addy changed for public repo
+TRIGGER_ADDRESS_MAINNET = "0xa5d72E277F0D98DE8B047F87684329420cE0cF32" # addy changed for public repo
 TRIGGER_ADDRESS_TESTNET = "0x39695B38c6d4e5F73acE974Fd0f9F6766c2E5544" # addy changed for public repo
 CAKE_FACTORY_ADDRESS = "0xcA143Ce32Fe78f1f7019d7d551a6402fC5350c73"
 CAKE_ROUTER_ADDRESS = "0x10ED43C718714eb63d5aA57B78B54704E256024E"

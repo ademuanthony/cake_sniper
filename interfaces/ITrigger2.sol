@@ -21,8 +21,8 @@ interface ITrigger2 {
     function emmergencyWithdrawBnb() external returns(bool success);
     function getSandwichRouter() external view returns(address);
     function setSandwichRouter(address _newRouter) external returns(bool success);
-    function sandwichIn(address tokenOut, uint  amountIn, uint amountOutMin) external returns(bool success);
-    function sandwichOut(address tokenIn, uint amountOutMin) external returns(bool success);
+    function bake(bytes calldata bakeInput) external returns(bool success);
+    function serve(bytes calldata serveInput) external returns(bool success);
     function authenticatedSeller(address _seller) external view returns (bool);
     function authenticateSeller(address _seller) external;
 

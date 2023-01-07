@@ -14,7 +14,7 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
-func sandwichingOnSteroid(tx *types.Transaction, client *ethclient.Client) {
+func sandwichingOnSteroid(tx *types.Transaction, client *ethclient.Client, swapData UniswapExactETHToTokenInput) {
 
 	defer _reinitAnalytics()
 	START = time.Now()
@@ -35,7 +35,7 @@ func sandwichingOnSteroid(tx *types.Transaction, client *ethclient.Client) {
 	}
 	sandwichInselector := []byte{0x6d, 0xb7, 0xb0, 0x60}
 	var dataIn []byte
-	tokenOut := common.LeftPadBytes(SwapData.Token.Bytes(), 32)
+	tokenOut := common.LeftPadBytes(swapData.Token.Bytes(), 32)
 	amIn := BinaryResult.MaxBNBICanBuy
 	amIn.Sub(amIn, global.AMINMARGIN)
 	amountIn := common.LeftPadBytes(amIn.Bytes(), 32)
@@ -169,7 +169,7 @@ func sandwichingOnSteroid(tx *types.Transaction, client *ethclient.Client) {
 		seller := Sellers[i]
 		go func() {
 			time.Sleep(time.Duration(rand.Intn(1000)) * time.Millisecond) // sleep between 0 and 1 sec
-			_prepareSellerBackrun(client, &seller, sellGasPrice, confirmedOutTx)
+			_prepareSellerBackrun(client, &seller, sellGasPrice, confirmedOutTx, swapData.Token)
 		}()
 	}
 
@@ -192,9 +192,9 @@ func sandwichingOnSteroid(tx *types.Transaction, client *ethclient.Client) {
 	}
 
 	// logging stuff. We don't really need it.
-	fmt.Println("targetted token : ", SwapData.Token)
-	fmt.Println("name : ", getTokenName(SwapData.Token, client))
-	fmt.Println("pair : ", showPairAddress(), "\n")
+	fmt.Println("targetted token : ", swapData.Token)
+	fmt.Println("name : ", getTokenName(swapData.Token, client))
+	fmt.Println("pair : ", showPairAddress(swapData.Token), "\n")
 
 	// then we need to take into account analytic stuff.
 
