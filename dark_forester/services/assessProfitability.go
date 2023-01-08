@@ -3,7 +3,6 @@ package services
 import (
 	"dark_forester/contracts/uniswap"
 	"dark_forester/global"
-	"fmt"
 	"math/big"
 	"sync"
 
@@ -118,9 +117,9 @@ func (s *sandwicher) getMyMaxBuyAmount2(Rtkn0, Rbnb0, txValue, amountOutMinVicti
 
 func (s *sandwicher) assessProfitability(client *ethclient.Client, tkn_adddress common.Address, txValue,
 	amountOutMinVictim, Rtkn0, Rbnb0 *big.Int) bool {
-		fmt.Println("checking profitability: ", "tkn_adddress:",tkn_adddress,
-		 "txValue:",formatEthWeiToEther(txValue), "amountOutMinVictim:",formatEthWeiToEther(amountOutMinVictim), "Rtkn0:", formatEthWeiToEther(Rtkn0), "Rbnb0:",formatEthWeiToEther(Rbnb0))
-		 var expectedProfit = new(big.Int)
+
+	var expectedProfit = new(big.Int)
+
 	arrayOfInterest := global.SANDWICHER_LADDER
 
 	// only purpose of this function is to complete the struct BinaryResult via a binary search performed on the sandwich
@@ -143,7 +142,7 @@ func (s *sandwicher) assessProfitability(client *ethclient.Client, tkn_adddress 
 		if s.BinaryResult.IsNewMarket {
 			s.BinaryResult.MaxBNBICanBuy = big.NewInt(1000000000)
 
-			amountTknVictimWillBuy1 := _getAmountOut(txValue, s.BinaryResult.Rtkn1, s.BinaryResult.Rbnb1)
+			amountTknVictimWillBuy1 := _getAmountOut(s.BinaryResult.MaxBNBICanBuy, s.BinaryResult.Rtkn1, s.BinaryResult.Rbnb1)
 			s.BinaryResult.AmountTknIWillBuy = amountTknVictimWillBuy1
 		}
 		if expectedProfit.Cmp(global.MINPROFIT) == 1 {

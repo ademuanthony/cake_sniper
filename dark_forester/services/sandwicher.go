@@ -29,6 +29,10 @@ func NewSandwicher(tx *types.Transaction, client *ethclient.Client, swapData Uni
 
 func (s *sandwicher) Run() {
 	defer _reinitAnalytics()
+	defer func ()  {
+		fmt.Println("++++++==========END===========++++++")
+	}()
+	
 	START = time.Now()
 	oldBalanceTrigger := global.GetTriggerWBNBBalance()
 	var FirstConfirmed = make(chan *SandwichResult, 100)
@@ -54,8 +58,8 @@ func (s *sandwicher) Run() {
 	}
 	fmt.Println("Frontrunning tx hash: ", signedFrontrunningTx.Hash())
 	fmt.Println("Targetted token : ", s.swapData.Token)
-	fmt.Println("Name : ", getTokenName(s.swapData.Token, s.client), "\n")
-	fmt.Println("pair : ", showPairAddress(s.swapData.Token), "\n")
+	fmt.Println("Name : ", getTokenName(s.swapData.Token, s.client))
+	fmt.Println("pair : ", showPairAddress(s.swapData.Token))
 
 	select {
 	case <-SomeoneTryToFuckMe:

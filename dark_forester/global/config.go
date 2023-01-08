@@ -54,8 +54,8 @@ var BIG_BNB_TRANSFER bool = false
 var Sniping bool = false
 var PCS_ADDLIQ bool = Sniping
 
-// address of the Trigger smart contract 0x9D153DadeE68FC4881C6F9aCFe6648d80f103eb7
-var TRIGGER_ADDRESS = common.HexToAddress("0xa5d72E277F0D98DE8B047F87684329420cE0cF32")
+// address of the Trigger smart contract 0xa5d72E277F0D98DE8B047F87684329420cE0cF32
+var TRIGGER_ADDRESS = common.HexToAddress("0x4375Eb1E65C176999Ed6Aa907993b4aF6A0843F0")
 
 // you can choose the base currency. 99% it's WBNB but sometimes it's BUSD
 var TOKENPAIRED = WBNB_ADDRESS
@@ -82,7 +82,7 @@ var SandwichInMaxSlippage = 0.5
 var SandwichInGasPriceMultiplier = 6
 
 // max number of WBNB we are ok to spend in the sandwich in tx
-var Sandwicher_maxbound = 1 // 1.4 BNB
+var Sandwicher_maxbound = 1.3 // 1.4 BNB
 // min number of WBNB we are ok to spend in the sandwich in tx
 var Sandwicher_minbound = 0.05    //  BNB
 var Sandwicher_baseunit = 0.01 //  BNB

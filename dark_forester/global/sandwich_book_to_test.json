@@ -1,13 +1,1 @@
 [
-	{
-		"address": "0xd942ed6b052537b5f67675e68020351a12764099",
-		"name": "Super Doge Coin",
-		"tested": false,
-		"whitelisted": false,
-		"deviation": 0,
-		"totalProfitsRealised": 0,
-		"totalBnbBought": 0,
-		"liquidity": 30.560859977473253,
-		"manuallyDisabled": false
-	}
-]

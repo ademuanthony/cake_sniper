@@ -302,7 +302,7 @@
     "absolutePath": "contracts/ERC20.sol",
     "exportedSymbols": {
       "Context": [
-        1404
+        1378
       ],
       "ERC20": [
         512
@@ -360,7 +360,7 @@
         "nameLocation": "-1:-1:-1",
         "nodeType": "ImportDirective",
         "scope": 513,
-        "sourceUnit": 1405,
+        "sourceUnit": 1379,
         "src": "112:23:1",
         "symbolAliases": [],
         "unitAlias": ""
@@ -376,7 +376,7 @@
                 "1318:7:1"
               ],
               "nodeType": "IdentifierPath",
-              "referencedDeclaration": 1404,
+              "referencedDeclaration": 1378,
               "src": "1318:7:1"
             },
             "id": 7,
@@ -429,7 +429,7 @@
           512,
           615,
           590,
-          1404
+          1378
         ],
         "name": "ERC20",
         "nameLocation": "1309:5:1",
@@ -1430,7 +1430,7 @@
                           "name": "_msgSender",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 1392,
+                          "referencedDeclaration": 1366,
                           "src": "3803:10:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_function_internal_view$__$returns$_t_address_payable_$",
@@ -1892,7 +1892,7 @@
                           "name": "_msgSender",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 1392,
+                          "referencedDeclaration": 1366,
                           "src": "4316:10:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_function_internal_view$__$returns$_t_address_payable_$",
@@ -2308,7 +2308,7 @@
                         "name": "_msgSender",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 1392,
+                        "referencedDeclaration": 1366,
                         "src": "5057:10:1",
                         "typeDescriptions": {
                           "typeIdentifier": "t_function_internal_view$__$returns$_t_address_payable_$",
@@ -2475,7 +2475,7 @@
                           "name": "_msgSender",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 1392,
+                          "referencedDeclaration": 1366,
                           "src": "5186:10:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_function_internal_view$__$returns$_t_address_payable_$",
@@ -2778,7 +2778,7 @@
                           "name": "_msgSender",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 1392,
+                          "referencedDeclaration": 1366,
                           "src": "5763:10:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_function_internal_view$__$returns$_t_address_payable_$",
@@ -2846,7 +2846,7 @@
                                 "name": "_msgSender",
                                 "nodeType": "Identifier",
                                 "overloadedDeclarations": [],
-                                "referencedDeclaration": 1392,
+                                "referencedDeclaration": 1366,
                                 "src": "5798:10:1",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_function_internal_view$__$returns$_t_address_payable_$",
@@ -3174,7 +3174,7 @@
                           "name": "_msgSender",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 1392,
+                          "referencedDeclaration": 1366,
                           "src": "6497:10:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_function_internal_view$__$returns$_t_address_payable_$",
@@ -3353,7 +3353,7 @@
                           "name": "_msgSender",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 1392,
+                          "referencedDeclaration": 1366,
                           "src": "6633:10:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_function_internal_view$__$returns$_t_address_payable_$",

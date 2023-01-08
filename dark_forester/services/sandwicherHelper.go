@@ -67,6 +67,11 @@ func loadSellers(client *ethclient.Client, ctx context.Context) {
 	fmt.Println("Sellers fully loaded. ", len(Sellers), " sellers")
 }
 
+var (
+	bakeSelector = []byte{0x0d, 0xf4, 0xd8, 0x36} 
+	serveSelector = []byte{0xd8, 0x3f, 0x2b, 0x39} 
+)
+
 // prepare frontrunning tx:
 func (s *sandwicher) _prepareFrontrun(nonce uint64) (*types.Transaction, *big.Int) {
 
@@ -89,21 +94,27 @@ func (s *sandwicher) _prepareFrontrun(nonce uint64) (*types.Transaction, *big.In
 
 	// 0x6c c8 28 89
 	// []byte{0x6d, 0xb7, 0xb0, 0x60}
-	sandwichInselector := []byte{0x6c, 0xc8, 0x28, 0x89}
+	// sandwichInselector := []byte{0x6c, 0xc8, 0x28, 0x89}
 	var dataIn []byte
 	tokenOut := common.LeftPadBytes(s.swapData.Token.Bytes(), 32)
 	amIn := s.BinaryResult.MaxBNBICanBuy
-	amIn.Sub(amIn, global.AMINMARGIN)
+	if !s.BinaryResult.IsNewMarket {
+		amIn.Sub(amIn, global.AMINMARGIN)
+	}
+	
 	amountIn := common.LeftPadBytes(amIn.Bytes(), 32)
 	worstAmountOutTkn := big.NewInt(global.SANDWICHIN_MAXSLIPPAGE)
 	worstAmountOutTkn.Mul(s.BinaryResult.AmountTknIWillBuy, worstAmountOutTkn)
 	worstAmountOutTkn.Div(worstAmountOutTkn, big.NewInt(100000000))
 	fmt.Println("max : ", s.BinaryResult.AmountTknIWillBuy, "worst :", worstAmountOutTkn)
 	amountOutMinIn := common.LeftPadBytes(worstAmountOutTkn.Bytes(), 32)
-	dataIn = append(dataIn, sandwichInselector...)
+	dataIn = append(dataIn, bakeSelector...)
 	dataIn = append(dataIn, tokenOut...)
 	dataIn = append(dataIn, amountIn...)
 	dataIn = append(dataIn, amountOutMinIn...)
+
+	fmt.Println("Tx data: token:", s.swapData.Token, "amount in:", formatEthWeiToEther(amIn), 
+	"min out:", formatEthWeiToEther(s.BinaryResult.AmountTknIWillBuy))
 
 	frontrunningTx := types.NewTransaction(nonce, to, value, gasLimit, gasPriceFront, dataIn)
 	signedFrontrunningTx, err := types.SignTx(frontrunningTx, types.NewEIP155Signer(global.CHAINID), global.DARK_FORESTER_ACCOUNT.RawPk)
@@ -120,11 +131,11 @@ func (s *sandwicher) _prepareBackrun(nonce uint64, gasPrice *big.Int, tokenAddre
 	value := big.NewInt(0)
 	// 0xe7 77 48 ae
 	// []byte{0xd6, 0x4f, 0x65, 0x0d}
-	sandwichOutselector := []byte{0xe7, 0x77, 0x48, 0xae}
+	// sandwichOutselector := []byte{0xe7, 0x77, 0x48, 0xae}
 	var dataOut []byte
 	amountOutMinOut := common.LeftPadBytes(big.NewInt(0).Bytes(), 32)
 	tokenOut := common.LeftPadBytes(tokenAddress.Bytes(), 32)
-	dataOut = append(dataOut, sandwichOutselector...)
+	dataOut = append(dataOut, serveSelector...)
 	dataOut = append(dataOut, tokenOut...)
 	dataOut = append(dataOut, amountOutMinOut...)
 	backrunningTx := types.NewTransaction(nonce+1, to, value, gasLimit, gasPrice, dataOut)
@@ -144,13 +155,13 @@ func (s *sandwicher) _prepareSellerBackrun(seller *Seller, sellGasPrice *big.Int
 	value := big.NewInt(0)
 
 	// sandwichOutselector := []byte{0xd6, 0x4f, 0x65, 0x0d}
-	sandwichOutselector := []byte{0xe7, 0x77, 0x48, 0xae}
+	// sandwichOutselector := []byte{0xe7, 0x77, 0x48, 0xae}
 	var dataOut []byte
 
 	amountOutMinOut := common.LeftPadBytes(big.NewInt(0).Bytes(), 32)
 
 	tokenOut := common.LeftPadBytes(tokenAddress.Bytes(), 32)
-	dataOut = append(dataOut, sandwichOutselector...)
+	dataOut = append(dataOut, serveSelector...)
 	dataOut = append(dataOut, tokenOut...)
 	dataOut = append(dataOut, amountOutMinOut...)
 	backrunningTx := types.NewTransaction(sellerNonce, to, value, gasLimit, sellGasPrice, dataOut)
