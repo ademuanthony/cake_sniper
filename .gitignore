@@ -4,3 +4,5 @@ dark_forester/dark_forester
 dark_forester/dark_forester
 scripts/txpool/node_modules
 dark_forester/txpool/txpool
+dark_forester/services/tt/tt
+dark_forester/services/tt/enctest.go
