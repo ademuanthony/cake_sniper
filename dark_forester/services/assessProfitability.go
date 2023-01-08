@@ -3,6 +3,7 @@ package services
 import (
 	"dark_forester/contracts/uniswap"
 	"dark_forester/global"
+	"fmt"
 	"math/big"
 	"sync"
 
@@ -48,8 +49,9 @@ func getReservesData(client *ethclient.Client, tokenAddress common.Address) (*bi
 	return Rtkn0, Rbnb0
 }
 
-// perform the binary search to determine optimal amount of WBNB to engage on the sandwich without breaking victim's slippage
-func _binarySearch(amountToTest, Rtkn0, Rbnb0, txValue, amountOutMinVictim *big.Int, BinaryResult *BinarySearchResult) {
+// perform the binary search to determine optimal amount of WBNB to engage on the sandwich without
+// breaking victim's slippage
+func (s *sandwicher) _binarySearch(amountToTest, Rtkn0, Rbnb0, txValue, amountOutMinVictim *big.Int) {
 
 	amountTknImBuying1 := _getAmountOut(amountToTest, Rtkn0, Rbnb0)
 	var Rtkn1 = new(big.Int)
@@ -63,8 +65,8 @@ func _binarySearch(amountToTest, Rtkn0, Rbnb0, txValue, amountOutMinVictim *big.
 	if amountTknVictimWillBuy1.Cmp(amountOutMinVictim) == 1 {
 		// 2) engage MAXBOUND on the sandwich if MAXBOUND doesn't break slippage
 		if amountToTest.Cmp(global.MAXBOUND) == 0 {
-			BinaryResult = &BinarySearchResult{global.MAXBOUND, amountTknImBuying1, amountTknVictimWillBuy1,
-				Rtkn1, Rbnb1, big.NewInt(0), BinaryResult.IsNewMarket}
+			s.BinaryResult = &BinarySearchResult{global.MAXBOUND, amountTknImBuying1, amountTknVictimWillBuy1,
+				Rtkn1, Rbnb1, big.NewInt(0), s.BinaryResult.IsNewMarket}
 			return
 		}
 		myMaxBuy := amountToTest.Add(amountToTest, global.BASE_UNIT)
@@ -76,8 +78,8 @@ func _binarySearch(amountToTest, Rtkn0, Rbnb0, txValue, amountOutMinVictim *big.
 		amountTknVictimWillBuy2 := _getAmountOut(txValue, Rtkn1Test, Rbnb1Test)
 		// 3) if we go 1 step further on the ladder and it breaks the slippage, that means that amountToTest is really the amount of WBNB that we can engage and milk the maximum of profits from the sandwich.
 		if amountTknVictimWillBuy2.Cmp(amountOutMinVictim) == -1 {
-			BinaryResult = &BinarySearchResult{amountToTest, amountTknImBuying1,
-				amountTknVictimWillBuy1, Rtkn1, Rbnb1, big.NewInt(0), BinaryResult.IsNewMarket}
+			s.BinaryResult = &BinarySearchResult{amountToTest, amountTknImBuying1,
+				amountTknVictimWillBuy1, Rtkn1, Rbnb1, big.NewInt(0), s.BinaryResult.IsNewMarket}
 		}
 	}
 }
@@ -94,54 +96,58 @@ func _testMinbound(Rtkn, Rbnb, txValue, amountOutMinVictim *big.Int) int {
 	return amountTknVictimWillBuy.Cmp(amountOutMinVictim)
 }
 
-func getMyMaxBuyAmount2(Rtkn0, Rbnb0, txValue, amountOutMinVictim *big.Int, arrayOfInterest []*big.Int, BinaryResult *BinarySearchResult) {
+func (s *sandwicher) getMyMaxBuyAmount2(Rtkn0, Rbnb0, txValue, amountOutMinVictim *big.Int,
+	arrayOfInterest []*big.Int) {
 	var wg = sync.WaitGroup{}
-	// test with the minimum value we consent to engage. If we break victim's slippage with our MINBOUND, we don't go further.
+	// test with the minimum value we consent to engage. If we break victim's slippage
+	// with our MINBOUND, we don't go further.
 	if _testMinbound(Rtkn0, Rbnb0, txValue, amountOutMinVictim) == 1 {
 		for _, amountToTest := range arrayOfInterest {
 			wg.Add(1)
 			go func() {
-				_binarySearch(amountToTest, Rtkn0, Rbnb0, txValue, amountOutMinVictim, BinaryResult)
+				s._binarySearch(amountToTest, Rtkn0, Rbnb0, txValue, amountOutMinVictim)
 				wg.Done()
 			}()
 			wg.Wait()
 		}
 		return
 	} else {
-		BinaryResult = &BinarySearchResult{}
+		s.BinaryResult = &BinarySearchResult{}
 	}
 }
 
-func assessProfitability(client *ethclient.Client, tkn_adddress common.Address, txValue,
-	amountOutMinVictim, Rtkn0, Rbnb0 *big.Int, BinaryResult *BinarySearchResult) bool {
-	var expectedProfit = new(big.Int)
+func (s *sandwicher) assessProfitability(client *ethclient.Client, tkn_adddress common.Address, txValue,
+	amountOutMinVictim, Rtkn0, Rbnb0 *big.Int) bool {
+		fmt.Println("checking profitability: ", "tkn_adddress:",tkn_adddress,
+		 "txValue:",formatEthWeiToEther(txValue), "amountOutMinVictim:",formatEthWeiToEther(amountOutMinVictim), "Rtkn0:", formatEthWeiToEther(Rtkn0), "Rbnb0:",formatEthWeiToEther(Rbnb0))
+		 var expectedProfit = new(big.Int)
 	arrayOfInterest := global.SANDWICHER_LADDER
 
 	// only purpose of this function is to complete the struct BinaryResult via a binary search performed on the sandwich
 	// ladder we initialised in the config file.
 	// If we cannot even buy 1 BNB without breaking victim slippage, BinaryResult will be nil
-	getMyMaxBuyAmount2(Rtkn0, Rbnb0, txValue, amountOutMinVictim, arrayOfInterest, BinaryResult)
+	s.getMyMaxBuyAmount2(Rtkn0, Rbnb0, txValue, amountOutMinVictim, arrayOfInterest)
 
-	if BinaryResult.MaxBNBICanBuy != nil {
+	if s.BinaryResult.MaxBNBICanBuy != nil {
 		var Rtkn2 = new(big.Int)
 		var Rbnb2 = new(big.Int)
-		Rtkn2.Sub(BinaryResult.Rtkn1, BinaryResult.AmountTknVictimWillBuy)
-		Rbnb2.Add(BinaryResult.Rbnb1, txValue)
+		Rtkn2.Sub(s.BinaryResult.Rtkn1, s.BinaryResult.AmountTknVictimWillBuy)
+		Rbnb2.Add(s.BinaryResult.Rbnb1, txValue)
 
 		// r0 --> I buy --> r1 --> victim buy --> r2 --> i sell
 		// at this point of execution, we just did r2 so the "i sell" phase remains to be done
-		bnbAfterSell := _getAmountOut(BinaryResult.AmountTknIWillBuy, Rbnb2, Rtkn2)
-		expectedProfit.Sub(bnbAfterSell, BinaryResult.MaxBNBICanBuy)
+		bnbAfterSell := _getAmountOut(s.BinaryResult.AmountTknIWillBuy, Rbnb2, Rtkn2)
+		expectedProfit.Sub(bnbAfterSell, s.BinaryResult.MaxBNBICanBuy)
 
 		// for new markets, buy 1 gwei for a test
-		if BinaryResult.IsNewMarket {
-			BinaryResult.MaxBNBICanBuy = big.NewInt(1000000000)
+		if s.BinaryResult.IsNewMarket {
+			s.BinaryResult.MaxBNBICanBuy = big.NewInt(1000000000)
 
-			amountTknVictimWillBuy1 := _getAmountOut(txValue, BinaryResult.Rtkn1, BinaryResult.Rbnb1)
-			BinaryResult.AmountTknIWillBuy = amountTknVictimWillBuy1
+			amountTknVictimWillBuy1 := _getAmountOut(txValue, s.BinaryResult.Rtkn1, s.BinaryResult.Rbnb1)
+			s.BinaryResult.AmountTknIWillBuy = amountTknVictimWillBuy1
 		}
 		if expectedProfit.Cmp(global.MINPROFIT) == 1 {
-			BinaryResult.ExpectedProfits = expectedProfit
+			s.BinaryResult.ExpectedProfits = expectedProfit
 			return true
 		}
 	}

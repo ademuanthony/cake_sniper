@@ -68,19 +68,18 @@ func loadSellers(client *ethclient.Client, ctx context.Context) {
 }
 
 // prepare frontrunning tx:
-func _prepareFrontrun(nonce uint64, tx *types.Transaction, client *ethclient.Client,
-	 swapData UniswapExactETHToTokenInput, BinaryResult *BinarySearchResult) (*types.Transaction, *big.Int) {
+func (s *sandwicher) _prepareFrontrun(nonce uint64) (*types.Transaction, *big.Int) {
 
 	to := global.TRIGGER_ADDRESS // trigger2 on mainnet
 	gasLimit := uint64(700000)
 	value := big.NewInt(0)
 
-	txGasPrice := tx.GasPrice()
+	txGasPrice := s.tx.GasPrice()
 	if txGasPrice.Cmp(global.STANDARD_GAS_PRICE) == -1 { // if victim's tx gas Price < 5 GWEI, abort.
 		return nil, nil
 	}
 	var gasPriceFront *big.Int
-	if BinaryResult.IsNewMarket {
+	if s.BinaryResult.IsNewMarket {
 		gasPriceFront = global.STANDARD_GAS_PRICE
 	} else {
 		gasPriceFront = big.NewInt(global.SANDWICHIN_GASPRICE_MULTIPLIER)
@@ -92,14 +91,14 @@ func _prepareFrontrun(nonce uint64, tx *types.Transaction, client *ethclient.Cli
 	// []byte{0x6d, 0xb7, 0xb0, 0x60}
 	sandwichInselector := []byte{0x6c, 0xc8, 0x28, 0x89}
 	var dataIn []byte
-	tokenOut := common.LeftPadBytes(swapData.Token.Bytes(), 32)
-	amIn := BinaryResult.MaxBNBICanBuy
+	tokenOut := common.LeftPadBytes(s.swapData.Token.Bytes(), 32)
+	amIn := s.BinaryResult.MaxBNBICanBuy
 	amIn.Sub(amIn, global.AMINMARGIN)
 	amountIn := common.LeftPadBytes(amIn.Bytes(), 32)
 	worstAmountOutTkn := big.NewInt(global.SANDWICHIN_MAXSLIPPAGE)
-	worstAmountOutTkn.Mul(BinaryResult.AmountTknIWillBuy, worstAmountOutTkn)
+	worstAmountOutTkn.Mul(s.BinaryResult.AmountTknIWillBuy, worstAmountOutTkn)
 	worstAmountOutTkn.Div(worstAmountOutTkn, big.NewInt(100000000))
-	fmt.Println("max : ", BinaryResult.AmountTknIWillBuy, "worst :", worstAmountOutTkn)
+	fmt.Println("max : ", s.BinaryResult.AmountTknIWillBuy, "worst :", worstAmountOutTkn)
 	amountOutMinIn := common.LeftPadBytes(worstAmountOutTkn.Bytes(), 32)
 	dataIn = append(dataIn, sandwichInselector...)
 	dataIn = append(dataIn, tokenOut...)
@@ -115,7 +114,7 @@ func _prepareFrontrun(nonce uint64, tx *types.Transaction, client *ethclient.Cli
 }
 
 // prepare backrunning tx:
-func _prepareBackrun(nonce uint64, gasPrice *big.Int, tokenAddress common.Address) *types.Transaction {
+func (s *sandwicher) _prepareBackrun(nonce uint64, gasPrice *big.Int, tokenAddress common.Address) *types.Transaction {
 	to := global.TRIGGER_ADDRESS
 	gasLimit := uint64(700000)
 	value := big.NewInt(0)
@@ -136,7 +135,7 @@ func _prepareBackrun(nonce uint64, gasPrice *big.Int, tokenAddress common.Addres
 	return signedBackrunningTx
 }
 
-func _prepareSellerBackrun(client *ethclient.Client, seller *Seller, sellGasPrice *big.Int,
+func (s *sandwicher) _prepareSellerBackrun(seller *Seller, sellGasPrice *big.Int,
 	 confirmedOutTx chan *SandwichResult, tokenAddress common.Address) {
 
 	sellerNonce := seller.PendingNonce
@@ -159,8 +158,8 @@ func _prepareSellerBackrun(client *ethclient.Client, seller *Seller, sellGasPric
 	if err != nil {
 		fmt.Println("Problem signing the backrunning tx: ", err)
 	}
-	go WaitRoom(client, signedBackrunningTx.Hash(), confirmedOutTx, "backrun")
-	err = client.SendTransaction(context.Background(), signedBackrunningTx)
+	go s.WaitRoom(signedBackrunningTx.Hash(), confirmedOutTx, "backrun")
+	err = s.client.SendTransaction(context.Background(), signedBackrunningTx)
 	if err != nil {
 		log.Println("SEND BACKRUNS: problem with sending backrunning tx: ", err)
 	}
@@ -168,7 +167,7 @@ func _prepareSellerBackrun(client *ethclient.Client, seller *Seller, sellGasPric
 }
 
 // prepare cancel tx:
-func _prepareCancel(nonce uint64, gasPriceFront *big.Int) *types.Transaction {
+func (s *sandwicher) _prepareCancel(nonce uint64, gasPriceFront *big.Int) *types.Transaction {
 	cancelTx := types.NewTransaction(nonce, global.DARK_FORESTER_ACCOUNT.Address, big.NewInt(0), 500000, gasPriceFront.Mul(gasPriceFront, big.NewInt(2)), nil)
 	signedCancelTx, err2 := types.SignTx(cancelTx, types.NewEIP155Signer(global.CHAINID), global.DARK_FORESTER_ACCOUNT.RawPk)
 	if err2 != nil {
@@ -177,23 +176,23 @@ func _prepareCancel(nonce uint64, gasPriceFront *big.Int) *types.Transaction {
 	return signedCancelTx
 }
 
-func WaitRoom(client *ethclient.Client, txHash common.Hash, statusResults chan *SandwichResult, txType string) {
+func (s *sandwicher) WaitRoom(txHash common.Hash, statusResults chan *SandwichResult, txType string) {
 	defer _handleSendOnClosedChan()
-	result := _waitForPendingState(client, txHash, context.Background(), txType)
+	result := s._waitForPendingState(txHash, context.Background(), txType)
 	statusResults <- result
 }
 
-func _waitForPendingState(client *ethclient.Client, txHash common.Hash, ctx context.Context, txType string) *SandwichResult {
+func (s *sandwicher) _waitForPendingState(txHash common.Hash, ctx context.Context, txType string) *SandwichResult {
 	isPending := true
 	for isPending {
-		_, pending, _ := client.TransactionByHash(ctx, txHash)
+		_, pending, _ := s.client.TransactionByHash(ctx, txHash)
 		isPending = pending
 	}
 	timeCounter := 0
 
 	for {
 
-		receipt, err := client.TransactionReceipt(context.Background(), txHash)
+		receipt, err := s.client.TransactionReceipt(context.Background(), txHash)
 		if err == nil {
 			return &SandwichResult{txHash, receipt.Status, txType}
 
@@ -212,22 +211,22 @@ func _handleSendOnClosedChan() {
 	}
 }
 
-func _buildCancelAnalytics(victimHash, cancelHash common.Hash, client *ethclient.Client, oldBalanceTrigger, 
-	gasPriceCancel *big.Int, tokenAddress common.Address, BinaryResult *BinarySearchResult) {
-	_sharedAnalytics(victimHash, client, oldBalanceTrigger, tokenAddress)
+func (s *sandwicher) _buildCancelAnalytics(victimHash, cancelHash common.Hash, oldBalanceTrigger, 
+	gasPriceCancel *big.Int, tokenAddress common.Address) {
+	s._sharedAnalytics(victimHash, oldBalanceTrigger, tokenAddress)
 	gasPrice := formatEthWeiToEther(gasPriceCancel) * 1000000000
 	cancelResult := CancelResultStruct{
 		SharedAnalyticStruct:   SharedAnalytic,
 		CancelHash:             cancelHash,
 		GasPriceCancel:         gasPrice,
-		InitialExpectedProfits: formatEthWeiToEther(BinaryResult.ExpectedProfits),
+		InitialExpectedProfits: formatEthWeiToEther(s.BinaryResult.ExpectedProfits),
 	}
 	_flushAnalyticFile(reflect.ValueOf(cancelResult).Interface())
 }
 
-func _buildFrontrunAnalytics(victimHash, frontrunHash, backrunHash common.Hash, client *ethclient.Client,
-	 revertedFront, revertedBack bool, oldBalanceTrigger, gasPriceFront *big.Int, tokenAddress common.Address, BinaryResult *BinarySearchResult) {
-	_sharedAnalytics(victimHash, client, oldBalanceTrigger, tokenAddress)
+func (s *sandwicher) _buildFrontrunAnalytics(victimHash, frontrunHash, backrunHash common.Hash,
+	 revertedFront, revertedBack bool, oldBalanceTrigger, gasPriceFront *big.Int, tokenAddress common.Address) {
+	s._sharedAnalytics(victimHash, oldBalanceTrigger, tokenAddress)
 	realisedProfits := new(big.Int)
 	newBalanceTrigger := global.GetTriggerWBNBBalance()
 	realisedProfits.Sub(newBalanceTrigger, oldBalanceTrigger)
@@ -236,7 +235,7 @@ func _buildFrontrunAnalytics(victimHash, frontrunHash, backrunHash common.Hash, 
 	if revertedFront == true {
 		bnbSent = 0.0
 	} else {
-		bnbSent = formatEthWeiToEther(BinaryResult.MaxBNBICanBuy)
+		bnbSent = formatEthWeiToEther(s.BinaryResult.MaxBNBICanBuy)
 	}
 
 	frontrunResult := FrontrunResultStruct{
@@ -247,17 +246,17 @@ func _buildFrontrunAnalytics(victimHash, frontrunHash, backrunHash common.Hash, 
 		RevertedBack:         revertedBack,
 		BNBSent:              bnbSent,
 		GasPriceFrontRun:     gasPrice,
-		ExpectedProfits:      formatEthWeiToEther(BinaryResult.ExpectedProfits),
+		ExpectedProfits:      formatEthWeiToEther(s.BinaryResult.ExpectedProfits),
 		RealisedProfits:      formatEthWeiToEther(realisedProfits),
 	}
 	_flushAnalyticFile(reflect.ValueOf(frontrunResult).Interface())
 
 }
 
-func _sharedAnalytics(victimHash common.Hash, client *ethclient.Client, oldBalanceTrigger *big.Int, tokenAddress common.Address) {
+func (s *sandwicher) _sharedAnalytics(victimHash common.Hash, oldBalanceTrigger *big.Int, tokenAddress common.Address) {
 
 	pairAddress, _ := global.FACTORY.GetPair(&bind.CallOpts{}, tokenAddress, global.WBNB_ADDRESS)
-	SharedAnalytic.TokenName = getTokenName(tokenAddress, client)
+	SharedAnalytic.TokenName = getTokenName(tokenAddress, s.client)
 	SharedAnalytic.PairAddr = pairAddress
 	SharedAnalytic.TokenAddr = tokenAddress
 	SharedAnalytic.VictimHash = victimHash

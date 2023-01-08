@@ -54,8 +54,8 @@ var BIG_BNB_TRANSFER bool = false
 var Sniping bool = false
 var PCS_ADDLIQ bool = Sniping
 
-// address of the Trigger smart contract
-var TRIGGER_ADDRESS = common.HexToAddress("0x9D153DadeE68FC4881C6F9aCFe6648d80f103eb7")
+// address of the Trigger smart contract 0x9D153DadeE68FC4881C6F9aCFe6648d80f103eb7
+var TRIGGER_ADDRESS = common.HexToAddress("0xa5d72E277F0D98DE8B047F87684329420cE0cF32")
 
 // you can choose the base currency. 99% it's WBNB but sometimes it's BUSD
 var TOKENPAIRED = WBNB_ADDRESS
@@ -82,14 +82,14 @@ var SandwichInMaxSlippage = 0.5
 var SandwichInGasPriceMultiplier = 6
 
 // max number of WBNB we are ok to spend in the sandwich in tx
-var Sandwicher_maxbound = 1.4 //  BNB
+var Sandwicher_maxbound = 1 // 1.4 BNB
 // min number of WBNB we are ok to spend in the sandwich in tx
 var Sandwicher_minbound = 0.05    //  BNB
 var Sandwicher_baseunit = 0.01 //  BNB
 // min profit expected in bnb to be worth launching a sandwich attack
 var Sandwicher_minprofit = 0.006 //  BNB
 // min liquidity of the pool on which we want to perform sandwich
-var Sandwicher_acceptable_liq = 10 // BNB
+var Sandwicher_acceptable_liq = 0.2 // BNB
 // stop everything and panic if we lose cumulated > 2 BNB on the different attacks
 var Sandwicher_stop_loss = 0.5
 
@@ -215,8 +215,9 @@ func _initSandwicher() {
 	maxbound.Mul(maxbound, mul10pow18)
 	MAXBOUND = maxbound
 
-	liq := big.NewInt(int64(Sandwicher_acceptable_liq))
+	liq := big.NewInt(int64(1e6*Sandwicher_acceptable_liq))
 	liq.Mul(liq, mul10pow18)
+	liq.Div(liq, big.NewInt(1e6))
 	ACCEPTABLELIQ = liq
 
 	gwei := big.NewInt(1000000000)

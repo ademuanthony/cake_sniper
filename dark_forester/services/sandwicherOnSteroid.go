@@ -11,38 +11,37 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/ethclient"
 )
 
-func sandwichingOnSteroid(tx *types.Transaction, client *ethclient.Client, swapData UniswapExactETHToTokenInput, BinaryResult *BinarySearchResult) {
+func (s *sandwicher) runOnSteroid() {
 
 	defer _reinitAnalytics()
 	START = time.Now()
 	var confirmedInTx = make(chan *SandwichResult, 100)
 
 	////////// SEND FRONTRUNNING TX ///////////////////
-	nonce, err := client.PendingNonceAt(context.Background(), global.DARK_FORESTER_ACCOUNT.Address)
+	nonce, err := s.client.PendingNonceAt(context.Background(), global.DARK_FORESTER_ACCOUNT.Address)
 	if err != nil {
 		fmt.Printf("couldn't fetch pending nonce for DARK_FORESTER_ACCOUNT", err)
 	}
 	to := global.TRIGGER_ADDRESS
 	gasLimit := uint64(700000)
 	value := big.NewInt(0)
-	victimGasPrice := tx.GasPrice()
+	victimGasPrice := s.tx.GasPrice()
 	// if victim's tx gas Price < 5 GWEI, or > MAXGWEIFRONTRUN : abort.
 	if victimGasPrice.Cmp(global.STANDARD_GAS_PRICE) == -1 || victimGasPrice.Cmp(global.MAXGWEIFRONTRUN) == 1 {
 		return
 	}
 	sandwichInselector := []byte{0x6d, 0xb7, 0xb0, 0x60}
 	var dataIn []byte
-	tokenOut := common.LeftPadBytes(swapData.Token.Bytes(), 32)
-	amIn := BinaryResult.MaxBNBICanBuy
+	tokenOut := common.LeftPadBytes(s.swapData.Token.Bytes(), 32)
+	amIn := s.BinaryResult.MaxBNBICanBuy
 	amIn.Sub(amIn, global.AMINMARGIN)
 	amountIn := common.LeftPadBytes(amIn.Bytes(), 32)
 	worstAmountOutTkn := big.NewInt(global.SANDWICHIN_MAXSLIPPAGE)
-	worstAmountOutTkn.Mul(BinaryResult.AmountTknIWillBuy, worstAmountOutTkn)
+	worstAmountOutTkn.Mul(s.BinaryResult.AmountTknIWillBuy, worstAmountOutTkn)
 	worstAmountOutTkn.Div(worstAmountOutTkn, big.NewInt(100000000))
-	fmt.Println("max : ", BinaryResult.AmountTknIWillBuy, "worst :", worstAmountOutTkn)
+	fmt.Println("max : ", s.BinaryResult.AmountTknIWillBuy, "worst :", worstAmountOutTkn)
 	amountOutMinIn := common.LeftPadBytes(worstAmountOutTkn.Bytes(), 32)
 	dataIn = append(dataIn, sandwichInselector...)
 	dataIn = append(dataIn, tokenOut...)
@@ -56,8 +55,8 @@ func sandwichingOnSteroid(tx *types.Transaction, client *ethclient.Client, swapD
 	gasPriceFront.Mul(victimGasPrice, big.NewInt(1100001)).Div(gasPriceFront, big.NewInt(1000000))
 	frontrunningTx := types.NewTransaction(nonce, to, value, gasLimit, gasPriceFront, dataIn)
 	signedFrontrunningTx, _ := types.SignTx(frontrunningTx, types.NewEIP155Signer(global.CHAINID), global.DARK_FORESTER_ACCOUNT.RawPk)
-	go WaitRoom(client, signedFrontrunningTx.Hash(), confirmedInTx, "frontrun")
-	err = client.SendTransaction(context.Background(), signedFrontrunningTx)
+	go s.WaitRoom(signedFrontrunningTx.Hash(), confirmedInTx, "frontrun")
+	err = s.client.SendTransaction(context.Background(), signedFrontrunningTx)
 	if err != nil {
 		log.Fatalln("sandwichingBurstSend: problem with sending frontrunning tx n°1: ", err)
 	}
@@ -68,8 +67,8 @@ func sandwichingOnSteroid(tx *types.Transaction, client *ethclient.Client, swapD
 	if victimGasPrice.Cmp(global.MAXGWEIFRONTRUN) != 1 {
 		cancelTx := types.NewTransaction(nonce, global.DARK_FORESTER_ACCOUNT.Address, big.NewInt(0), 500000, gasPriceFront, nil)
 		signedCancelTx, _ := types.SignTx(cancelTx, types.NewEIP155Signer(global.CHAINID), global.DARK_FORESTER_ACCOUNT.RawPk)
-		go WaitRoom(client, signedCancelTx.Hash(), confirmedInTx, "cancel")
-		err = client.SendTransaction(context.Background(), signedCancelTx)
+		go s.WaitRoom(signedCancelTx.Hash(), confirmedInTx, "cancel")
+		err = s.client.SendTransaction(context.Background(), signedCancelTx)
 		if err != nil {
 			log.Fatalln("sandwichingBurstSend: problem with sending cancel tx n°1: ", err)
 		}
@@ -83,8 +82,8 @@ func sandwichingOnSteroid(tx *types.Transaction, client *ethclient.Client, swapD
 		if victimGasPrice.Cmp(global.MAXGWEIFRONTRUN) != 1 {
 			frontrunningTx = types.NewTransaction(nonce, to, value, gasLimit, gasPriceFront, dataIn)
 			signedFrontrunningTx, _ = types.SignTx(frontrunningTx, types.NewEIP155Signer(global.CHAINID), global.DARK_FORESTER_ACCOUNT.RawPk)
-			go WaitRoom(client, signedFrontrunningTx.Hash(), confirmedInTx, "frontrun")
-			err = client.SendTransaction(context.Background(), signedFrontrunningTx)
+			go s.WaitRoom(signedFrontrunningTx.Hash(), confirmedInTx, "frontrun")
+			err = s.client.SendTransaction(context.Background(), signedFrontrunningTx)
 			if err != nil {
 				log.Fatalln("sandwichingBurstSend: problem with sending frontrunning tx n°2: ", err)
 			}
@@ -98,8 +97,8 @@ func sandwichingOnSteroid(tx *types.Transaction, client *ethclient.Client, swapD
 		if victimGasPrice.Cmp(global.MAXGWEIFRONTRUN) != 1 {
 			cancelTx := types.NewTransaction(nonce, global.DARK_FORESTER_ACCOUNT.Address, big.NewInt(0), 500000, gasPriceFront, nil)
 			signedCancelTx, _ := types.SignTx(cancelTx, types.NewEIP155Signer(global.CHAINID), global.DARK_FORESTER_ACCOUNT.RawPk)
-			go WaitRoom(client, signedCancelTx.Hash(), confirmedInTx, "cancel")
-			err = client.SendTransaction(context.Background(), signedCancelTx)
+			go s.WaitRoom(signedCancelTx.Hash(), confirmedInTx, "cancel")
+			err = s.client.SendTransaction(context.Background(), signedCancelTx)
 			if err != nil {
 				log.Fatalln("sandwichingBurstSend: problem with sending cancel tx n°2: ", err)
 			}
@@ -118,8 +117,8 @@ func sandwichingOnSteroid(tx *types.Transaction, client *ethclient.Client, swapD
 		if victimGasPrice.Cmp(global.MAXGWEIFRONTRUN) != 1 {
 			frontrunningTx = types.NewTransaction(nonce, to, value, gasLimit, gasPriceFront, dataIn)
 			signedFrontrunningTx, _ = types.SignTx(frontrunningTx, types.NewEIP155Signer(global.CHAINID), global.DARK_FORESTER_ACCOUNT.RawPk)
-			go WaitRoom(client, signedFrontrunningTx.Hash(), confirmedInTx, "frontrun")
-			err = client.SendTransaction(context.Background(), signedFrontrunningTx)
+			go s.WaitRoom(signedFrontrunningTx.Hash(), confirmedInTx, "frontrun")
+			err = s.client.SendTransaction(context.Background(), signedFrontrunningTx)
 			if err != nil {
 				log.Fatalln("sandwichingBurstSend: problem with sending frontrunning tx n°2: ", err)
 			}
@@ -141,8 +140,8 @@ func sandwichingOnSteroid(tx *types.Transaction, client *ethclient.Client, swapD
 		if victimGasPrice.Cmp(global.MAXGWEIFRONTRUN) != 1 {
 			frontrunningTx = types.NewTransaction(nonce, to, value, gasLimit, gasPriceFront, dataIn)
 			signedFrontrunningTx, _ = types.SignTx(frontrunningTx, types.NewEIP155Signer(global.CHAINID), global.DARK_FORESTER_ACCOUNT.RawPk)
-			go WaitRoom(client, signedFrontrunningTx.Hash(), confirmedInTx, "frontrun")
-			err = client.SendTransaction(context.Background(), signedFrontrunningTx)
+			go s.WaitRoom(signedFrontrunningTx.Hash(), confirmedInTx, "frontrun")
+			err = s.client.SendTransaction(context.Background(), signedFrontrunningTx)
 			if err != nil {
 				log.Fatalln("sandwichingBurstSend: problem with sending frontrunning tx n°2: ", err)
 			}
@@ -169,7 +168,7 @@ func sandwichingOnSteroid(tx *types.Transaction, client *ethclient.Client, swapD
 		seller := Sellers[i]
 		go func() {
 			time.Sleep(time.Duration(rand.Intn(1000)) * time.Millisecond) // sleep between 0 and 1 sec
-			_prepareSellerBackrun(client, &seller, sellGasPrice, confirmedOutTx, swapData.Token)
+			s._prepareSellerBackrun(&seller, sellGasPrice, confirmedOutTx, s.swapData.Token)
 		}()
 	}
 
@@ -192,9 +191,9 @@ func sandwichingOnSteroid(tx *types.Transaction, client *ethclient.Client, swapD
 	}
 
 	// logging stuff. We don't really need it.
-	fmt.Println("targetted token : ", swapData.Token)
-	fmt.Println("name : ", getTokenName(swapData.Token, client))
-	fmt.Println("pair : ", showPairAddress(swapData.Token), "\n")
+	fmt.Println("targetted token : ", s.swapData.Token)
+	fmt.Println("name : ", getTokenName(s.swapData.Token, s.client))
+	fmt.Println("pair : ", showPairAddress(s.swapData.Token), "\n")
 
 	// then we need to take into account analytic stuff.
 
@@ -229,7 +228,7 @@ func sandwichingOnSteroid(tx *types.Transaction, client *ethclient.Client, swapD
 		fmt.Println("cleaning SomeoneTryToFuckMe channel")
 	default:
 	}
-	loadSellers(client, context.Background())
+	loadSellers(s.client, context.Background())
 	fmt.Println("sandwichingOnSteroid last line")
 	return
 }

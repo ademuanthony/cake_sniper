@@ -467,5 +467,85 @@
 			"victimHash": "0x8fd1612bb5726bb70916bdacd39fdc675eee32eb0a4cc23b95e43879c15e3fe6"
 		},
 		"realisedProfits": 0
+	},
+	{
+		"RevertedBack": true,
+		"RevertedFront": true,
+		"backrunHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+		"bnbSent": 0,
+		"expectedProfits": 0.011517770671318272,
+		"frontrunHash": "0x04d137194a28966fb0f2dd1064983510edbd684edbf981a21ed3875a658276ec",
+		"gasPriceFront": 5,
+		"infos": {
+			"colsolidated": false,
+			"execTime": 2324,
+			"name": "CATMINE",
+			"newBalanceTrigger": 1.0339410229213042,
+			"oldBalanceTrigger": 1.0339410229213042,
+			"pairAddr": "0x924b6fb3252db7084bd4fe2d9faa398d595a2c8f",
+			"tokenAddr": "0x88f3391346f73df043e6e3d4b5cc07b11b4f0eea",
+			"victimHash": "0xa1d3881596c169c4bfd0aa515e07f12a534a0d4bd6068d2779071c066e47b58c"
+		},
+		"realisedProfits": 0
+	},
+	{
+		"RevertedBack": true,
+		"RevertedFront": false,
+		"backrunHash": "0x30225478f2fe1688885db8fdbfd3203ef268817347a88be467a0f7467b20226f",
+		"bnbSent": -0.000499999,
+		"expectedProfits": 0.011517770671318272,
+		"frontrunHash": "0x04d137194a28966fb0f2dd1064983510edbd684edbf981a21ed3875a658276ec",
+		"gasPriceFront": 5,
+		"infos": {
+			"colsolidated": false,
+			"execTime": 4099,
+			"name": "CATMINE",
+			"newBalanceTrigger": 1.0339410229213042,
+			"oldBalanceTrigger": 1.0339410229213042,
+			"pairAddr": "0x924b6fb3252db7084bd4fe2d9faa398d595a2c8f",
+			"tokenAddr": "0x88f3391346f73df043e6e3d4b5cc07b11b4f0eea",
+			"victimHash": "0xa1d3881596c169c4bfd0aa515e07f12a534a0d4bd6068d2779071c066e47b58c"
+		},
+		"realisedProfits": 0
+	},
+	{
+		"RevertedBack": true,
+		"RevertedFront": true,
+		"backrunHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+		"bnbSent": 0,
+		"expectedProfits": 0.00759960949661059,
+		"frontrunHash": "0x6773d0d48f59440975a9613eb20db357d8cb8a41b3ff3502f0500e64e88b5af8",
+		"gasPriceFront": 5,
+		"infos": {
+			"colsolidated": false,
+			"execTime": 1084,
+			"name": "Super Doge Coin",
+			"newBalanceTrigger": 1.0339410229213042,
+			"oldBalanceTrigger": 1.0339410229213042,
+			"pairAddr": "0xcad91922db63353edf5e7b6c03548d37e4df2e2c",
+			"tokenAddr": "0xd942ed6b052537b5f67675e68020351a12764099",
+			"victimHash": "0x6a6589e2ea1776755778db3d84ce31807cffc24f9b28ba5976adf5d0cea5d780"
+		},
+		"realisedProfits": 0
+	},
+	{
+		"RevertedBack": true,
+		"RevertedFront": true,
+		"backrunHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+		"bnbSent": 0,
+		"expectedProfits": 0.00759960949661059,
+		"frontrunHash": "0xf356f1fbbb59310a24bd8b3e61de059f95dc366a1807e55e1acdb8178c2fccad",
+		"gasPriceFront": 5,
+		"infos": {
+			"colsolidated": false,
+			"execTime": 2182,
+			"name": "Super Doge Coin",
+			"newBalanceTrigger": 1.0339410229213042,
+			"oldBalanceTrigger": 1.0339410229213042,
+			"pairAddr": "0xcad91922db63353edf5e7b6c03548d37e4df2e2c",
+			"tokenAddr": "0xd942ed6b052537b5f67675e68020351a12764099",
+			"victimHash": "0x980b6863a33a1cc1ba55ecbd59d1f1c35f5126a30d451c7f87b47f44a7242931"
+		},
+		"realisedProfits": 0
 	}
 ]

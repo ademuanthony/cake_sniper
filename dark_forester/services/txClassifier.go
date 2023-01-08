@@ -79,7 +79,14 @@ func _handleWatchedAddressTx(tx *types.Transaction, client *ethclient.Client, sw
 			defer _reinitAnalytics()
 			fmt.Println("victim tx hash :", tx.Hash())
 
-			buildSwapETHData(tx, client)
+			// 0) parse the info of the swap so that we can access it easily
+			swapData := buildSwapETHData(tx, client)
+
+			// 1) Do security checks. We want the base currency of the trade to be solely WBNB
+			if swapData.Paired != global.WBNB_ADDRESS {
+				return
+			}
+
 			Rtkn0, Rbnb0 := getReservesData(client, swapData.Token)
 			if Rtkn0 == nil {
 				return
@@ -87,7 +94,10 @@ func _handleWatchedAddressTx(tx *types.Transaction, client *ethclient.Client, sw
 			BinaryResult = &BinarySearchResult{global.BASE_UNIT, global.BASE_UNIT, global.BASE_UNIT,
 				Rtkn0, Rbnb0, big.NewInt(0), isNewMarket}
 
-			sandwichingOnSteroid(tx, client, swapData, BinaryResult)
+			BinaryResult.IsNewMarket = !global.IN_SANDWICH_BOOK[swapData.Token]
+
+			sandwicher := NewSandwicher(tx, client, swapData, BinaryResult)
+			sandwicher.runOnSteroid()
 		}
 	}
 }
