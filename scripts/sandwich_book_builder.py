@@ -174,8 +174,8 @@ def testMarket():
 
 def publishMarketTestEvent(market):
     print('publishing tested event')
-    if markets[market]["tested"] == True and markets[market]["deviation"] < 2 and markets[market]["deviation"] != 0:
-        markets[market]["whitelisted"] = True
+    if market["tested"] == True and market["deviation"] < 2 and market["deviation"] != 0:
+        market["whitelisted"] = True
     red.publish('MARKET_TESTED', json.dumps(market))
 
 def printCurrrentWhitelisted():

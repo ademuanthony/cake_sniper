@@ -3,6 +3,7 @@ package services
 import (
 	"dark_forester/contracts/uniswap"
 	"dark_forester/global"
+	"fmt"
 	"math/big"
 	"math/rand"
 	"sync"
@@ -139,7 +140,7 @@ func (s *sandwicher) assessProfitability(client *ethclient.Client, tkn_adddress 
 
 	profitPec := (slippage + priceImpact) - 0.5
 
-	if amountToTest.Cmp(global.MAXBOUND) >= 1 {
+	if amountToTest.Cmp(global.MAXBOUND) >= 0 {
 		percent := rand.Intn(99-75) + 75
 
 		numerator := new(big.Int).Mul(global.MAXBOUND, big.NewInt(int64(percent)))

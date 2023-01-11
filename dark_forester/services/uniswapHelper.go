@@ -264,6 +264,7 @@ type FrontrunResultStruct struct {
 }
 
 type UniswapExactETHToTokenInput struct {
+	Start        time.Time
 	Token        common.Address
 	Decimals     uint8
 	Paired       common.Address
@@ -298,7 +299,7 @@ func buildSwapETHData(tx *types.Transaction, client *ethclient.Client) UniswapEx
 	var deadline = new(big.Int)
 	data := tx.Data()[4:]
 	last20 := data[len(data)-20:]
-	SwapData := UniswapExactETHToTokenInput{}
+	SwapData := UniswapExactETHToTokenInput{Start: time.Now()}
 	SwapData.Token = common.BytesToAddress(last20)
 	last40 := data[len(data)-52 : len(data)-32]
 	SwapData.Paired = common.BytesToAddress(last40)

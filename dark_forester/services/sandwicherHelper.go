@@ -315,9 +315,9 @@ func _flushAnalyticFile(structToWrite interface{}) {
 	json.Unmarshal(jStr, &newData)
 
 	//normalize market for python
-	if info, f := newData["info"]; f {
+	if info, f := newData["infos"]; f {
 		infoMap := info.(map[string]interface{})
-		delete(newData, "info")
+		delete(newData, "infos")
 		for key, val := range infoMap {
 			newData[key] = val
 		}

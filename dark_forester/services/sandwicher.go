@@ -32,19 +32,20 @@ func NewSandwicher(tx *types.Transaction, client *ethclient.Client, swapData Uni
 func (s *sandwicher) Run() {
 	defer _reinitAnalytics()
 	defer func() {
-		fmt.Println("++++++==========END===========++++++")
+		fmt.Printf("++++++==========END in %s===========++++++\n\n", time.Since(s.swapData.Start))
 	}()
 
 	START = time.Now()
-	oldBalanceTrigger := global.GetTriggerWBNBBalance()
+	var oldBalanceTrigger *big.Int
+	go func() {
+		oldBalanceTrigger = global.GetTriggerWBNBBalance()
+	}()
+
 	var FirstConfirmed = make(chan *SandwichResult, 100)
 
 	////////// SEND FRONTRUNNING TX ///////////////////
 
-	nonce, err := s.client.PendingNonceAt(context.Background(), global.DARK_FORESTER_ACCOUNT.Address)
-	if err != nil {
-		fmt.Printf("couldn't fetch pending nonce for DARK_FORESTER_ACCOUNT", err)
-	}
+	nonce := global.NextNonce()
 	signedFrontrunningTx, gasPriceFront := s._prepareFrontrun(nonce)
 	if signedFrontrunningTx == nil {
 		return
@@ -54,12 +55,13 @@ func (s *sandwicher) Run() {
 	fmt.Println("Watchdog activated")
 	//we  wait for vitim tx to confirm before sending backrunning tx
 	go s.WaitRoom(s.tx.Hash(), FirstConfirmed, "frontrun")
-	err = s.client.SendTransaction(context.Background(), signedFrontrunningTx)
+	err := s.client.SendTransaction(context.Background(), signedFrontrunningTx)
 	if err != nil {
 		log.Fatalln("handleWatchedAddressTx: problem with frontrunning tx : ", err)
 	}
 	fmt.Println("Target tx hash: ", s.tx.Hash())
 	fmt.Println("Frontrunning tx hash: ", signedFrontrunningTx.Hash())
+	fmt.Println("Tx sent in: ", time.Since(s.swapData.Start).String())
 	fmt.Println("Targetted token : ", s.swapData.Token)
 	fmt.Println("Name : ", getTokenName(s.swapData.Token, s.client))
 	fmt.Println("pair : ", showPairAddress(s.swapData.Token))
@@ -84,8 +86,8 @@ func (s *sandwicher) Run() {
 		} else {
 			// TODO: wait for victims tx to confirm
 			fmt.Println("frontrunning tx successful. Sending backrunning..")
-			// time.Sleep(1000 * time.Millisecond) // wait a little to ensure full confirmation of front and victim tx TODO: remove?
-			s.sendBackRunningTx(nonce, global.STANDARD_GAS_PRICE, oldBalanceTrigger,
+			time.Sleep(1000 * time.Millisecond) // wait a little to ensure full confirmation of front and victim tx TODO: remove?
+			s.sendBackRunningTx(global.NextNonce(), global.STANDARD_GAS_PRICE, oldBalanceTrigger,
 				signedFrontrunningTx.Hash(), s.tx.Hash(), true)
 		}
 	}
@@ -157,10 +159,10 @@ func (s *sandwicher) sendBackRunningTx(nonce uint64, gasPriceFront, oldBalanceTr
 
 	// check if backrunning tx succeeded:
 	result := s._waitForPendingState(signedBackrunningTx.Hash(), context.Background(), "backrun")
-	
+
 	if result == nil {
 		fmt.Println("couldn't send back running tx check to see if there are trapped founds to retrieve")
-		return 
+		return
 	}
 
 	if result.Status == 0 {
@@ -176,7 +178,7 @@ func (s *sandwicher) sendBackRunningTx(nonce uint64, gasPriceFront, oldBalanceTr
 				return
 			}
 		}
-		
+
 		fmt.Printf("\nbackrunning tx reverted. Need to manually rescue funds:\ntoken name involved : %v\nBEP20 address:%v\n", SharedAnalytic.TokenName, SharedAnalytic.TokenAddr)
 		s._buildFrontrunAnalytics(victimHash, frontrunHash, signedBackrunningTx.Hash(),
 			false, true, oldBalanceTrigger, signedBackrunningTx.GasPrice(), s.swapData.Token)

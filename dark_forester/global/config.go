@@ -2,6 +2,7 @@ package global
 
 import (
 	"bufio"
+	"context"
 	"crypto/ecdsa"
 	"dark_forester/contracts/erc20"
 	"dark_forester/contracts/uniswap"
@@ -74,22 +75,22 @@ var ML = 200
 var Sandwicher bool = true
 
 // allows spectator mode for tx that would have been profitable if sandwich realised successfully
-var MonitorModeOnly bool = false
+var MonitorModeOnly bool = true
 
 // max slippage we allow in % for our sandwich in tx
-var SandwichInMaxSlippage = 0.5
+var SandwichInMaxSlippage = 1.5
 
 // gas price for our sandwich in tx in multiples of victim-s tx gas.
 // Must be high enough for favourable ordering inside the block.
-var SandwichInGasPriceMultiplier = 2
+var SandwichInGasPriceMultiplier = 5
 
 // max number of WBNB we are ok to spend in the sandwich in tx
-var Sandwicher_maxbound = 0.55 // 1.4 BNB
+var Sandwicher_maxbound = 1.45 
 // min number of WBNB we are ok to spend in the sandwich in tx
 var Sandwicher_minbound = 0.05 //  BNB
 var Sandwicher_baseunit = 0.01 //  BNB
 // min profit expected in bnb to be worth launching a sandwich attack
-var Sandwicher_minprofit = 0.004 //0.0047552 //  BNB
+var Sandwicher_minprofit = 0.0075 //0.0047552 //  BNB
 // min liquidity of the pool on which we want to perform sandwich
 var Sandwicher_acceptable_liq = 0.2 // BNB
 // stop everything and panic if we lose cumulated > 2 BNB on the different attacks
@@ -106,7 +107,6 @@ var Sandwich_max_gwei_to_pay = 1000
 var SANDWICH_BOOK = make(map[common.Address]Market)
 var IN_SANDWICH_BOOK = make(map[common.Address]bool)
 var NewMarketAdded = make(map[common.Address]bool)
-
 
 // The sandwich ladder is a graduation going from MINBOUND to MAXBOUND with a BASE_UNIT interval.
 // I use it to do a binary search to determmine what is the optimal amount of BNB I can use to do
@@ -168,6 +168,13 @@ type Account struct {
 
 var clientCp *ethclient.Client
 
+var nonce uint64
+
+func NextNonce() uint64 {
+	nonce += 1
+	return nonce - 1
+}
+
 // /////////// INITIIALISER FUNCS /////////////////
 func _initConst(client *ethclient.Client) {
 	clientCp = client
@@ -183,6 +190,12 @@ func _initConst(client *ethclient.Client) {
 		panic(1)
 	}
 	DARK_FORESTER_ACCOUNT.RawPk = rawPk
+
+	newNonce, err := client.PendingNonceAt(context.Background(), DARK_FORESTER_ACCOUNT.Address)
+	if err != nil {
+		fmt.Printf("couldn't fetch pending nonce for DARK_FORESTER_ACCOUNT", err)
+	}
+	nonce = newNonce
 
 	factory, err := uniswap.NewIPancakeFactory(CAKE_FACTORY_ADDRESS, client)
 	if err != nil {
