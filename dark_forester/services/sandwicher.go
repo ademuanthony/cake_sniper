@@ -29,10 +29,10 @@ func NewSandwicher(tx *types.Transaction, client *ethclient.Client, swapData Uni
 
 func (s *sandwicher) Run() {
 	defer _reinitAnalytics()
-	defer func ()  {
+	defer func() {
 		fmt.Println("++++++==========END===========++++++")
 	}()
-	
+
 	START = time.Now()
 	oldBalanceTrigger := global.GetTriggerWBNBBalance()
 	var FirstConfirmed = make(chan *SandwichResult, 100)
@@ -68,29 +68,22 @@ func (s *sandwicher) Run() {
 			s.tx.Hash(), FirstConfirmed)
 
 	case result := <-FirstConfirmed:
-		if result.Status == 0 {
+		tokenBalance, err := global.GetTriggerTokenBalance(s.swapData.Token)
+		if err != nil {
+			fmt.Println("Error in getting trigger token balance", err)
+		}
+		if result.Status == 0 && tokenBalance.Int64() == 0 {
 
 			fmt.Println("frontrunning tx reverted")
 			s._buildFrontrunAnalytics(s.tx.Hash(), signedFrontrunningTx.Hash(), global.Nullhash, true, true, oldBalanceTrigger,
 				gasPriceFront, s.swapData.Token)
 
 		} else {
-			// check target token balance on trigger to ensure that the token was bought
-			tokenBalance, err := global.GetTriggerTokenBalance(s.swapData.Token)
-			if err != nil {
-				fmt.Println("Error in getting trigger token balance", err)
-			} else {
-				if tokenBalance.Int64() == 0 {
-					fmt.Println("frontrunning tx failed")
-					s._buildFrontrunAnalytics(s.tx.Hash(), signedFrontrunningTx.Hash(), global.Nullhash,
-						true, true, oldBalanceTrigger, gasPriceFront, s.swapData.Token)
-				} else {
-
-					fmt.Println("frontrunning tx successful. Sending backrunning..")
-					s.sendBackRunningTx(nonce, common.Big1.Mul(global.STANDARD_GAS_PRICE, big.NewInt(2)), oldBalanceTrigger,
-						signedFrontrunningTx.Hash(), s.tx.Hash())
-				}
-			}
+			// TODO: wait for victims tx to confirm
+			fmt.Println("frontrunning tx successful. Sending backrunning..")
+			time.Sleep(100 * time.Millisecond) // wait a little to ensure full confirmation of front and victim tx TODO: remove?
+			s.sendBackRunningTx(nonce, global.STANDARD_GAS_PRICE, oldBalanceTrigger,
+				signedFrontrunningTx.Hash(), s.tx.Hash(), true)
 		}
 	}
 
@@ -142,17 +135,17 @@ func (s *sandwicher) emmmergencyCancel(nonce uint64, gasPriceFront,
 			s.swapData.Token)
 	} else {
 		fmt.Println("Frontrunning tx confirmed before cancel tx... launching backrunning tx")
-		s.sendBackRunningTx(nonce, gasPriceFront, oldBalanceTrigger, victimHash, frontrunHash)
+		s.sendBackRunningTx(nonce, global.STANDARD_GAS_PRICE, oldBalanceTrigger, victimHash, frontrunHash, false)
 	}
 }
 
 // we send backrunning tx only if frontruning succeeded and wasn't cancelled.
 func (s *sandwicher) sendBackRunningTx(nonce uint64, gasPriceFront, oldBalanceTrigger *big.Int,
-	frontrunHash, victimHash common.Hash) {
+	frontrunHash, victimHash common.Hash, frontSucceeded bool) {
 	if s.BinaryResult.IsNewMarket {
 		gasPriceFront = global.STANDARD_GAS_PRICE
 	}
-	signedBackrunningTx := s._prepareBackrun(nonce, gasPriceFront, s.swapData.Token)
+	signedBackrunningTx := s._prepareBackrun(nonce, gasPriceFront, s.swapData.Token, frontSucceeded)
 	err := s.client.SendTransaction(context.Background(), signedBackrunningTx)
 	if err != nil {
 		log.Fatalln("sendBackRunningTx: problem with backrunning tx : ", err)
@@ -161,6 +154,11 @@ func (s *sandwicher) sendBackRunningTx(nonce uint64, gasPriceFront, oldBalanceTr
 
 	// check if backrunning tx succeeded:
 	result := s._waitForPendingState(signedBackrunningTx.Hash(), context.Background(), "backrun")
+	
+	if result == nil {
+		fmt.Println("couldn't send back running tx check to see if there are trapped founds to retrieve")
+		return 
+	}
 
 	if result.Status == 0 {
 		// a failed backrunning tx is worrying if front succeeded. It means the stinky tokens are locked in TRIGGER and couldn't be sold back.
@@ -168,7 +166,14 @@ func (s *sandwicher) sendBackRunningTx(nonce uint64, gasPriceFront, oldBalanceTr
 		fmt.Printf("\nbackrunning tx reverted. Need to manually rescue funds:\ntoken name involved : %v\nBEP20 address:%v\n", SharedAnalytic.TokenName, SharedAnalytic.TokenAddr)
 		s._buildFrontrunAnalytics(victimHash, frontrunHash, signedBackrunningTx.Hash(),
 			false, true, oldBalanceTrigger, signedBackrunningTx.GasPrice(), s.swapData.Token)
-		log.Fatalln()
+
+		if s.BinaryResult.IsNewMarket {
+			name := getTokenName(s.swapData.Token, s.client)
+			addNewMarket(s.swapData, name, formatEthWeiToEther(s.BinaryResult.Rbnb1), false)
+			fmt.Println("Whitelisted a new market")
+		} else {
+			log.Fatalln()
+		}
 	} else {
 		// backrunning tx succeeded. Calculates realised profits
 		fmt.Println("backrunning tx sucessful")
@@ -177,7 +182,7 @@ func (s *sandwicher) sendBackRunningTx(nonce uint64, gasPriceFront, oldBalanceTr
 
 		if s.BinaryResult.IsNewMarket {
 			name := getTokenName(s.swapData.Token, s.client)
-			addNewMarket(s.swapData, name, formatEthWeiToEther(s.BinaryResult.Rbnb1))
+			addNewMarket(s.swapData, name, formatEthWeiToEther(s.BinaryResult.Rbnb1), true)
 			fmt.Println("Whitelisted a new market")
 		}
 	}

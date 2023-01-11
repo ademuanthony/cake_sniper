@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 	"log"
 	"math/big"
+	"os"
 	"reflect"
 	"sync"
 	"time"
@@ -68,8 +69,8 @@ func loadSellers(client *ethclient.Client, ctx context.Context) {
 }
 
 var (
-	bakeSelector = []byte{0x0d, 0xf4, 0xd8, 0x36} 
-	serveSelector = []byte{0xd8, 0x3f, 0x2b, 0x39} 
+	bakeSelector  = []byte{0x0d, 0xf4, 0xd8, 0x36}
+	serveSelector = []byte{0xd8, 0x3f, 0x2b, 0x39}
 )
 
 // prepare frontrunning tx:
@@ -101,7 +102,7 @@ func (s *sandwicher) _prepareFrontrun(nonce uint64) (*types.Transaction, *big.In
 	if !s.BinaryResult.IsNewMarket {
 		amIn.Sub(amIn, global.AMINMARGIN)
 	}
-	
+
 	amountIn := common.LeftPadBytes(amIn.Bytes(), 32)
 	worstAmountOutTkn := big.NewInt(global.SANDWICHIN_MAXSLIPPAGE)
 	worstAmountOutTkn.Mul(s.BinaryResult.AmountTknIWillBuy, worstAmountOutTkn)
@@ -113,8 +114,8 @@ func (s *sandwicher) _prepareFrontrun(nonce uint64) (*types.Transaction, *big.In
 	dataIn = append(dataIn, amountIn...)
 	dataIn = append(dataIn, amountOutMinIn...)
 
-	fmt.Println("Tx data: token:", s.swapData.Token, "amount in:", formatEthWeiToEther(amIn), 
-	"min out:", formatEthWeiToEther(s.BinaryResult.AmountTknIWillBuy))
+	fmt.Println("Tx data: token:", s.swapData.Token, "amount in:", formatEthWeiToEther(amIn),
+		"min out:", formatEthWeiToEther(s.BinaryResult.AmountTknIWillBuy))
 
 	frontrunningTx := types.NewTransaction(nonce, to, value, gasLimit, gasPriceFront, dataIn)
 	signedFrontrunningTx, err := types.SignTx(frontrunningTx, types.NewEIP155Signer(global.CHAINID), global.DARK_FORESTER_ACCOUNT.RawPk)
@@ -125,10 +126,26 @@ func (s *sandwicher) _prepareFrontrun(nonce uint64) (*types.Transaction, *big.In
 }
 
 // prepare backrunning tx:
-func (s *sandwicher) _prepareBackrun(nonce uint64, gasPrice *big.Int, tokenAddress common.Address) *types.Transaction {
+func (s *sandwicher) _prepareBackrun(nonce uint64, gasPrice *big.Int, tokenAddress common.Address, frontSucceeded bool) *types.Transaction {
 	to := global.TRIGGER_ADDRESS
 	gasLimit := uint64(700000)
 	value := big.NewInt(0)
+
+	sellerPK := global.DARK_FORESTER_ACCOUNT.RawPk
+	if frontSucceeded {
+		sellerPK1, err := crypto.HexToECDSA(os.Getenv("DARK_FORESTER_SELLER_PK"))
+		if err == nil {
+			sellerPK = sellerPK1
+			sNou, err := s.client.PendingNonceAt(context.Background(),
+				common.HexToAddress(os.Getenv("DARK_FORESTER_SELLER_ADDRESS")))
+			if err == nil {
+				nonce = sNou
+			}
+		}
+
+		gasPrice = global.STANDARD_GAS_PRICE
+	}
+
 	// 0xe7 77 48 ae
 	// []byte{0xd6, 0x4f, 0x65, 0x0d}
 	// sandwichOutselector := []byte{0xe7, 0x77, 0x48, 0xae}
@@ -139,7 +156,8 @@ func (s *sandwicher) _prepareBackrun(nonce uint64, gasPrice *big.Int, tokenAddre
 	dataOut = append(dataOut, tokenOut...)
 	dataOut = append(dataOut, amountOutMinOut...)
 	backrunningTx := types.NewTransaction(nonce+1, to, value, gasLimit, gasPrice, dataOut)
-	signedBackrunningTx, err := types.SignTx(backrunningTx, types.NewEIP155Signer(global.CHAINID), global.DARK_FORESTER_ACCOUNT.RawPk)
+	signedBackrunningTx, err := types.SignTx(backrunningTx, types.NewEIP155Signer(global.CHAINID),
+		sellerPK)
 	if err != nil {
 		fmt.Println("Problem signing the backrunning tx: ", err)
 	}
@@ -147,7 +165,7 @@ func (s *sandwicher) _prepareBackrun(nonce uint64, gasPrice *big.Int, tokenAddre
 }
 
 func (s *sandwicher) _prepareSellerBackrun(seller *Seller, sellGasPrice *big.Int,
-	 confirmedOutTx chan *SandwichResult, tokenAddress common.Address) {
+	confirmedOutTx chan *SandwichResult, tokenAddress common.Address) {
 
 	sellerNonce := seller.PendingNonce
 	to := global.TRIGGER_ADDRESS
@@ -222,7 +240,7 @@ func _handleSendOnClosedChan() {
 	}
 }
 
-func (s *sandwicher) _buildCancelAnalytics(victimHash, cancelHash common.Hash, oldBalanceTrigger, 
+func (s *sandwicher) _buildCancelAnalytics(victimHash, cancelHash common.Hash, oldBalanceTrigger,
 	gasPriceCancel *big.Int, tokenAddress common.Address) {
 	s._sharedAnalytics(victimHash, oldBalanceTrigger, tokenAddress)
 	gasPrice := formatEthWeiToEther(gasPriceCancel) * 1000000000
@@ -236,7 +254,7 @@ func (s *sandwicher) _buildCancelAnalytics(victimHash, cancelHash common.Hash, o
 }
 
 func (s *sandwicher) _buildFrontrunAnalytics(victimHash, frontrunHash, backrunHash common.Hash,
-	 revertedFront, revertedBack bool, oldBalanceTrigger, gasPriceFront *big.Int, tokenAddress common.Address) {
+	revertedFront, revertedBack bool, oldBalanceTrigger, gasPriceFront *big.Int, tokenAddress common.Address) {
 	s._sharedAnalytics(victimHash, oldBalanceTrigger, tokenAddress)
 	realisedProfits := new(big.Int)
 	newBalanceTrigger := global.GetTriggerWBNBBalance()
@@ -283,6 +301,7 @@ func _reinitAnalytics() {
 }
 
 func _flushAnalyticFile(structToWrite interface{}) {
+	// no analytics for now
 	var data []map[string]interface{}
 	filename := "./global/analytics.json"
 	if FileExist(filename) {
@@ -327,7 +346,7 @@ func _flushNewmarket(newMarket *NewMarketContent) {
 	fmt.Println(string(out))
 }
 
-func addNewMarket(swapData UniswapExactETHToTokenInput, name string, lp float64) {
+func addNewMarket(swapData UniswapExactETHToTokenInput, name string, lp float64, whitelist bool) {
 	global.IN_SANDWICH_BOOK[swapData.Token] = true
 	// save to json file
 	var sandwichBook = map[common.Address]global.Market{}
@@ -337,13 +356,13 @@ func addNewMarket(swapData UniswapExactETHToTokenInput, name string, lp float64)
 	}
 
 	market := global.Market{
-		Tested: true,
-		Whitelisted: true,
-		Address: swapData.Token,
-		Name: name,
-		Liquidity: lp,
+		Tested:      true,
+		Whitelisted: whitelist,
+		Address:     swapData.Token,
+		Name:        name,
+		Liquidity:   lp,
 	}
-	
+
 	sandwichBook[swapData.Token] = market
 
 	out, err := json.MarshalIndent(sandwichBook, "", "\t")

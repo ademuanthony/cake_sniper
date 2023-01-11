@@ -17,6 +17,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
+	"github.com/ethereum/go-ethereum/params"
 )
 
 ///////// DARK FORESTER ACCOUNT //////////
@@ -28,7 +29,7 @@ var accountAddress = "0x81F37cc0EcAE1dD1c89D79A98f857563873cFA76"
 var accountPk = "de8c0753508570d6bc3aea027a5896401c82fe997d3717d19c785Fbbee128695"
 var DARK_FORESTER_ACCOUNT Account
 
-///////// CONST //////////////////
+// /////// CONST //////////////////
 var WBNB_ADDRESS = common.HexToAddress("0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c")
 var BUSD_ADDRESS = common.HexToAddress("0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56")
 var CAKE_FACTORY_ADDRESS = common.HexToAddress("0xcA143Ce32Fe78f1f7019d7d551a6402fC5350c73")
@@ -36,6 +37,7 @@ var CAKE_ROUTER_ADDRESS = "0x10ED43C718714eb63d5aA57B78B54704E256024E"
 var WBNBERC20 *erc20.Erc20
 var BUSDERC20 *erc20.Erc20
 var FACTORY *uniswap.IPancakeFactory
+var ROUTER *uniswap.IPancakeRouter02
 var CHAINID = big.NewInt(56)
 var STANDARD_GAS_PRICE = big.NewInt(5000000000) // 5 GWEI
 var Nullhash = common.HexToHash("0x0000000000000000000000000000000000000000000000000000000000000000")
@@ -72,41 +74,42 @@ var ML = 200
 var Sandwicher bool = true
 
 // allows spectator mode for tx that would have been profitable if sandwich realised successfully
-var MonitorModeOnly bool = false
+var MonitorModeOnly bool = true
 
 // max slippage we allow in % for our sandwich in tx
 var SandwichInMaxSlippage = 0.5
 
-// gas price for our sandwich in tx in multiples of victim-s tx gas. 
+// gas price for our sandwich in tx in multiples of victim-s tx gas.
 // Must be high enough for favourable ordering inside the block.
-var SandwichInGasPriceMultiplier = 6
+var SandwichInGasPriceMultiplier = 1.5
 
 // max number of WBNB we are ok to spend in the sandwich in tx
-var Sandwicher_maxbound = 1.3 // 1.4 BNB
+var Sandwicher_maxbound = 01.36 // 1.4 BNB
 // min number of WBNB we are ok to spend in the sandwich in tx
-var Sandwicher_minbound = 0.05    //  BNB
+var Sandwicher_minbound = 0.05 //  BNB
 var Sandwicher_baseunit = 0.01 //  BNB
 // min profit expected in bnb to be worth launching a sandwich attack
-var Sandwicher_minprofit = 0.006 //  BNB
+var Sandwicher_minprofit = 0.003 //0.0047552 //  BNB
 // min liquidity of the pool on which we want to perform sandwich
 var Sandwicher_acceptable_liq = 0.2 // BNB
 // stop everything and panic if we lose cumulated > 2 BNB on the different attacks
 var Sandwicher_stop_loss = 0.5
 
-// we basicaly calculate the max amount of BNB we can enter on a sandwich without breaking victim's slippage. 
+// we basicaly calculate the max amount of BNB we can enter on a sandwich without breaking victim's slippage.
 // Then substract Sandwich_margin_amountIn to it to be sure
 var Sandwich_margin_amountIn = 0.005 // BNB
 // max gas price we tolerate for a sandwich in tx
 var Sandwich_max_gwei_to_pay = 1000
 
-// sandwich book contains all the authorised markets, which means markets I can ggo in and out without 
+// sandwich book contains all the authorised markets, which means markets I can ggo in and out without
 // stupid sell taxes that are widespread among meme tokens
 var SANDWICH_BOOK = make(map[common.Address]Market)
 var IN_SANDWICH_BOOK = make(map[common.Address]bool)
 var NewMarketAdded = make(map[common.Address]bool)
 
-// The sandwich ladder is a graduation going from MINBOUND to MAXBOUND with a BASE_UNIT interval. 
-// I use it to do a binary search to determmine what is the optimal amount of BNB I can use to do 
+
+// The sandwich ladder is a graduation going from MINBOUND to MAXBOUND with a BASE_UNIT interval.
+// I use it to do a binary search to determmine what is the optimal amount of BNB I can use to do
 // the sandwich in tx without breaking the slippage of the victim.
 var SANDWICHER_LADDER []*big.Int
 
@@ -123,12 +126,12 @@ var STOPLOSSBALANCE *big.Int
 var AMINMARGIN *big.Int
 var MAXGWEIFRONTRUN *big.Int
 
-///////// BIG TRANSFERS CONFIG //////////
+// /////// BIG TRANSFERS CONFIG //////////
 var BNB = "50000000000000000000" // 50 BNB
 var BigTransfer big.Int
 var AddressesWatched = make(map[common.Address]AddressData)
 
-///////////// TYPES /////////////////
+// /////////// TYPES /////////////////
 type SnipeConfiguration struct {
 	TokenAddress common.Address // token address to monitor
 	TokenPaired  common.Address
@@ -137,19 +140,19 @@ type SnipeConfiguration struct {
 }
 
 type Market struct {
-	Address            common.Address
-	Name               string
-	Tested             bool
-	Whitelisted        bool
-	CumulatedProfits   float64
-	CumulatedBNBBought float64
-	Liquidity          float64
-	ManuallyDisabled   bool
+	Address            common.Address `json:"address"`
+	Name               string         `json:"name"`
+	Tested             bool           `json:"tested"`
+	Whitelisted        bool           `json:"whitelisted"`
+	CumulatedProfits   float64        `json:"cumulatedProfits"`
+	CumulatedBNBBought float64        `json:"cumulatedBNBBought"`
+	Liquidity          float64        `json:"liquidity"`
+	ManuallyDisabled   bool           `json:"manuallyDisabled"`
 }
 
 type Address struct {
-	Name string
-	Addr string
+	Name string `json:"name"`
+	Addr string `json:"addr"`
 }
 
 type AddressData struct {
@@ -165,7 +168,7 @@ type Account struct {
 
 var clientCp *ethclient.Client
 
-///////////// INITIIALISER FUNCS /////////////////
+// /////////// INITIIALISER FUNCS /////////////////
 func _initConst(client *ethclient.Client) {
 	clientCp = client
 
@@ -187,6 +190,12 @@ func _initConst(client *ethclient.Client) {
 	}
 	FACTORY = factory
 
+	router, err := uniswap.NewIPancakeRouter02(common.HexToAddress(CAKE_ROUTER_ADDRESS), client)
+	if err != nil {
+		log.Fatalln("InitFilters: couldn't embed ROUTER: ", err)
+	}
+	ROUTER = router
+
 	wbnb, err := erc20.NewErc20(WBNB_ADDRESS, client)
 	if err != nil {
 		log.Fatalln("InitFilters: couldn't fetch WBNB token: ", err)
@@ -207,15 +216,11 @@ func _initSandwicher() {
 	SANDWICHIN_MAXSLIPPAGE = int64((100 - SandwichInMaxSlippage) * 1000000)
 	SANDWICHIN_GASPRICE_MULTIPLIER = int64(SandwichInGasPriceMultiplier * 1000000)
 
-	minbound := big.NewInt(int64(Sandwicher_minbound))
-	minbound.Mul(minbound, mul10pow18)
-	MINBOUND = minbound
+	MINBOUND = EtherToWei(big.NewFloat(Sandwicher_minbound))
 
-	maxbound := big.NewInt(int64(Sandwicher_maxbound))
-	maxbound.Mul(maxbound, mul10pow18)
-	MAXBOUND = maxbound
+	MAXBOUND = EtherToWei(big.NewFloat(Sandwicher_maxbound))
 
-	liq := big.NewInt(int64(1e6*Sandwicher_acceptable_liq))
+	liq := big.NewInt(int64(1e6 * Sandwicher_acceptable_liq))
 	liq.Mul(liq, mul10pow18)
 	liq.Div(liq, big.NewInt(1e6))
 	ACCEPTABLELIQ = liq
@@ -350,4 +355,14 @@ func GetTriggerTokenBalance(tokenAddress common.Address) (*big.Int, error) {
 		log.Fatalln("InitFilters: couldn't fetch WBNB token: ", err)
 	}
 	return token.BalanceOf(&bind.CallOpts{}, TRIGGER_ADDRESS)
+}
+
+func EtherToWei(eth *big.Float) *big.Int {
+	truncInt, _ := eth.Int(nil)
+	truncInt = new(big.Int).Mul(truncInt, big.NewInt(params.Ether))
+	fracStr := strings.Split(fmt.Sprintf("%.18f", eth), ".")[1]
+	fracStr += strings.Repeat("0", 18-len(fracStr))
+	fracInt, _ := new(big.Int).SetString(fracStr, 10)
+	wei := new(big.Int).Add(truncInt, fracInt)
+	return wei
 }

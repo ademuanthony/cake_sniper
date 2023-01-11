@@ -88,7 +88,7 @@ func _handleWatchedAddressTx(tx *types.Transaction, client *ethclient.Client, sw
 			}
 
 			Rtkn0, Rbnb0 := getReservesData(client, swapData.Token)
-			if Rtkn0 == nil {
+			if Rtkn0 == nil || Rtkn0.Int64() <= 0 || Rbnb0 == nil || Rbnb0.Int64() <= 0 {
 				return
 			}
 			BinaryResult = &BinarySearchResult{global.BASE_UNIT, global.BASE_UNIT, global.BASE_UNIT,

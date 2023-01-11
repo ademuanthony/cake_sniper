@@ -5,12 +5,9 @@ import (
 	"fmt"
 	"log"
 	"math/big"
-	"strings"
 
-	"dark_forester/contracts/uniswap"
 	"dark_forester/global"
 
-	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -27,16 +24,13 @@ var swapTokensForExactETH = [4]byte{0x4a, 0x25, 0xd9, 0x4a}
 var swapTokensForExactTokens = [4]byte{0x88, 0x03, 0xdb, 0xee}
 var addLiquidity = [4]byte{0xe8, 0xe3, 0x37, 0x00}
 
-// standard ABI
-var routerAbi, _ = abi.JSON(strings.NewReader(uniswap.PancakeRouterABI))
-
 // This handler has been though for the sandwicher part of the bot.
 func HandleSwapExactETHForTokens(tx *types.Transaction, client *ethclient.Client) {
 	var BinaryResult = &BinarySearchResult{}
 	defer reinitBinaryResult(BinaryResult)
 	// 0) parse the info of the swap so that we can access it easily
 	swapData := buildSwapETHData(tx, client)
-	BinaryResult.IsNewMarket = !global.IN_SANDWICH_BOOK[swapData.Token]
+	// BinaryResult.IsNewMarket = !global.IN_SANDWICH_BOOK[swapData.Token]
 
 	// 1) Do security checks. We want the base currency of the trade to be solely WBNB
 	if swapData.Paired != global.WBNB_ADDRESS {
@@ -46,20 +40,26 @@ func HandleSwapExactETHForTokens(tx *types.Transaction, client *ethclient.Client
 	sandwicher := NewSandwicher(tx, client, swapData, BinaryResult)
 
 	Rtkn0, Rbnb0 := getReservesData(client, swapData.Token)
-	if Rbnb0 == nil || Rbnb0.Cmp(global.ACCEPTABLELIQ) == -1 {
+	if Rtkn0 == nil || _formatEthWeiToEther(Rtkn0, int64(swapData.Decimals)) <= 0 ||
+		Rbnb0 == nil || formatEthWeiToEther(Rbnb0) <= 0 {
+		return
+	}
+
+	if Rbnb0.Cmp(global.ACCEPTABLELIQ) == -1 {
 		return
 	}
 
 	// 2) Assess profitability of the frontrun
 	success := sandwicher.assessProfitability(client, swapData.Token, tx.Value(), swapData.AmountOutMin, Rtkn0, Rbnb0)
 	// 3) If the frontrun pass the profitability test, init sandwich tx
-	if success == true {
+	if success {
 		// we check if the market has already been tested
-		if global.IN_SANDWICH_BOOK[swapData.Token] == true {
+		if global.IN_SANDWICH_BOOK[swapData.Token] {
 			// we check if the test has been successful as we don't want to snipe on a coin that implement stupid seller tax
-			if global.SANDWICH_BOOK[swapData.Token].Whitelisted == true && global.SANDWICH_BOOK[swapData.Token].ManuallyDisabled == false {
+			if (global.SANDWICH_BOOK[swapData.Token].Whitelisted) &&
+				!global.SANDWICH_BOOK[swapData.Token].ManuallyDisabled {
 				// reminder: if MonitorModeOnly == true in the config file, we remain spectator only. We identify sandwich without performing them.
-				if global.MonitorModeOnly == false {
+				if !global.MonitorModeOnly {
 
 					// sandwich attack is performed here. It can come with 2 flavor: the function sandwiching defined in sandwicher.go and sandwichingOnSteroid definied in sandwicherOnSteroid.go. In fact, those 2 functions correspond to 2 iteration of the attack i tried.
 					// sandwiching: initialise a frontrunning tx. Then listen until victim's tx is confirmed. If during that timelapse a bot try to spoil the attack, we try to send a cancel tx. If not, we send a backrunning tx once victimm's tx is validated.
@@ -74,11 +74,12 @@ func HandleSwapExactETHForTokens(tx *types.Transaction, client *ethclient.Client
 			}
 
 		} else {
-			sandwicher.Run()
+			// sandwicher.Run()
 			// if we identify a possible sandwich on a unknown market,
 			// we want register it and test hability to buy/sell with python scripts.
 			if global.NewMarketAdded[swapData.Token] == false {
 				fmt.Println("new market to test: ")
+				global.NewMarketAdded[swapData.Token] = true
 
 				newMarketContent := NewMarketContent{
 					swapData.Token,

@@ -3,7 +3,9 @@ package services
 import (
 	"dark_forester/contracts/uniswap"
 	"dark_forester/global"
+	"fmt"
 	"math/big"
+	"math/rand"
 	"sync"
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -12,12 +14,18 @@ import (
 )
 
 // Equivalent of _getAmountOut function of the PCS router. Calculates z.
-func _getAmountOut(myMaxBuy, reserveOut, reserveIn *big.Int) *big.Int {
+func _getAmountOut(amountIn, reserveIn, reserveOut *big.Int) *big.Int {
+	// fmt.Printf("_getAmountOut %s %s %s \n", myMaxBuy.String(), reserveBnb.String(), reserveTkn.String())
+	// out, err := global.ROUTER.GetAmountOut(&bind.CallOpts{}, myMaxBuy, reserveBnb, reserveTkn)
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// return out
 
 	var myMaxBuy9975 = new(big.Int)
 	var z = new(big.Int)
 	num := big.NewInt(9975)
-	myMaxBuy9975.Mul(num, myMaxBuy)
+	myMaxBuy9975.Mul(num, amountIn)
 	num.Mul(myMaxBuy9975, reserveOut)
 
 	den := big.NewInt(10000)
@@ -52,12 +60,12 @@ func getReservesData(client *ethclient.Client, tokenAddress common.Address) (*bi
 // breaking victim's slippage
 func (s *sandwicher) _binarySearch(amountToTest, Rtkn0, Rbnb0, txValue, amountOutMinVictim *big.Int) {
 
-	amountTknImBuying1 := _getAmountOut(amountToTest, Rtkn0, Rbnb0)
+	amountTknImBuying1 := _getAmountOut(amountToTest, Rbnb0, Rtkn0)
 	var Rtkn1 = new(big.Int)
 	var Rbnb1 = new(big.Int)
 	Rtkn1.Sub(Rtkn0, amountTknImBuying1)
 	Rbnb1.Add(Rbnb0, amountToTest)
-	amountTknVictimWillBuy1 := _getAmountOut(txValue, Rtkn1, Rbnb1)
+	amountTknVictimWillBuy1 := _getAmountOut(txValue, Rbnb1, Rtkn1)
 
 	// check if this amountToTest is really the best we can have
 	// 1) we don't break victim's slippage with amountToTest
@@ -69,12 +77,12 @@ func (s *sandwicher) _binarySearch(amountToTest, Rtkn0, Rbnb0, txValue, amountOu
 			return
 		}
 		myMaxBuy := amountToTest.Add(amountToTest, global.BASE_UNIT)
-		amountTknImBuying2 := _getAmountOut(myMaxBuy, Rtkn0, Rbnb0)
+		amountTknImBuying2 := _getAmountOut(myMaxBuy, Rbnb0, Rtkn0)
 		var Rtkn1Test = new(big.Int)
 		var Rbnb1Test = new(big.Int)
 		Rtkn1Test.Sub(Rtkn0, amountTknImBuying2)
 		Rbnb1Test.Add(Rbnb0, myMaxBuy)
-		amountTknVictimWillBuy2 := _getAmountOut(txValue, Rtkn1Test, Rbnb1Test)
+		amountTknVictimWillBuy2 := _getAmountOut(txValue, Rbnb1Test, Rtkn1Test)
 		// 3) if we go 1 step further on the ladder and it breaks the slippage, that means that amountToTest is really the amount of WBNB that we can engage and milk the maximum of profits from the sandwich.
 		if amountTknVictimWillBuy2.Cmp(amountOutMinVictim) == -1 {
 			s.BinaryResult = &BinarySearchResult{amountToTest, amountTknImBuying1,
@@ -85,13 +93,12 @@ func (s *sandwicher) _binarySearch(amountToTest, Rtkn0, Rbnb0, txValue, amountOu
 
 // test if we break victim's slippage with MNBOUND WBNB engaged
 func _testMinbound(Rtkn, Rbnb, txValue, amountOutMinVictim *big.Int) int {
-
-	amountTknImBuying := _getAmountOut(global.MINBOUND, Rtkn, Rbnb)
+	amountTknImBuying := _getAmountOut(global.MINBOUND, Rbnb, Rtkn)
 	var Rtkn1 = new(big.Int)
 	var Rbnb1 = new(big.Int)
 	Rtkn1.Sub(Rtkn, amountTknImBuying)
 	Rbnb1.Add(Rbnb, global.MINBOUND)
-	amountTknVictimWillBuy := _getAmountOut(txValue, Rtkn1, Rbnb1)
+	amountTknVictimWillBuy := _getAmountOut(txValue, Rbnb1, Rtkn1)
 	return amountTknVictimWillBuy.Cmp(amountOutMinVictim)
 }
 
@@ -120,36 +127,70 @@ func (s *sandwicher) assessProfitability(client *ethclient.Client, tkn_adddress 
 
 	var expectedProfit = new(big.Int)
 
-	arrayOfInterest := global.SANDWICHER_LADDER
+	// arrayOfInterest := global.SANDWICHER_LADDER
 
-	// only purpose of this function is to complete the struct BinaryResult via a binary search performed on the sandwich
-	// ladder we initialised in the config file.
-	// If we cannot even buy 1 BNB without breaking victim slippage, BinaryResult will be nil
-	s.getMyMaxBuyAmount2(Rtkn0, Rbnb0, txValue, amountOutMinVictim, arrayOfInterest)
+	// // only purpose of this function is to complete the struct BinaryResult via a binary search performed on the sandwich
+	// // ladder we initialised in the config file.
+	// // If we cannot even buy 1 BNB without breaking victim slippage, BinaryResult will be nil
+	// s.getMyMaxBuyAmount2(Rtkn0, Rbnb0, txValue, amountOutMinVictim, arrayOfInterest)
 
-	if s.BinaryResult.MaxBNBICanBuy != nil {
-		var Rtkn2 = new(big.Int)
-		var Rbnb2 = new(big.Int)
-		Rtkn2.Sub(s.BinaryResult.Rtkn1, s.BinaryResult.AmountTknVictimWillBuy)
-		Rbnb2.Add(s.BinaryResult.Rbnb1, txValue)
+	slippage := slippage(txValue, amountOutMinVictim, Rbnb0, Rtkn0, int64(s.swapData.Decimals))
+	priceImpact := priceImpact(txValue, Rbnb0)
+	amountToTest := getMaxTradeAmountForSlippage(Rbnb0, slippage)
 
-		// r0 --> I buy --> r1 --> victim buy --> r2 --> i sell
-		// at this point of execution, we just did r2 so the "i sell" phase remains to be done
-		bnbAfterSell := _getAmountOut(s.BinaryResult.AmountTknIWillBuy, Rbnb2, Rtkn2)
-		expectedProfit.Sub(bnbAfterSell, s.BinaryResult.MaxBNBICanBuy)
+	profitPec := (slippage + priceImpact) - 0.5
 
-		// for new markets, buy 1 gwei for a test
-		if s.BinaryResult.IsNewMarket {
-			s.BinaryResult.MaxBNBICanBuy = big.NewInt(1000000000)
+	if amountToTest.Cmp(global.MAXBOUND) >= 1 {
+		percent := rand.Intn(99-75) + 75
 
-			amountTknVictimWillBuy1 := _getAmountOut(s.BinaryResult.MaxBNBICanBuy, s.BinaryResult.Rtkn1, s.BinaryResult.Rbnb1)
-			s.BinaryResult.AmountTknIWillBuy = amountTknVictimWillBuy1
-		}
-		if expectedProfit.Cmp(global.MINPROFIT) == 1 {
-			s.BinaryResult.ExpectedProfits = expectedProfit
-			return true
-		}
+		numerator := new(big.Int).Mul(global.MAXBOUND, big.NewInt(int64(percent)))
+		amountToTest = new(big.Int).Div(numerator, big.NewInt(100))
 	}
+
+	profit := profitPec * formatEthWeiToEther(amountToTest) / 100
+
+	amountTknImBuying1 := _getAmountOut(amountToTest, Rbnb0, Rtkn0)
+	var Rtkn1 = new(big.Int)
+	var Rbnb1 = new(big.Int)
+	Rtkn1.Sub(Rtkn0, amountTknImBuying1)
+	Rbnb1.Add(Rbnb0, amountToTest)
+	amountTknVictimWillBuy1 := _getAmountOut(txValue, Rbnb1, Rtkn1)
+
+	s.BinaryResult = &BinarySearchResult{amountToTest, amountTknImBuying1, amountTknVictimWillBuy1,
+		Rtkn1, Rbnb1, big.NewInt(0), s.BinaryResult.IsNewMarket}
+
+	var Rtkn2 = new(big.Int)
+	var Rbnb2 = new(big.Int)
+	Rtkn2.Sub(s.BinaryResult.Rtkn1, s.BinaryResult.AmountTknVictimWillBuy)
+	Rbnb2.Add(s.BinaryResult.Rbnb1, txValue)
+
+	// r0 --> I buy --> r1 --> victim buy --> r2 --> i sell
+	// at this point of execution, we just did r2 so the "i sell" phase remains to be done
+	bnbAfterSell := _getAmountOut(s.BinaryResult.AmountTknIWillBuy, Rtkn2, Rbnb2)
+	expectedProfit.Sub(bnbAfterSell, s.BinaryResult.MaxBNBICanBuy)
+
+	// for new markets, buy 1 gwei for a test
+	if s.BinaryResult.IsNewMarket {
+		s.BinaryResult.MaxBNBICanBuy = big.NewInt(1000000000)
+
+		amountTknVictimWillBuy1 := _getAmountOut(s.BinaryResult.MaxBNBICanBuy, s.BinaryResult.Rbnb1, s.BinaryResult.Rtkn1)
+		s.BinaryResult.AmountTknIWillBuy = amountTknVictimWillBuy1
+	}
+
+	if global.EtherToWei(big.NewFloat(profit)).Cmp(global.MINPROFIT) == 1 {
+		s.BinaryResult.ExpectedProfits = expectedProfit
+
+		fmt.Printf(`%s, txValue: %f, Rbnb0: %f,
+		price imp: %f, slippage: %f,  MaxBNBICanBuy: %f; profit: %f, expectedProfit: %f`+"\n\n",
+			tkn_adddress.Hex(),
+			formatEthWeiToEther(txValue),
+			formatEthWeiToEther(Rbnb0),
+			priceImpact, slippage,
+			formatEthWeiToEther(amountToTest), profit, formatEthWeiToEther(expectedProfit))
+
+		return slippage <= 5
+	}
+
 	return false
 }
 

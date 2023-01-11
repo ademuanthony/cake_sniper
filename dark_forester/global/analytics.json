@@ -371,681 +371,201 @@
 	{
 		"RevertedBack": true,
 		"RevertedFront": false,
-		"backrunHash": "0x906c6931b0aed33884c9258c7658489646cdf32e6fe35b373bde52505c0b98ec",
-		"bnbSent": 0.9995,
-		"expectedProfits": 0.005588139246497884,
-		"frontrunHash": "0xf27f94b13d57f4f339a0b95a184cf50b26e7b969cf12d0e954c739d692174c86",
-		"gasPriceFront": 10,
+		"backrunHash": "0x7f9a8a252ffcc6727f0a43ba8f8b60b6bc0249cd0df353d6fbcdf31713ac18b3",
+		"bnbSent": 1e-9,
+		"expectedProfits": 1477.6868545940988,
+		"frontrunHash": "0x5cf4221787608b0355a1486c78937051c5c41ca355be55bf4c6d3ca54d5790bb",
+		"gasPriceFront": 5,
 		"infos": {
 			"colsolidated": false,
-			"execTime": 5910,
-			"name": "ZOO",
-			"newBalanceTrigger": 1.418520160926301,
-			"oldBalanceTrigger": 1.418520160926301,
-			"pairAddr": "0x579bb1902e405d056071ad43f4abbf3d42ba0615",
-			"tokenAddr": "0x7ffc1243232da3ac001994208e2002816b57c669",
-			"victimHash": "0x1a1439d8310452869a8a52715f7984f7bc086a031000394b0da2c5dfcff1e829"
+			"execTime": 5879,
+			"name": "PiXiu",
+			"newBalanceTrigger": 0.260431306,
+			"oldBalanceTrigger": 0.260431307,
+			"pairAddr": "0xa19e01421d3215e3fc1564543c3f693c56b19d46",
+			"tokenAddr": "0xb63eda72033ff465b5064aa18dec0524e0c0bb93",
+			"victimHash": "0x75c27e52c6b7db75bbd9c2ac10ad926845a3d7138dbab1e8ea4eb8ec2390a3d2"
 		},
-		"realisedProfits": 0
-	},
-	{
-		"RevertedBack": true,
-		"RevertedFront": false,
-		"backrunHash": "0xb7ebb4643c6ec49f21c9c26aa16d170642a071bc152a9ab16ad3fd297544b2ba",
-		"bnbSent": 0.9995,
-		"expectedProfits": 0.006087057375620437,
-		"frontrunHash": "0x8da4688da14328880b6d0d01081a08c530aaecea8fb6edaf82baa04f071d33b7",
-		"gasPriceFront": 10,
-		"infos": {
-			"colsolidated": false,
-			"execTime": 3366,
-			"name": "ZOO",
-			"newBalanceTrigger": 1.418520160926301,
-			"oldBalanceTrigger": 1.418520160926301,
-			"pairAddr": "0x579bb1902e405d056071ad43f4abbf3d42ba0615",
-			"tokenAddr": "0x7ffc1243232da3ac001994208e2002816b57c669",
-			"victimHash": "0x7ae8649bac4acee501a11d395e4a90aa8969be23c2959ad53c67e9ab0f86820c"
-		},
-		"realisedProfits": 0
-	},
-	{
-		"RevertedBack": true,
-		"RevertedFront": false,
-		"backrunHash": "0x48c3b4889cae97ae3081004d02d23b945378f7f9af6ef068922f007291b8d7be",
-		"bnbSent": 0.9995,
-		"expectedProfits": 0.007081362998714442,
-		"frontrunHash": "0x0a5d41872ed68e73db49f51257efef2d690a0e6a489f89ed7b8d7cb116d884f4",
-		"gasPriceFront": 10,
-		"infos": {
-			"colsolidated": false,
-			"execTime": 3679,
-			"name": "IMOV",
-			"newBalanceTrigger": 1.418520160926301,
-			"oldBalanceTrigger": 1.418520160926301,
-			"pairAddr": "0xc948a0df9394f3f0c9d4570c8d14458ced147657",
-			"tokenAddr": "0x7b8779e01d117ec7e220f8299a6f93672e8eae23",
-			"victimHash": "0x4b8375e576014f43b2a76c8204715f5db8b7eb44eed7d39cbf06235d01d31022"
-		},
-		"realisedProfits": 0
+		"realisedProfits": -1e-9
 	},
 	{
 		"RevertedBack": true,
 		"RevertedFront": true,
 		"backrunHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
 		"bnbSent": 0,
-		"expectedProfits": 0.012011941652475586,
-		"frontrunHash": "0xbd434dd93ecf3aa2c45f148410f1213b9c179efb7a7ac4c721ef3b58fcc668da",
-		"gasPriceFront": 29.999999999999996,
-		"infos": {
-			"colsolidated": false,
-			"execTime": 2879,
-			"name": "ZOO",
-			"newBalanceTrigger": 1.418520160926301,
-			"oldBalanceTrigger": 1.418520160926301,
-			"pairAddr": "0x579bb1902e405d056071ad43f4abbf3d42ba0615",
-			"tokenAddr": "0x7ffc1243232da3ac001994208e2002816b57c669",
-			"victimHash": "0x2a955e2d8620b1f05a28d8a9da0fcbf5c993f1e41c3525acf1862a9c3c63e956"
-		},
-		"realisedProfits": 0
-	},
-	{
-		"RevertedBack": true,
-		"RevertedFront": true,
-		"backrunHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
-		"bnbSent": 0,
-		"expectedProfits": 0.03757543108810726,
-		"frontrunHash": "0x69bb9ccf37f49134a1948992d25ab1f94890ec3304cf200017668deb79449f79",
-		"gasPriceFront": 42,
-		"infos": {
-			"colsolidated": false,
-			"execTime": 1824,
-			"name": "IMOV",
-			"newBalanceTrigger": 1.418520160926301,
-			"oldBalanceTrigger": 1.418520160926301,
-			"pairAddr": "0xc948a0df9394f3f0c9d4570c8d14458ced147657",
-			"tokenAddr": "0x7b8779e01d117ec7e220f8299a6f93672e8eae23",
-			"victimHash": "0x8fd1612bb5726bb70916bdacd39fdc675eee32eb0a4cc23b95e43879c15e3fe6"
-		},
-		"realisedProfits": 0
-	},
-	{
-		"RevertedBack": true,
-		"RevertedFront": true,
-		"backrunHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
-		"bnbSent": 0,
-		"expectedProfits": 0.011517770671318272,
-		"frontrunHash": "0x04d137194a28966fb0f2dd1064983510edbd684edbf981a21ed3875a658276ec",
+		"expectedProfits": 114301577251404.27,
+		"frontrunHash": "0xa5ab1f3924f7567b182131589db4a9d1d97063d4062b006619f55d746fd949c4",
 		"gasPriceFront": 5,
 		"infos": {
 			"colsolidated": false,
-			"execTime": 2324,
-			"name": "CATMINE",
-			"newBalanceTrigger": 1.0339410229213042,
-			"oldBalanceTrigger": 1.0339410229213042,
-			"pairAddr": "0x924b6fb3252db7084bd4fe2d9faa398d595a2c8f",
-			"tokenAddr": "0x88f3391346f73df043e6e3d4b5cc07b11b4f0eea",
-			"victimHash": "0xa1d3881596c169c4bfd0aa515e07f12a534a0d4bd6068d2779071c066e47b58c"
-		},
-		"realisedProfits": 0
-	},
-	{
-		"RevertedBack": true,
-		"RevertedFront": false,
-		"backrunHash": "0x30225478f2fe1688885db8fdbfd3203ef268817347a88be467a0f7467b20226f",
-		"bnbSent": -0.000499999,
-		"expectedProfits": 0.011517770671318272,
-		"frontrunHash": "0x04d137194a28966fb0f2dd1064983510edbd684edbf981a21ed3875a658276ec",
-		"gasPriceFront": 5,
-		"infos": {
-			"colsolidated": false,
-			"execTime": 4099,
-			"name": "CATMINE",
-			"newBalanceTrigger": 1.0339410229213042,
-			"oldBalanceTrigger": 1.0339410229213042,
-			"pairAddr": "0x924b6fb3252db7084bd4fe2d9faa398d595a2c8f",
-			"tokenAddr": "0x88f3391346f73df043e6e3d4b5cc07b11b4f0eea",
-			"victimHash": "0xa1d3881596c169c4bfd0aa515e07f12a534a0d4bd6068d2779071c066e47b58c"
-		},
-		"realisedProfits": 0
-	},
-	{
-		"RevertedBack": true,
-		"RevertedFront": true,
-		"backrunHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
-		"bnbSent": 0,
-		"expectedProfits": 0.00759960949661059,
-		"frontrunHash": "0x6773d0d48f59440975a9613eb20db357d8cb8a41b3ff3502f0500e64e88b5af8",
-		"gasPriceFront": 5,
-		"infos": {
-			"colsolidated": false,
-			"execTime": 1084,
-			"name": "Super Doge Coin",
-			"newBalanceTrigger": 1.0339410229213042,
-			"oldBalanceTrigger": 1.0339410229213042,
-			"pairAddr": "0xcad91922db63353edf5e7b6c03548d37e4df2e2c",
-			"tokenAddr": "0xd942ed6b052537b5f67675e68020351a12764099",
-			"victimHash": "0x6a6589e2ea1776755778db3d84ce31807cffc24f9b28ba5976adf5d0cea5d780"
-		},
-		"realisedProfits": 0
-	},
-	{
-		"RevertedBack": true,
-		"RevertedFront": true,
-		"backrunHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
-		"bnbSent": 0,
-		"expectedProfits": 0.00759960949661059,
-		"frontrunHash": "0xf356f1fbbb59310a24bd8b3e61de059f95dc366a1807e55e1acdb8178c2fccad",
-		"gasPriceFront": 5,
-		"infos": {
-			"colsolidated": false,
-			"execTime": 2182,
-			"name": "Super Doge Coin",
-			"newBalanceTrigger": 1.0339410229213042,
-			"oldBalanceTrigger": 1.0339410229213042,
-			"pairAddr": "0xcad91922db63353edf5e7b6c03548d37e4df2e2c",
-			"tokenAddr": "0xd942ed6b052537b5f67675e68020351a12764099",
-			"victimHash": "0x980b6863a33a1cc1ba55ecbd59d1f1c35f5126a30d451c7f87b47f44a7242931"
-		},
-		"realisedProfits": 0
-	},
-	{
-		"RevertedBack": true,
-		"RevertedFront": true,
-		"backrunHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
-		"bnbSent": 0,
-		"expectedProfits": 0.06140377912181136,
-		"frontrunHash": "0xb7029dad3605fe2784ec1e5299995520a7f74a82cfa91faac0698d2a6b24e163",
-		"gasPriceFront": 5,
-		"infos": {
-			"colsolidated": false,
-			"execTime": 1114,
-			"name": "DefiConnect",
-			"newBalanceTrigger": 1.0339410229213042,
-			"oldBalanceTrigger": 1.0339410229213042,
-			"pairAddr": "0x0187ffa6760855ec13b06f89410016f30b3018c3",
-			"tokenAddr": "0x97a143545c0f8200222c051ac0a2fc93acbe6ba2",
-			"victimHash": "0x66895ccccc169674ba8e6b9246ddf311ac59d030e8fb54e70dd3611de52bd25a"
-		},
-		"realisedProfits": 0
-	},
-	{
-		"RevertedBack": true,
-		"RevertedFront": true,
-		"backrunHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
-		"bnbSent": 0,
-		"expectedProfits": 0.026145343582949922,
-		"frontrunHash": "0x946a248d31267ed9060717e8ad41e91d501fcde69cabee0199a906e41f486835",
-		"gasPriceFront": 5,
-		"infos": {
-			"colsolidated": false,
-			"execTime": 1842,
-			"name": "NewHuo Tech",
-			"newBalanceTrigger": 1.0339410229213042,
-			"oldBalanceTrigger": 1.0339410229213042,
-			"pairAddr": "0xaa9bf6eaf2a30193fc9712d5988784fec4bdddd7",
-			"tokenAddr": "0xc59caafd1ec94e78b937f8a30e6a7565fc3c3103",
-			"victimHash": "0xb70bbe78d370631ab51b326e427b40bafc4a9ebf51bec025de48d7448428e03e"
-		},
-		"realisedProfits": 0
-	},
-	{
-		"RevertedBack": true,
-		"RevertedFront": true,
-		"backrunHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
-		"bnbSent": 0,
-		"expectedProfits": 0.017199234750827425,
-		"frontrunHash": "0x1d28ba89c435d7136a07cb884436c5426bce601581e093bf546ed351ff7ae69b",
-		"gasPriceFront": 5,
-		"infos": {
-			"colsolidated": false,
-			"execTime": 2388,
-			"name": "DefiConnect",
-			"newBalanceTrigger": 1.0339410229213042,
-			"oldBalanceTrigger": 1.0339410229213042,
-			"pairAddr": "0x0187ffa6760855ec13b06f89410016f30b3018c3",
-			"tokenAddr": "0x97a143545c0f8200222c051ac0a2fc93acbe6ba2",
-			"victimHash": "0x3326633e44e488f649f947daa676f138f5d927eaa381dd66c32c3a59c051e2fa"
-		},
-		"realisedProfits": 0
-	},
-	{
-		"RevertedBack": true,
-		"RevertedFront": true,
-		"backrunHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
-		"bnbSent": 0,
-		"expectedProfits": 0.15666402868811327,
-		"frontrunHash": "0x53eb16c14d96888d064191d3eec9597a8bd6e5ce8c0097e1f2f69c755cf57953",
-		"gasPriceFront": 5,
-		"infos": {
-			"colsolidated": false,
-			"execTime": 3065,
-			"name": "DefiConnect",
-			"newBalanceTrigger": 1.0339410229213042,
-			"oldBalanceTrigger": 1.0339410229213042,
-			"pairAddr": "0x0187ffa6760855ec13b06f89410016f30b3018c3",
-			"tokenAddr": "0x97a143545c0f8200222c051ac0a2fc93acbe6ba2",
-			"victimHash": "0x2e9b0e7af14706f77b67b56120ce0d975704f2f956b1e35c687927d07ac49c97"
-		},
-		"realisedProfits": 0
-	},
-	{
-		"RevertedBack": true,
-		"RevertedFront": true,
-		"backrunHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
-		"bnbSent": 0,
-		"expectedProfits": 0.01770464910316055,
-		"frontrunHash": "0x70a22a3be3806396f52efed7ab0b36957b3dfb6589e21050aece72230d8683fb",
-		"gasPriceFront": 5,
-		"infos": {
-			"colsolidated": false,
-			"execTime": 1248,
-			"name": "DefiConnect",
-			"newBalanceTrigger": 1.3332143289113008,
-			"oldBalanceTrigger": 1.3332143289113008,
-			"pairAddr": "0x0187ffa6760855ec13b06f89410016f30b3018c3",
-			"tokenAddr": "0x97a143545c0f8200222c051ac0a2fc93acbe6ba2",
-			"victimHash": "0x27113ae0e5177a9dabcdebf0abfef5889b47817f0084e4eca065f47e3b3b8a2f"
-		},
-		"realisedProfits": 0
-	},
-	{
-		"RevertedBack": true,
-		"RevertedFront": true,
-		"backrunHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
-		"bnbSent": 0,
-		"expectedProfits": 0.21287442147606134,
-		"frontrunHash": "0x2756bc0e784b9f1f7a2d9dbe75f8cece8f2448ec7afa23049686713688852d10",
-		"gasPriceFront": 5,
-		"infos": {
-			"colsolidated": false,
-			"execTime": 2701,
-			"name": "DefiConnect",
-			"newBalanceTrigger": 1.3332143289113008,
-			"oldBalanceTrigger": 1.3332143289113008,
-			"pairAddr": "0x0187ffa6760855ec13b06f89410016f30b3018c3",
-			"tokenAddr": "0x97a143545c0f8200222c051ac0a2fc93acbe6ba2",
-			"victimHash": "0xdd3cb4997509a090d783284c616b0c4923548951b774b3770894557ab362765f"
-		},
-		"realisedProfits": 0
-	},
-	{
-		"RevertedBack": true,
-		"RevertedFront": true,
-		"backrunHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
-		"bnbSent": 0,
-		"expectedProfits": 0.010448019477938634,
-		"frontrunHash": "0x674a3a621fa59ada178e66c3871e6a2177005df3a944eaca07a0f26943173c98",
-		"gasPriceFront": 5,
-		"infos": {
-			"colsolidated": false,
-			"execTime": 1100,
-			"name": "JUPITER DAO",
-			"newBalanceTrigger": 1.3332143289113008,
-			"oldBalanceTrigger": 1.3332143289113008,
-			"pairAddr": "0xc561adae83ca736094e2056ec3455dbf7f2be8d5",
-			"tokenAddr": "0x7bbcab190c22b7105b04428d9228e9f7854d6296",
-			"victimHash": "0x0fb96a7250dfc931ca8d7af11654b648133796cf096d3795968e816655e27d33"
-		},
-		"realisedProfits": 0
-	},
-	{
-		"RevertedBack": true,
-		"RevertedFront": true,
-		"backrunHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
-		"bnbSent": 0,
-		"expectedProfits": 0.13742858069785294,
-		"frontrunHash": "0x673ed7d4321f5b3ebd654cf394e3b4c9a68cab544345157696cbceb6f12806f3",
-		"gasPriceFront": 5,
-		"infos": {
-			"colsolidated": false,
-			"execTime": 1082,
-			"name": "Algoryt",
-			"newBalanceTrigger": 1.3332143289113008,
-			"oldBalanceTrigger": 1.3332143289113008,
-			"pairAddr": "0x057993025cbfb919de939109d94013dfc3281025",
-			"tokenAddr": "0x785b608135b0100ccbe0f6d6f59a4e5551e92b7d",
-			"victimHash": "0xa5f975423c62f7f5733df43baaa1e57385064581c77354e68e128f8e7ced3601"
-		},
-		"realisedProfits": 0
-	},
-	{
-		"RevertedBack": true,
-		"RevertedFront": true,
-		"backrunHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
-		"bnbSent": 0,
-		"expectedProfits": 0.00716342104288753,
-		"frontrunHash": "0x6ead9fe0e9a922dab2be1e3c9a409cf42284a0bb9b080b3e4e1b86961faa9c7a",
-		"gasPriceFront": 5,
-		"infos": {
-			"colsolidated": false,
-			"execTime": 2834,
-			"name": "TAUDAO",
-			"newBalanceTrigger": 1.3332143289113008,
-			"oldBalanceTrigger": 1.3332143289113008,
-			"pairAddr": "0x5558dfefb957b74cd44b8fc55f81de640229053c",
-			"tokenAddr": "0x73ff0223d71bc71d654a642f29739fc45847d1ac",
-			"victimHash": "0x16ef1ef7ad7e7a8732ac7aef5cdfdc76d1b497df3b14943cf947d9907e39a1cc"
-		},
-		"realisedProfits": 0
-	},
-	{
-		"RevertedBack": true,
-		"RevertedFront": true,
-		"backrunHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
-		"bnbSent": 0,
-		"expectedProfits": 0.009202864494671083,
-		"frontrunHash": "0x29d1fe367bdeef8875a1848a3ff18473f98f30dca1d738e69995483e7493c389",
-		"gasPriceFront": 5,
-		"infos": {
-			"colsolidated": false,
-			"execTime": 2290,
-			"name": "Univaults",
-			"newBalanceTrigger": 1.3332143289113008,
-			"oldBalanceTrigger": 1.3332143289113008,
-			"pairAddr": "0x96dd960fa706226990e2b502371762027ea43dc4",
-			"tokenAddr": "0xe03bc8dadce77f41150004a8aa15ab6b8bdc3c1f",
-			"victimHash": "0xb445ec5bf614b66b33b26fa8bdb9a2fd08a44e505d3be6afaa476c5e0a628ba6"
-		},
-		"realisedProfits": 0
-	},
-	{
-		"RevertedBack": true,
-		"RevertedFront": true,
-		"backrunHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
-		"bnbSent": 0,
-		"expectedProfits": 0.009666791981683054,
-		"frontrunHash": "0xf64cf8ddec17230ca973ba584d5dddf475738559f203526bb2b148a08a9aac94",
-		"gasPriceFront": 5,
-		"infos": {
-			"colsolidated": false,
-			"execTime": 3542,
-			"name": "BNBRISE",
-			"newBalanceTrigger": 1.3332143289113008,
-			"oldBalanceTrigger": 1.3332143289113008,
-			"pairAddr": "0x3b37f8d26b7d021ba1e918f3d666c24a72f3efc5",
-			"tokenAddr": "0xae90578bb0d15a64f96479d80bac9fbff4f63ec3",
-			"victimHash": "0xb846d436985ca60819b6165e2b5704d618ad4b95a0c9d80466b006e55e8077e5"
-		},
-		"realisedProfits": 0
-	},
-	{
-		"RevertedBack": true,
-		"RevertedFront": false,
-		"backrunHash": "0xfe050356d2e1fa56e49de40600c248ef717a61ff1b4cc32ec820f061789b638c",
-		"bnbSent": -0.000499999,
-		"expectedProfits": 0.006808147571966911,
-		"frontrunHash": "0x3fb6aa050b94aa81431fd7b0cebb43ff5df4b019eebf7fc55e2d516ed1046e7c",
-		"gasPriceFront": 5,
-		"infos": {
-			"colsolidated": false,
-			"execTime": 5121,
-			"name": "BONK!!!",
-			"newBalanceTrigger": 1.3327143299113007,
-			"oldBalanceTrigger": 1.3332143289113008,
-			"pairAddr": "0xd1f3b62df3ae295fbcdbe7d4b50acd7658c70adb",
-			"tokenAddr": "0x0395900fa10c12f7643ed7ca825d0ebb3f331b24",
-			"victimHash": "0xf6be2044f3056edc7a30e74ef0155b78d64ac2c5ef6d462ba02151b366271180"
-		},
-		"realisedProfits": -0.000499999
-	},
-	{
-		"RevertedBack": true,
-		"RevertedFront": true,
-		"backrunHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
-		"bnbSent": 0,
-		"expectedProfits": 0.01342571837669574,
-		"frontrunHash": "0xcba4eee878a39c7a2e49c65b72e640bc2edb80fd160399fb45cbef33b7ea93d5",
-		"gasPriceFront": 5,
-		"infos": {
-			"colsolidated": false,
-			"execTime": 7994,
-			"name": "PigDemon",
-			"newBalanceTrigger": 1.3327143299113007,
-			"oldBalanceTrigger": 1.3327143299113007,
-			"pairAddr": "0xb174005cc7e475b5a4e1b671b2f90909500d6b48",
-			"tokenAddr": "0x45a23b42f442d52dd91f315d2c612f973ea213fe",
-			"victimHash": "0x486e3d57c9a4f5b465cca23111809519b8c71a09f226e05513a669eb6ed70fd4"
-		},
-		"realisedProfits": 0
-	},
-	{
-		"RevertedBack": true,
-		"RevertedFront": true,
-		"backrunHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
-		"bnbSent": 0,
-		"expectedProfits": 0.026237757048835166,
-		"frontrunHash": "0x11d237fad876b90f7280324247b894b3d22bf9fa87ca37870c31260da6a458d3",
-		"gasPriceFront": 5,
-		"infos": {
-			"colsolidated": false,
-			"execTime": 3249,
-			"name": "LUCA",
-			"newBalanceTrigger": 1.3327143299113007,
-			"oldBalanceTrigger": 1.3327143299113007,
-			"pairAddr": "0x89d8a3e78ead0f72fa8691c4f094cf6e6531ce04",
-			"tokenAddr": "0xa6b06d151a60908e1e09cd03fd51fc26dc1c1e7c",
-			"victimHash": "0xdaff865d2ef75fa1c4b4a24e20222d5417f8d0821ec25140552e18c1622ca292"
-		},
-		"realisedProfits": 0
-	},
-	{
-		"RevertedBack": true,
-		"RevertedFront": true,
-		"backrunHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
-		"bnbSent": 0,
-		"expectedProfits": 0.008673396642913013,
-		"frontrunHash": "0xf3499df2e619120c8a9ec2844cff8fdfb5278f83958154a6ff6f4c84f81aa6b6",
-		"gasPriceFront": 5,
-		"infos": {
-			"colsolidated": false,
-			"execTime": 3135,
-			"name": "TAUDAO",
-			"newBalanceTrigger": 1.3327143299113007,
-			"oldBalanceTrigger": 1.3327143299113007,
-			"pairAddr": "0x5558dfefb957b74cd44b8fc55f81de640229053c",
-			"tokenAddr": "0x73ff0223d71bc71d654a642f29739fc45847d1ac",
-			"victimHash": "0xd097ec1110c944c836c9d9f84bb2f7b6dc862431be13a1a2657da21791751178"
-		},
-		"realisedProfits": 0
-	},
-	{
-		"RevertedBack": true,
-		"RevertedFront": true,
-		"backrunHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
-		"bnbSent": 0,
-		"expectedProfits": 0.0683682951508934,
-		"frontrunHash": "0x18812c874fdc106d65125d32638a9157c2c3272f4c3c2493d671da69dc51c701",
-		"gasPriceFront": 5,
-		"infos": {
-			"colsolidated": false,
-			"execTime": 1084,
-			"name": "LUCA",
-			"newBalanceTrigger": 1.3327143299113007,
-			"oldBalanceTrigger": 1.3327143299113007,
-			"pairAddr": "0x89d8a3e78ead0f72fa8691c4f094cf6e6531ce04",
-			"tokenAddr": "0xa6b06d151a60908e1e09cd03fd51fc26dc1c1e7c",
-			"victimHash": "0x890332147e897986a0c82c171d4ac279e9340ca7251788e8145cf2b14904c491"
-		},
-		"realisedProfits": 0
-	},
-	{
-		"RevertedBack": true,
-		"RevertedFront": true,
-		"backrunHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
-		"bnbSent": 0,
-		"expectedProfits": 0.03752636991597577,
-		"frontrunHash": "0xa03731cbd018091048621fb3011672582784931f4be1243fcd591615fbd5329b",
-		"gasPriceFront": 5,
-		"infos": {
-			"colsolidated": false,
-			"execTime": 2296,
-			"name": "Automated Income Machine",
-			"newBalanceTrigger": 1.3327143299113007,
-			"oldBalanceTrigger": 1.3327143299113007,
-			"pairAddr": "0xc0d1e8a5371772b27b52ea7ef0a57ef9a4115a30",
-			"tokenAddr": "0x0bf3bacaf2442ecb7545709960056dbde23fd674",
-			"victimHash": "0x4f3c11143e04682f55a8537f2a2d4f3cb2ab0816822ea875f49ae975995a6abf"
-		},
-		"realisedProfits": 0
-	},
-	{
-		"RevertedBack": true,
-		"RevertedFront": true,
-		"backrunHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
-		"bnbSent": 0,
-		"expectedProfits": 0.020708839821025272,
-		"frontrunHash": "0xfb2f5cbca9c1fcb9b3712adf96beca93d48196670f0f9e28fa24b1f51d406f45",
-		"gasPriceFront": 5,
-		"infos": {
-			"colsolidated": false,
-			"execTime": 1079,
-			"name": "Wrapped Okcash BSC",
-			"newBalanceTrigger": 1.3327143299113007,
-			"oldBalanceTrigger": 1.3327143299113007,
-			"pairAddr": "0xb3ed18350524e447e0bf53e6676cef0d0900b2c2",
-			"tokenAddr": "0x523821d20a283d955f6205b4c9252779cd0f964b",
-			"victimHash": "0x6a1fcc234f2c15caf22e9a4bdf1e9397bf338e654b702c4f427cdc3f219e43b1"
-		},
-		"realisedProfits": 0
-	},
-	{
-		"RevertedBack": true,
-		"RevertedFront": true,
-		"backrunHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
-		"bnbSent": 0,
-		"expectedProfits": 0.049944790649740806,
-		"frontrunHash": "0xc2489e60ab80f2af2fac666a30507f8e4d17b6d5deabaf642ca06e687e57324f",
-		"gasPriceFront": 5,
-		"infos": {
-			"colsolidated": false,
-			"execTime": 12261,
-			"name": "LUCA",
-			"newBalanceTrigger": 1.3327143299113007,
-			"oldBalanceTrigger": 1.3327143299113007,
-			"pairAddr": "0x89d8a3e78ead0f72fa8691c4f094cf6e6531ce04",
-			"tokenAddr": "0xa6b06d151a60908e1e09cd03fd51fc26dc1c1e7c",
-			"victimHash": "0x31519d7e63bfebd5cf75e56d8412f48e63d2e51bacbdbac9d9c54c75aafc8697"
-		},
-		"realisedProfits": 0
-	},
-	{
-		"RevertedBack": true,
-		"RevertedFront": true,
-		"backrunHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
-		"bnbSent": 0,
-		"expectedProfits": 0.03230237442155506,
-		"frontrunHash": "0x113376b59b52eb8b4bb38241951f60df2436fe2da56d596f18db548f71160578",
-		"gasPriceFront": 5,
-		"infos": {
-			"colsolidated": false,
-			"execTime": 1345,
-			"name": "LUCA",
-			"newBalanceTrigger": 1.3327143299113007,
-			"oldBalanceTrigger": 1.3327143299113007,
-			"pairAddr": "0x89d8a3e78ead0f72fa8691c4f094cf6e6531ce04",
-			"tokenAddr": "0xa6b06d151a60908e1e09cd03fd51fc26dc1c1e7c",
-			"victimHash": "0xaedccfafe4a060954cab684c85cd59cdfc094b8fa0864fdb3d478dd88bd5ae0a"
-		},
-		"realisedProfits": 0
-	},
-	{
-		"RevertedBack": true,
-		"RevertedFront": true,
-		"backrunHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
-		"bnbSent": 0,
-		"expectedProfits": 0.010122311706863719,
-		"frontrunHash": "0xe064e868faba715c3e887f7f0807a39cdacc31c0ea49e73c1099c3b8a4534645",
-		"gasPriceFront": 5,
-		"infos": {
-			"colsolidated": false,
-			"execTime": 1209,
-			"name": "lieflat",
-			"newBalanceTrigger": 1.3327143299113007,
-			"oldBalanceTrigger": 1.3327143299113007,
-			"pairAddr": "0x3ddaf13f0de56a574e3b45c71c327b2047965e4f",
-			"tokenAddr": "0xe91c5943e1b8bded30c459a21d645c5819257e09",
-			"victimHash": "0xc4642291c62c8e709ebad1bc443811dacb566a79e80684629c8e38e29412d5c3"
-		},
-		"realisedProfits": 0
-	},
-	{
-		"RevertedBack": true,
-		"RevertedFront": true,
-		"backrunHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
-		"bnbSent": 0,
-		"expectedProfits": 0.0625712283536845,
-		"frontrunHash": "0x74b1ea6d698abd8e6687f5da0755f42da511d19922270d26b11e351faf71bee4",
-		"gasPriceFront": 5,
-		"infos": {
-			"colsolidated": false,
-			"execTime": 1131,
-			"name": "DefiConnect",
-			"newBalanceTrigger": 1.3327143299113007,
-			"oldBalanceTrigger": 1.3327143299113007,
-			"pairAddr": "0x0187ffa6760855ec13b06f89410016f30b3018c3",
-			"tokenAddr": "0x97a143545c0f8200222c051ac0a2fc93acbe6ba2",
-			"victimHash": "0xe7255a76e0bcd9acf4038ed25519925c735e48a3fc4f8bc21ae57ee7e264c26a"
-		},
-		"realisedProfits": 0
-	},
-	{
-		"RevertedBack": true,
-		"RevertedFront": true,
-		"backrunHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
-		"bnbSent": 0,
-		"expectedProfits": 0.0625712283536845,
-		"frontrunHash": "0x7cf2a32fd2f233aa4cf6e9a42683f6026167871ff7d7a7ecb88f324987c7b25b",
-		"gasPriceFront": 5,
-		"infos": {
-			"colsolidated": false,
-			"execTime": 3142,
-			"name": "DefiConnect",
-			"newBalanceTrigger": 1.3327143299113007,
-			"oldBalanceTrigger": 1.3327143299113007,
-			"pairAddr": "0x0187ffa6760855ec13b06f89410016f30b3018c3",
-			"tokenAddr": "0x97a143545c0f8200222c051ac0a2fc93acbe6ba2",
-			"victimHash": "0x73fd37dd02c9e6faa97b88ff0021429acc45709f0aa76d9a1a3290b705f57a72"
-		},
-		"realisedProfits": 0
-	},
-	{
-		"RevertedBack": true,
-		"RevertedFront": true,
-		"backrunHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
-		"bnbSent": 0,
-		"expectedProfits": 0.019266015300916352,
-		"frontrunHash": "0x800653adb05f9b9b14e5e92dc2ee5738b6fde0bc1a5180e39e2f67d691f90949",
-		"gasPriceFront": 5,
-		"infos": {
-			"colsolidated": false,
-			"execTime": 1051,
-			"name": "DefiConnect",
-			"newBalanceTrigger": 1.3327143299113007,
-			"oldBalanceTrigger": 1.3327143299113007,
-			"pairAddr": "0x0187ffa6760855ec13b06f89410016f30b3018c3",
-			"tokenAddr": "0x97a143545c0f8200222c051ac0a2fc93acbe6ba2",
-			"victimHash": "0x3d9f28fcdd0e8accb613a539fb8a0893dbd94f508d924a61c97a90e01f0211bd"
+			"execTime": 1123,
+			"name": "Cat",
+			"newBalanceTrigger": 0.260431306,
+			"oldBalanceTrigger": 0.260431306,
+			"pairAddr": "0x51d6e1dbe1bd149259a17594e1394de7634241ce",
+			"tokenAddr": "0x0173295183685f27c84db046b5f0bea3e683c24b",
+			"victimHash": "0x811e249804c86ff10d3829943bdb93ffd67989f108b8673b3849d6eeb7739b36"
 		},
 		"realisedProfits": 0
 	},
 	{
 		"RevertedBack": false,
 		"RevertedFront": false,
-		"backrunHash": "0xacd6c403c0ad5a1f86f4e91157d9634d0f381c27b4fd417db8cb7c2979598e7e",
-		"bnbSent": 1e-9,
-		"expectedProfits": 0.16057887355200165,
-		"frontrunHash": "0x6fd4b0875bc93e4b11ecc3176075aa5ba551f23b4beca2c6494bbca2de43e380",
+		"backrunHash": "0xb3c392dbeffc37e65bd6952fc7a11dd73e900be53133ed9324d9eb2239cb2260",
+		"bnbSent": 0.1495,
+		"expectedProfits": 23941666.81730222,
+		"frontrunHash": "0x34e75dff6bf6609bca80b5d146b94455ac4cbeb87def5a935ecf5ee9384c96a6",
+		"gasPriceFront": 10,
+		"infos": {
+			"colsolidated": false,
+			"execTime": 6765,
+			"name": "MNU-Chain-Token",
+			"newBalanceTrigger": 0.259685126108751,
+			"oldBalanceTrigger": 0.260431305,
+			"pairAddr": "0xa7684ae9de0c7ea248617b634d440acfd8bf8ddd",
+			"tokenAddr": "0x256be284fea694f1bb11f76d556a28ecb496eee9",
+			"victimHash": "0x419068feba7647d077a2390434bde075095a7f0eb8feac6cfc2eaa982f0c4d53"
+		},
+		"realisedProfits": -0.00074617889124901
+	},
+	{
+		"RevertedBack": false,
+		"RevertedFront": false,
+		"backrunHash": "0xedd329bb6e0a2592137f22f0064b7c386da22d5bfe558585b8f501ee05e1f5df",
+		"bnbSent": 0.2695,
+		"expectedProfits": 70152.5068367923,
+		"frontrunHash": "0xa0d98622fbe1b89e111dd737f61422e4afd652581d4a9324f7829f59e101ca90",
 		"gasPriceFront": 5,
 		"infos": {
 			"colsolidated": false,
-			"execTime": 5088,
-			"name": "DefiConnect",
-			"newBalanceTrigger": 1.3327143299062962,
-			"oldBalanceTrigger": 1.3327143299113007,
-			"pairAddr": "0x0187ffa6760855ec13b06f89410016f30b3018c3",
-			"tokenAddr": "0x97a143545c0f8200222c051ac0a2fc93acbe6ba2",
-			"victimHash": "0x8d6f59b111f0af43fd053a720c74601512f91b2981d3b6575ee2d3ad4958569d"
+			"execTime": 9318,
+			"name": "THENA",
+			"newBalanceTrigger": 0.30124530434409924,
+			"oldBalanceTrigger": 0.302584366108751,
+			"pairAddr": "0xf7390ea35999ea21ca33bc0e76a383f53b8bfe7a",
+			"tokenAddr": "0xf4c8e32eadec4bfe97e0f595add0f4450a863a11",
+			"victimHash": "0x718b10fbe43d1104b0275cfa7221aedc5f6e44a14aee19794904ea0d60981539"
 		},
-		"realisedProfits": -5.0045e-12
+		"realisedProfits": -0.001339061764651739
+	},
+	{
+		"RevertedBack": true,
+		"RevertedFront": true,
+		"backrunHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+		"bnbSent": 0,
+		"expectedProfits": 70152.09377650701,
+		"frontrunHash": "0xea0836b0af1f65043508194e73499be15efca1c1aecc4ca16e2c644865f3956f",
+		"gasPriceFront": 7.499999999999999,
+		"infos": {
+			"colsolidated": false,
+			"execTime": 1238,
+			"name": "THENA",
+			"newBalanceTrigger": 0.30124530434409924,
+			"oldBalanceTrigger": 0.30124530434409924,
+			"pairAddr": "0xf7390ea35999ea21ca33bc0e76a383f53b8bfe7a",
+			"tokenAddr": "0xf4c8e32eadec4bfe97e0f595add0f4450a863a11",
+			"victimHash": "0xc9b41cbadc95ee259e39d40e0a9a5e0e60ea5dc87ace178bc0e6c0f43d78a360"
+		},
+		"realisedProfits": 0
+	},
+	{
+		"RevertedBack": true,
+		"RevertedFront": true,
+		"backrunHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+		"bnbSent": 0,
+		"expectedProfits": 20113412.248411007,
+		"frontrunHash": "0x2b1e2dccb925799302592a230feb95d5c70124404f45dc1198809914f1d2d899",
+		"gasPriceFront": 7.499999999999999,
+		"infos": {
+			"colsolidated": false,
+			"execTime": 1107,
+			"name": "IMOV",
+			"newBalanceTrigger": 0.03174530434409925,
+			"oldBalanceTrigger": 0.03174530434409925,
+			"pairAddr": "0xc948a0df9394f3f0c9d4570c8d14458ced147657",
+			"tokenAddr": "0x7b8779e01d117ec7e220f8299a6f93672e8eae23",
+			"victimHash": "0xaacb86896b9d74ff5a40c58606ad4e083bdc4ef8f4258cc8f69a5e802ca26304"
+		},
+		"realisedProfits": 0
+	},
+	{
+		"RevertedBack": true,
+		"RevertedFront": true,
+		"backrunHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+		"bnbSent": 0,
+		"expectedProfits": 556359.6460615982,
+		"frontrunHash": "0xac3f208f33e96af957ac551674664e11c8966715c869d83847e0120371e4e64d",
+		"gasPriceFront": 7.499999999999999,
+		"infos": {
+			"colsolidated": false,
+			"execTime": 1123,
+			"name": "Singularity Dao",
+			"newBalanceTrigger": 0.31782841434409925,
+			"oldBalanceTrigger": 0.31782841434409925,
+			"pairAddr": "0x43b95976cf0929478bc13332c9cd2d63bf060976",
+			"tokenAddr": "0x90ed8f1dc86388f14b64ba8fb4bbd23099f18240",
+			"victimHash": "0xbc7ceeecaaa03369d91c9bda1cd175b5d59c6f9f3dc284f74ff07c8cb31848c9"
+		},
+		"realisedProfits": 0
+	},
+	{
+		"RevertedBack": true,
+		"RevertedFront": true,
+		"backrunHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+		"bnbSent": 0,
+		"expectedProfits": 21790197999.60051,
+		"frontrunHash": "0x1876938e200afb6244b7c0311aa69899cde01da28548165c4200878bb1e34953",
+		"gasPriceFront": 7.499999999999999,
+		"infos": {
+			"colsolidated": false,
+			"execTime": 1807,
+			"name": "ZOO",
+			"newBalanceTrigger": 0.31782841434409925,
+			"oldBalanceTrigger": 0.31782841434409925,
+			"pairAddr": "0x579bb1902e405d056071ad43f4abbf3d42ba0615",
+			"tokenAddr": "0x7ffc1243232da3ac001994208e2002816b57c669",
+			"victimHash": "0xd0df9a5daa8f210028beebed901007cece452cd6708286e780282e4d9422eb53"
+		},
+		"realisedProfits": 0
+	},
+	{
+		"RevertedBack": true,
+		"RevertedFront": true,
+		"backrunHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+		"bnbSent": 0,
+		"expectedProfits": 9287.48985934494,
+		"frontrunHash": "0x5ce03961c77470fb87509817fe6eb2e1352d751bc36a94bec1d00beec5b4f391",
+		"gasPriceFront": 7.499999999999999,
+		"infos": {
+			"colsolidated": false,
+			"execTime": 1793,
+			"name": "Oraichain Token",
+			"newBalanceTrigger": 0.36890282734409924,
+			"oldBalanceTrigger": 0.36890282734409924,
+			"pairAddr": "0xf7697db76fbf4ba5d22c0c72ab986cf751fba3af",
+			"tokenAddr": "0xa325ad6d9c92b55a3fc5ad7e412b1518f96441c0",
+			"victimHash": "0x6d2619cb6ccbbc744d8b7734841f7e329b4618d5f939b7a1776e2ff1cff85e1c"
+		},
+		"realisedProfits": 0
+	},
+	{
+		"RevertedBack": true,
+		"RevertedFront": true,
+		"backrunHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+		"bnbSent": 0,
+		"expectedProfits": 25660.773178961073,
+		"frontrunHash": "0xa5e876949b835db000924fc18ead3334029e932dad3966ea29d6bbf747400c36",
+		"gasPriceFront": 7.499999999999999,
+		"infos": {
+			"colsolidated": false,
+			"execTime": 1135,
+			"name": "BUSD Token",
+			"newBalanceTrigger": 0.36890282734409924,
+			"oldBalanceTrigger": 0.36890282734409924,
+			"pairAddr": "0x58f876857a02d6762e0101bb5c46a8c1ed44dc16",
+			"tokenAddr": "0xe9e7cea3dedca5984780bafc599bd69add087d56",
+			"victimHash": "0x7baf81b7453421b25cbcf4f198154477efa3ad3bbe1c0cd44f0bf6c3281bdcab"
+		},
+		"realisedProfits": 0
 	}
 ]

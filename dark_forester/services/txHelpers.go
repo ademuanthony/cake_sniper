@@ -21,7 +21,11 @@ func getTxSenderAddress(tx *types.Transaction, client *ethclient.Client) string 
 }
 
 func formatEthWeiToEther(etherAmount *big.Int) float64 {
-	var base, exponent = big.NewInt(10), big.NewInt(18)
+	return _formatEthWeiToEther(etherAmount, 18)
+}
+
+func _formatEthWeiToEther(etherAmount *big.Int, decimals int64) float64 {
+	var base, exponent = big.NewInt(10), big.NewInt(decimals)
 	denominator := base.Exp(base, exponent, nil)
 	// Convert to float for precision
 	tokensSentFloat := new(big.Float).SetInt(etherAmount)

@@ -2,11 +2,13 @@ package services
 
 import (
 	"context"
+	"dark_forester/contracts/uniswap"
 	"log"
 	"math"
 	"math/big"
 	"time"
 
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -193,7 +195,7 @@ func buildAddLiquidityFinal(tx *types.Transaction, client *ethclient.Client, add
 	return final
 }
 
-////////////////////// swapExactETHForTokens //////////////////////////////
+// //////////////////// swapExactETHForTokens //////////////////////////////
 type Result struct {
 	Hash   common.Hash
 	Status uint64
@@ -226,7 +228,7 @@ type BinarySearchResult struct {
 	Rtkn1                  *big.Int
 	Rbnb1                  *big.Int
 	ExpectedProfits        *big.Int
-	IsNewMarket bool
+	IsNewMarket            bool
 }
 
 var SharedAnalytic SharedAnalyticStruct
@@ -263,6 +265,7 @@ type FrontrunResultStruct struct {
 
 type UniswapExactETHToTokenInput struct {
 	Token        common.Address
+	Decimals     uint8
 	Paired       common.Address
 	AmountOutMin *big.Int
 	Deadline     *big.Int
@@ -302,6 +305,11 @@ func buildSwapETHData(tx *types.Transaction, client *ethclient.Client) UniswapEx
 	SwapData.AmountOutMin, _ = amountMin.SetString(common.Bytes2Hex(data[:32]), 16)
 	SwapData.Deadline, _ = deadline.SetString(common.Bytes2Hex(data[96:128]), 16)
 	SwapData.To = common.BytesToAddress(data[64:96])
+
+	token, _ := uniswap.NewIERC20(SwapData.Token, client)
+	if token != nil {
+		SwapData.Decimals, _ = token.Decimals(&bind.CallOpts{})
+	}
 
 	return SwapData
 }
