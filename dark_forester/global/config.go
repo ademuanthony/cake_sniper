@@ -74,22 +74,22 @@ var ML = 200
 var Sandwicher bool = true
 
 // allows spectator mode for tx that would have been profitable if sandwich realised successfully
-var MonitorModeOnly bool = true
+var MonitorModeOnly bool = false
 
 // max slippage we allow in % for our sandwich in tx
 var SandwichInMaxSlippage = 0.5
 
 // gas price for our sandwich in tx in multiples of victim-s tx gas.
 // Must be high enough for favourable ordering inside the block.
-var SandwichInGasPriceMultiplier = 1.5
+var SandwichInGasPriceMultiplier = 2
 
 // max number of WBNB we are ok to spend in the sandwich in tx
-var Sandwicher_maxbound = 01.36 // 1.4 BNB
+var Sandwicher_maxbound = 0.55 // 1.4 BNB
 // min number of WBNB we are ok to spend in the sandwich in tx
 var Sandwicher_minbound = 0.05 //  BNB
 var Sandwicher_baseunit = 0.01 //  BNB
 // min profit expected in bnb to be worth launching a sandwich attack
-var Sandwicher_minprofit = 0.003 //0.0047552 //  BNB
+var Sandwicher_minprofit = 0.004 //0.0047552 //  BNB
 // min liquidity of the pool on which we want to perform sandwich
 var Sandwicher_acceptable_liq = 0.2 // BNB
 // stop everything and panic if we lose cumulated > 2 BNB on the different attacks

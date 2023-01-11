@@ -61,6 +61,7 @@ func setupWorkerRegistry(redisClient redis.Client) {
 	registerWorker := redisClient.Subscribe("REGISTER_WORKER")
 	removeWorker := redisClient.Subscribe("REMOVE_WORKER")
 	addNewMarker := redisClient.Subscribe("NEW_MARKET")
+	marketTestedSubscriber := redisClient.Subscribe("MARKET_TESTED")
 
 	go func() {
 		for {
@@ -118,6 +119,31 @@ func setupWorkerRegistry(redisClient redis.Client) {
 			workerMutex.Unlock()
 
 			fmt.Println("Worker unregistered", msg.Payload)
+		}
+	}()
+
+	go func() {
+		for {
+			func() {
+				msg, err := marketTestedSubscriber.ReceiveMessage()
+				if err != nil {
+					fmt.Println("Error in receiving redis msg", err)
+					return
+				}
+
+				var market global.Market
+				if err := json.Unmarshal([]byte(msg.Payload), &market); err != nil {
+					fmt.Println("Error in marshalling new market info", err)
+					return
+				}
+				if oldMarket, f := global.SANDWICH_BOOK[market.Address]; f && oldMarket.ManuallyDisabled {
+					return
+				}
+				err = services.SaveMarket(market)
+				if err != nil {
+					fmt.Println("error in saving tested market", err)
+				}
+			}()
 		}
 	}()
 }

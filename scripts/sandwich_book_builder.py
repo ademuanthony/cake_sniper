@@ -1,9 +1,14 @@
 import json
 from brownie import *
 from variables import *
+import redis
+import json
 
+red = redis.StrictRedis('localhost', 6379, charset="utf-8", decode_responses=True)
 
-# open the analytic file. consolidate tne totalProfitsRealised / totalBnbBought for each market. Then extract data pulled from the sandwich monitor mode of dark_forester. Append all unknowned / to be tested  market to sandwich_book.json.
+# open the analytic file. consolidate tne totalProfitsRealised / totalBnbBought for each market. 
+# Then extract data pulled from the sandwich monitor mode of dark_forester. 
+# Append all unknowned / to be tested  market to sandwich_book.json.
 
 def refineSandwichBook():
 
@@ -151,18 +156,27 @@ def testMarket():
                             with open("./dark_forester/global/sandwich_book_temp.json", "w") as dest:
                                 json.dump(filteredData, dest, indent=2)
 
+                        
+
                     else:  # revert on buy
                         print("--> buy tx: failed")
                         markets[market]["tested"] = True
                         filteredData[market] = markets[market]
                         with open("./dark_forester/global/sandwich_book_temp.json", "w") as dest:
                             json.dump(filteredData, dest, indent=2)
-
-                except:
-                    print("market test failed")
+                    
+                    publishMarketTestEvent(markets[market])
+                    
+                except Exception as e:
+                    print("ERROR : "+str(e))
                 
     print("no more market to test sir")
 
+def publishMarketTestEvent(market):
+    print('publishing tested event')
+    if markets[market]["tested"] == True and markets[market]["deviation"] < 2 and markets[market]["deviation"] != 0:
+        markets[market]["whitelisted"] = True
+    red.publish('MARKET_TESTED', json.dumps(market))
 
 def printCurrrentWhitelisted():
     print("\nCURRENT BOOK : \n")

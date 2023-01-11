@@ -314,6 +314,15 @@ func _flushAnalyticFile(structToWrite interface{}) {
 	var newData map[string]interface{}
 	json.Unmarshal(jStr, &newData)
 
+	//normalize market for python
+	if info, f := newData["info"]; f {
+		infoMap := info.(map[string]interface{})
+		delete(newData, "info")
+		for key, val := range infoMap {
+			newData[key] = val
+		}
+	}
+
 	data = append(data, newData)
 
 	newContent, _ := json.MarshalIndent(data, "", "\t")

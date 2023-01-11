@@ -200,6 +200,8 @@ func handleTransaction(tx *types.Transaction, client *ethclient.Client) {
 
 func main() {
 
+	fmt.Println("Getting started")
+
 	// we say <place_holder> for the defval as it is anyway filtered to geth_ipc in the switch
 	ClientEntered := flag.String("client", "xxx", "Gateway to the bsc protocol. Available options:\n\t-bsc_testnet\n\t-bsc\n\t-geth_http\n\t-geth_ipc")
 	flag.Parse()
@@ -218,10 +220,6 @@ func main() {
 		}()
 	}
 
-	var redisClient = redis.NewClient(&redis.Options{
-		Addr: "localhost:6379",
-	})
-
 	shutdownSignal := make(chan os.Signal, 1)
 	signal.Notify(shutdownSignal, os.Interrupt)
 
@@ -230,12 +228,12 @@ func main() {
 	go func() {
 		for range shutdownSignal {
 			fmt.Println("\nShut down requested. Un-registering worker")
-			redisClient.Publish("REMOVE_WORKER", workerID)
+			services.RedisClient.Publish("REMOVE_WORKER", workerID)
 			os.Exit(0)
 		}
 	}()
 
 	// Launch txpool streamer
-	StreamNewTxs(client, rpcClient, redisClient)
+	StreamNewTxs(client, rpcClient, services.RedisClient)
 
 }

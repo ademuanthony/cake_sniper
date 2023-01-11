@@ -2,12 +2,14 @@ package services
 
 import (
 	"context"
+	"dark_forester/contracts/uniswap"
 	"dark_forester/global"
 	"fmt"
 	"log"
 	"math/big"
 	"time"
 
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -56,6 +58,7 @@ func (s *sandwicher) Run() {
 	if err != nil {
 		log.Fatalln("handleWatchedAddressTx: problem with frontrunning tx : ", err)
 	}
+	fmt.Println("Target tx hash: ", s.tx.Hash())
 	fmt.Println("Frontrunning tx hash: ", signedFrontrunningTx.Hash())
 	fmt.Println("Targetted token : ", s.swapData.Token)
 	fmt.Println("Name : ", getTokenName(s.swapData.Token, s.client))
@@ -81,7 +84,7 @@ func (s *sandwicher) Run() {
 		} else {
 			// TODO: wait for victims tx to confirm
 			fmt.Println("frontrunning tx successful. Sending backrunning..")
-			time.Sleep(100 * time.Millisecond) // wait a little to ensure full confirmation of front and victim tx TODO: remove?
+			// time.Sleep(1000 * time.Millisecond) // wait a little to ensure full confirmation of front and victim tx TODO: remove?
 			s.sendBackRunningTx(nonce, global.STANDARD_GAS_PRICE, oldBalanceTrigger,
 				signedFrontrunningTx.Hash(), s.tx.Hash(), true)
 		}
@@ -145,7 +148,7 @@ func (s *sandwicher) sendBackRunningTx(nonce uint64, gasPriceFront, oldBalanceTr
 	if s.BinaryResult.IsNewMarket {
 		gasPriceFront = global.STANDARD_GAS_PRICE
 	}
-	signedBackrunningTx := s._prepareBackrun(nonce, gasPriceFront, s.swapData.Token, frontSucceeded)
+	signedBackrunningTx := s._prepareBackrun(nonce, global.STANDARD_GAS_PRICE, s.swapData.Token, frontSucceeded)
 	err := s.client.SendTransaction(context.Background(), signedBackrunningTx)
 	if err != nil {
 		log.Fatalln("sendBackRunningTx: problem with backrunning tx : ", err)
@@ -161,8 +164,19 @@ func (s *sandwicher) sendBackRunningTx(nonce uint64, gasPriceFront, oldBalanceTr
 	}
 
 	if result.Status == 0 {
-		// a failed backrunning tx is worrying if front succeeded. It means the stinky tokens are locked in TRIGGER and couldn't be sold back.
+		// a failed backrunning tx is worrying if front succeeded.
+		// It means the stinky tokens are locked in TRIGGER and couldn't be sold back.
 		// at this point, we need to shut down dark forested and rescue the tokens manually.
+		// we will check the balance of trigger to see if the token is actually locked there in
+		contract, err := uniswap.NewIERC20(s.swapData.Token, s.client)
+		if err == nil {
+			balance, err := contract.BalanceOf(&bind.CallOpts{}, global.TRIGGER_ADDRESS)
+			if err == nil && balance.Int64() == 0 {
+				// no need to worry, the cancel trigger may have succeeded
+				return
+			}
+		}
+		
 		fmt.Printf("\nbackrunning tx reverted. Need to manually rescue funds:\ntoken name involved : %v\nBEP20 address:%v\n", SharedAnalytic.TokenName, SharedAnalytic.TokenAddr)
 		s._buildFrontrunAnalytics(victimHash, frontrunHash, signedBackrunningTx.Hash(),
 			false, true, oldBalanceTrigger, signedBackrunningTx.GasPrice(), s.swapData.Token)

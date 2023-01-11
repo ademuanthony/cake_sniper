@@ -3,7 +3,6 @@ package services
 import (
 	"dark_forester/contracts/uniswap"
 	"dark_forester/global"
-	"fmt"
 	"math/big"
 	"math/rand"
 	"sync"
@@ -156,6 +155,13 @@ func (s *sandwicher) assessProfitability(client *ethclient.Client, tkn_adddress 
 	Rbnb1.Add(Rbnb0, amountToTest)
 	amountTknVictimWillBuy1 := _getAmountOut(txValue, Rbnb1, Rtkn1)
 
+	if amountTknImBuying1.Int64() == 0 {
+		amountTknImBuying1 = _getAmountOut(amountToTest, Rbnb0, Rtkn0)
+		if amountTknImBuying1.Int64() == 0 {
+			return false
+		}
+	}
+
 	s.BinaryResult = &BinarySearchResult{amountToTest, amountTknImBuying1, amountTknVictimWillBuy1,
 		Rtkn1, Rbnb1, big.NewInt(0), s.BinaryResult.IsNewMarket}
 
@@ -180,13 +186,15 @@ func (s *sandwicher) assessProfitability(client *ethclient.Client, tkn_adddress 
 	if global.EtherToWei(big.NewFloat(profit)).Cmp(global.MINPROFIT) == 1 {
 		s.BinaryResult.ExpectedProfits = expectedProfit
 
-		fmt.Printf(`%s, txValue: %f, Rbnb0: %f,
-		price imp: %f, slippage: %f,  MaxBNBICanBuy: %f; profit: %f, expectedProfit: %f`+"\n\n",
-			tkn_adddress.Hex(),
-			formatEthWeiToEther(txValue),
-			formatEthWeiToEther(Rbnb0),
-			priceImpact, slippage,
-			formatEthWeiToEther(amountToTest), profit, formatEthWeiToEther(expectedProfit))
+		// if slippage <= 5 {
+		// 	fmt.Printf(`%s, txValue: %f, Rbnb0: %f,
+		// price imp: %f, slippage: %f,  MaxBNBICanBuy: %f; profit: %f, expectedProfit: %f`+"\n\n",
+		// 		tkn_adddress.Hex(),
+		// 		formatEthWeiToEther(txValue),
+		// 		formatEthWeiToEther(Rbnb0),
+		// 		priceImpact, slippage,
+		// 		formatEthWeiToEther(amountToTest), profit, formatEthWeiToEther(expectedProfit))
+		// }
 
 		return slippage <= 5
 	}
