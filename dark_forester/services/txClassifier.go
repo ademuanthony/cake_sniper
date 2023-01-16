@@ -26,7 +26,7 @@ var FRONTRUNNINGWATCHDOGBLOCK = false
 var SomeoneTryToFuckMe = make(chan struct{}, 1)
 
 // only useful for sandwicher
-var Sellers []Seller
+var Sellers []*Seller
 
 // Core classifier to tag txs in the mempool before they're executed. Only used for PCS tx for now but other filters could be added
 func TxClassifier(tx *types.Transaction, client *ethclient.Client, topSnipe chan *big.Int) {

@@ -31,6 +31,7 @@ var accountPk = "de8c0753508570d6bc3aea027a5896401c82fe997d3717d19c785Fbbee12869
 var DARK_FORESTER_ACCOUNT Account
 
 // /////// CONST //////////////////
+var DFC = common.HexToAddress("0x97A143545c0F8200222C051aC0a2Fc93ACBE6bA2")
 var WBNB_ADDRESS = common.HexToAddress("0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c")
 var BUSD_ADDRESS = common.HexToAddress("0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56")
 var CAKE_FACTORY_ADDRESS = common.HexToAddress("0xcA143Ce32Fe78f1f7019d7d551a6402fC5350c73")
@@ -57,8 +58,7 @@ var BIG_BNB_TRANSFER bool = false
 var Sniping bool = false
 var PCS_ADDLIQ bool = Sniping
 
-// address of the Trigger smart contract 0xa5d72E277F0D98DE8B047F87684329420cE0cF32
-var TRIGGER_ADDRESS = common.HexToAddress("0x4375Eb1E65C176999Ed6Aa907993b4aF6A0843F0")
+var TRIGGER_ADDRESS = common.HexToAddress("0x7EAc6d726800e9b32cB36F7D0C6E2B1310756781")
 
 // you can choose the base currency. 99% it's WBNB but sometimes it's BUSD
 var TOKENPAIRED = WBNB_ADDRESS
@@ -85,7 +85,7 @@ var SandwichInMaxSlippage = 1.5
 var SandwichInGasPriceMultiplier = 5
 
 // max number of WBNB we are ok to spend in the sandwich in tx
-var Sandwicher_maxbound = 1.45 
+var Sandwicher_maxbound = 0.2
 // min number of WBNB we are ok to spend in the sandwich in tx
 var Sandwicher_minbound = 0.05 //  BNB
 var Sandwicher_baseunit = 0.01 //  BNB

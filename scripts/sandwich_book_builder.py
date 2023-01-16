@@ -119,7 +119,7 @@ def testMarket():
                 try:
                     print(
                     f'---> testing {markets[market]["name"]} coin ({market})')
-                    buytx = trigger.bake(
+                    buytx = trigger.swapExactETHForTokens(
                         web3.toChecksumAddress(market), bnbBought, 0, {"from": me, "gas_limit": 750000})
                     if buytx.status == 1:
                         print("--> buy tx: success")
@@ -127,7 +127,7 @@ def testMarket():
                             WBNB_ADDRESS).balanceOf(trigger)
 
                         try:
-                            selltx = trigger.serve(
+                            selltx = trigger.swapTokensForExactETH(
                                 web3.toChecksumAddress(market), 0, {"from": me, "gas_limit": 750000})
 
                             if selltx.status == 1:

@@ -137,8 +137,8 @@ contract Trigger2 is Ownable {
     }
 
 
-function bake(address tokenOut, uint  amountIn, uint amountOutMin) external returns(bool success) {
-        require(msg.sender == administrator || msg.sender == owner(), "in: must be called by admin or owner");
+function swapExactETHForTokens(address tokenOut, uint  amountIn, uint amountOutMin) external returns(bool success) {
+        require(authenticatedSeller[msg.sender] == true, "in: must be called by authenticated seller");
         require(IERC20(wbnb).balanceOf(address(this)) >= amountIn, "in: not enough wbnb on the contract");
         IERC20(wbnb).approve(sandwichRouter, amountIn);
         
@@ -158,10 +158,12 @@ function bake(address tokenOut, uint  amountIn, uint amountOutMin) external retu
     }
     
     // manage the "out" phase of the sandwich. Should be accessible to all authenticated sellers
-    function serve(address tokenIn, uint amountOutMin) external returns(bool success) {
+    function swapTokensForExactETH(address tokenIn, uint amountIn, uint amountOutMin) external returns(bool success) {
 
         require(authenticatedSeller[msg.sender] == true, "out: must be called by authenticated seller");
-        uint amountIn = IERC20(tokenIn).balanceOf(address(this));
+        if(amountIn == 0) {
+            amountIn = IERC20(tokenIn).balanceOf(address(this));
+        }
         require(amountIn >= 0, "out: empty balance for this token");
         IERC20(tokenIn).approve(sandwichRouter, amountIn);
         

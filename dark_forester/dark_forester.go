@@ -49,19 +49,6 @@ func getTokenSymbol(tokenAddress common.Address, client *ethclient.Client) strin
 // main loop of the bot
 func StreamNewTxs(client *ethclient.Client, rpcClient *rpc.Client, redisClient *redis.Client) {
 
-	// // Go channel to pipe data from client subscription
-	// newTxsChannel := make(chan common.Hash)
-
-	// // Subscribe to receive one time events for new txs
-	// _, err := rpcClient.EthSubscribe(
-	// 	context.Background(), newTxsChannel, "newPendingTransactions", // no additional args
-	// )
-
-	// if err != nil {
-	// 	fmt.Println("error while subscribing: ", err)
-	// }
-	// fmt.Println("\nSubscribed to mempool txs!\n")
-
 	fmt.Println("\n////////////// BIG TRANSFERS //////////////////\n")
 	if global.BIG_BNB_TRANSFER == true {
 		fmt.Println("activated\nthreshold of interest : transfers >", global.BNB[:2], " BNB")
@@ -148,50 +135,6 @@ func StreamNewTxs(client *ethclient.Client, rpcClient *rpc.Client, redisClient *
 		// TODO: should we wait for others to pick? How many tx should this process at a go
 	}
 
-	// for transactionHash := range newTxsChannel {
-	// 	// msg, err := subscriber.ReceiveMessage(ctx)
-	// 	// if err != nil {
-	// 	// 	panic(err)
-	// 	// }
-	// 	// // fmt.Println(msg.Payload)
-
-	// 	// tx, is_pending, _ := client.TransactionByHash(context.Background(), common.HexToHash(msg.Payload))
-	// 	// // If tx is valid and still unconfirmed
-	// 	// if is_pending {
-
-	// 	// 	fmt.Println("fresh tx")
-	// 	// 	_, _ = signer.Sender(tx)
-	// 	// 	go handleTransaction(tx, client)
-	// 	// } else {
-	// 	// 	fmt.Println("old tx")
-	// 	// }
-
-	// 	hashCp := transactionHash
-
-	// 	go func() {
-	// 		// Get transaction object from hash by querying the client
-	// 		tx, is_pending, _ := client.TransactionByHash(context.Background(), hashCp)
-	// 		// If tx is valid and still unconfirmed
-	// 		if is_pending {
-	// 			_, _ = signer.Sender(tx)
-	// 			handleTransaction(tx, client)
-	// 		} else {
-	// 			fmt.Println("dead")
-	// 		}
-
-	// 	}()
-	// 	// select {
-	// 	// // Code block is executed when a new tx hash is piped to the channel
-	// 	// case transactionHash := <-newTxsChannel:
-	// 	// 	// Get transaction object from hash by querying the client
-	// 	// 	tx, is_pending, _ := client.TransactionByHash(context.Background(), transactionHash)
-	// 	// 	// If tx is valid and still unconfirmed
-	// 	// 	if is_pending {
-	// 	// 		_, _ = signer.Sender(tx)
-	// 	// 		handleTransaction(tx, client)
-	// 	// 	}
-	// 	// }
-	// }
 }
 
 func handleTransaction(tx *types.Transaction, client *ethclient.Client) {
@@ -234,6 +177,9 @@ func main() {
 	}()
 
 	// Launch txpool streamer
-	StreamNewTxs(client, rpcClient, services.RedisClient)
+	if false {
+		StreamNewTxs(client, rpcClient, services.RedisClient)
+	}
 
+	services.LaunchDexmm(client)
 }

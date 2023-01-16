@@ -168,7 +168,7 @@ func (s *sandwicher) runOnSteroid() {
 		seller := Sellers[i]
 		go func() {
 			time.Sleep(time.Duration(rand.Intn(1000)) * time.Millisecond) // sleep between 0 and 1 sec
-			s._prepareSellerBackrun(&seller, sellGasPrice, confirmedOutTx, s.swapData.Token)
+			s._prepareSellerBackrun(seller, sellGasPrice, confirmedOutTx, s.swapData.Token)
 		}()
 	}
 

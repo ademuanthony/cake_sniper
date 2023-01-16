@@ -27,7 +27,22 @@ type Seller struct {
 	Pk           string
 	RawPk        *ecdsa.PrivateKey
 	Balance      float64
-	PendingNonce uint64
+	// CurrentNonce is the nonce used for the last transaction. Use it for replacement
+	CurrentNonce uint64
+}
+
+func (s *Seller) PendingNonce(ctx context.Context, client *ethclient.Client) uint64 {
+	if s.CurrentNonce == 0 {
+		v, err := client.PendingNonceAt(ctx, s.Address)
+		if err != nil {
+			fmt.Println("PendingNonce", err)
+			return 0
+		}
+		s.CurrentNonce = v
+	} else {
+		s.CurrentNonce += 1
+	}
+	return s.CurrentNonce
 }
 
 var loadSellerMutex sync.Mutex
@@ -53,7 +68,7 @@ func loadSellers(client *ethclient.Client, ctx context.Context) {
 	for _, sel := range swarm {
 
 		guard.Lock()
-		sel.PendingNonce, err = client.PendingNonceAt(ctx, sel.Address)
+		sel.CurrentNonce, err = client.PendingNonceAt(ctx, sel.Address)
 		guard.Unlock()
 		if err != nil {
 			fmt.Printf("couldn't fetch pending nonce for sel%v: %v", sel.Idx, err)
@@ -63,14 +78,14 @@ func loadSellers(client *ethclient.Client, ctx context.Context) {
 		if err != nil {
 			log.Printf("error decrypting sel%v pk: %v", sel.Idx, err)
 		}
-		Sellers = append(Sellers, sel)
+		Sellers = append(Sellers, &sel)
 	}
 	fmt.Println("Sellers fully loaded. ", len(Sellers), " sellers")
 }
 
 var (
-	bakeSelector  = []byte{0x0d, 0xf4, 0xd8, 0x36}
-	serveSelector = []byte{0xd8, 0x3f, 0x2b, 0x39}
+	bakeSelector  = []byte{0x8d, 0x2a, 0xbc, 0x12} // swapExactETHForTokens -> 0x8d 0x2a 0xbc 0x12
+	serveSelector = []byte{0xbd, 0x9b, 0x20, 0x84} // swapTokensForExactETH -> 0xbd 0x9b 0x20 0x84
 )
 
 // prepare frontrunning tx:
@@ -150,10 +165,12 @@ func (s *sandwicher) _prepareBackrun(nonce uint64, gasPrice *big.Int, tokenAddre
 	// []byte{0xd6, 0x4f, 0x65, 0x0d}
 	// sandwichOutselector := []byte{0xe7, 0x77, 0x48, 0xae}
 	var dataOut []byte
+	amountIn := common.LeftPadBytes(big.NewInt(0).Bytes(), 32)
 	amountOutMinOut := common.LeftPadBytes(big.NewInt(0).Bytes(), 32)
 	tokenOut := common.LeftPadBytes(tokenAddress.Bytes(), 32)
 	dataOut = append(dataOut, serveSelector...)
 	dataOut = append(dataOut, tokenOut...)
+	dataOut = append(dataOut, amountIn...)
 	dataOut = append(dataOut, amountOutMinOut...)
 	backrunningTx := types.NewTransaction(nonce+1, to, value, gasLimit, gasPrice, dataOut)
 	signedBackrunningTx, err := types.SignTx(backrunningTx, types.NewEIP155Signer(global.CHAINID),
@@ -167,7 +184,7 @@ func (s *sandwicher) _prepareBackrun(nonce uint64, gasPrice *big.Int, tokenAddre
 func (s *sandwicher) _prepareSellerBackrun(seller *Seller, sellGasPrice *big.Int,
 	confirmedOutTx chan *SandwichResult, tokenAddress common.Address) {
 
-	sellerNonce := seller.PendingNonce
+	sellerNonce := seller.CurrentNonce
 	to := global.TRIGGER_ADDRESS
 	gasLimit := uint64(700000)
 	value := big.NewInt(0)

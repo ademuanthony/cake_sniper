@@ -3,7 +3,6 @@ package services
 import (
 	"dark_forester/contracts/uniswap"
 	"dark_forester/global"
-	"fmt"
 	"math/big"
 	"math/rand"
 	"sync"
@@ -13,8 +12,8 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
-// Equivalent of _getAmountOut function of the PCS router. Calculates z.
-func _getAmountOut(amountIn, reserveIn, reserveOut *big.Int) *big.Int {
+// Equivalent of getAmountOut function of the PCS router. Calculates z.
+func getAmountOut(amountIn, reserveIn, reserveOut *big.Int) *big.Int {
 	// fmt.Printf("_getAmountOut %s %s %s \n", myMaxBuy.String(), reserveBnb.String(), reserveTkn.String())
 	// out, err := global.ROUTER.GetAmountOut(&bind.CallOpts{}, myMaxBuy, reserveBnb, reserveTkn)
 	// if err != nil {
@@ -32,6 +31,20 @@ func _getAmountOut(amountIn, reserveIn, reserveOut *big.Int) *big.Int {
 	den.Mul(den, reserveIn)
 	den.Add(den, myMaxBuy9975)
 	z.Div(num, den)
+	return z
+}
+
+func getAmountOutMin(amountIn, reserveIn, reserveOut *big.Int, slippage float64) *big.Int {
+	amount := getAmountOut(amountIn, reserveIn, reserveOut)
+
+	var myMaxBuySlip = new(big.Int)
+	var z = new(big.Int)
+	num := big.NewInt(int64(10000 - slippage*10000))
+	myMaxBuySlip.Mul(num, amount)
+
+	den := big.NewInt(10000)
+	z.Div(num, den)
+
 	return z
 }
 
@@ -60,12 +73,12 @@ func getReservesData(client *ethclient.Client, tokenAddress common.Address) (*bi
 // breaking victim's slippage
 func (s *sandwicher) _binarySearch(amountToTest, Rtkn0, Rbnb0, txValue, amountOutMinVictim *big.Int) {
 
-	amountTknImBuying1 := _getAmountOut(amountToTest, Rbnb0, Rtkn0)
+	amountTknImBuying1 := getAmountOut(amountToTest, Rbnb0, Rtkn0)
 	var Rtkn1 = new(big.Int)
 	var Rbnb1 = new(big.Int)
 	Rtkn1.Sub(Rtkn0, amountTknImBuying1)
 	Rbnb1.Add(Rbnb0, amountToTest)
-	amountTknVictimWillBuy1 := _getAmountOut(txValue, Rbnb1, Rtkn1)
+	amountTknVictimWillBuy1 := getAmountOut(txValue, Rbnb1, Rtkn1)
 
 	// check if this amountToTest is really the best we can have
 	// 1) we don't break victim's slippage with amountToTest
@@ -77,12 +90,12 @@ func (s *sandwicher) _binarySearch(amountToTest, Rtkn0, Rbnb0, txValue, amountOu
 			return
 		}
 		myMaxBuy := amountToTest.Add(amountToTest, global.BASE_UNIT)
-		amountTknImBuying2 := _getAmountOut(myMaxBuy, Rbnb0, Rtkn0)
+		amountTknImBuying2 := getAmountOut(myMaxBuy, Rbnb0, Rtkn0)
 		var Rtkn1Test = new(big.Int)
 		var Rbnb1Test = new(big.Int)
 		Rtkn1Test.Sub(Rtkn0, amountTknImBuying2)
 		Rbnb1Test.Add(Rbnb0, myMaxBuy)
-		amountTknVictimWillBuy2 := _getAmountOut(txValue, Rbnb1Test, Rtkn1Test)
+		amountTknVictimWillBuy2 := getAmountOut(txValue, Rbnb1Test, Rtkn1Test)
 		// 3) if we go 1 step further on the ladder and it breaks the slippage, that means that amountToTest is really the amount of WBNB that we can engage and milk the maximum of profits from the sandwich.
 		if amountTknVictimWillBuy2.Cmp(amountOutMinVictim) == -1 {
 			s.BinaryResult = &BinarySearchResult{amountToTest, amountTknImBuying1,
@@ -93,12 +106,12 @@ func (s *sandwicher) _binarySearch(amountToTest, Rtkn0, Rbnb0, txValue, amountOu
 
 // test if we break victim's slippage with MNBOUND WBNB engaged
 func _testMinbound(Rtkn, Rbnb, txValue, amountOutMinVictim *big.Int) int {
-	amountTknImBuying := _getAmountOut(global.MINBOUND, Rbnb, Rtkn)
+	amountTknImBuying := getAmountOut(global.MINBOUND, Rbnb, Rtkn)
 	var Rtkn1 = new(big.Int)
 	var Rbnb1 = new(big.Int)
 	Rtkn1.Sub(Rtkn, amountTknImBuying)
 	Rbnb1.Add(Rbnb, global.MINBOUND)
-	amountTknVictimWillBuy := _getAmountOut(txValue, Rbnb1, Rtkn1)
+	amountTknVictimWillBuy := getAmountOut(txValue, Rbnb1, Rtkn1)
 	return amountTknVictimWillBuy.Cmp(amountOutMinVictim)
 }
 
@@ -149,15 +162,15 @@ func (s *sandwicher) assessProfitability(client *ethclient.Client, tkn_adddress 
 
 	profit := profitPec * formatEthWeiToEther(amountToTest) / 100
 
-	amountTknImBuying1 := _getAmountOut(amountToTest, Rbnb0, Rtkn0)
+	amountTknImBuying1 := getAmountOut(amountToTest, Rbnb0, Rtkn0)
 	var Rtkn1 = new(big.Int)
 	var Rbnb1 = new(big.Int)
 	Rtkn1.Sub(Rtkn0, amountTknImBuying1)
 	Rbnb1.Add(Rbnb0, amountToTest)
-	amountTknVictimWillBuy1 := _getAmountOut(txValue, Rbnb1, Rtkn1)
+	amountTknVictimWillBuy1 := getAmountOut(txValue, Rbnb1, Rtkn1)
 
 	if amountTknImBuying1.Int64() == 0 {
-		amountTknImBuying1 = _getAmountOut(amountToTest, Rbnb0, Rtkn0)
+		amountTknImBuying1 = getAmountOut(amountToTest, Rbnb0, Rtkn0)
 		if amountTknImBuying1.Int64() == 0 {
 			return false
 		}
@@ -173,14 +186,14 @@ func (s *sandwicher) assessProfitability(client *ethclient.Client, tkn_adddress 
 
 	// r0 --> I buy --> r1 --> victim buy --> r2 --> i sell
 	// at this point of execution, we just did r2 so the "i sell" phase remains to be done
-	bnbAfterSell := _getAmountOut(s.BinaryResult.AmountTknIWillBuy, Rtkn2, Rbnb2)
+	bnbAfterSell := getAmountOut(s.BinaryResult.AmountTknIWillBuy, Rtkn2, Rbnb2)
 	expectedProfit.Sub(bnbAfterSell, s.BinaryResult.MaxBNBICanBuy)
 
 	// for new markets, buy 1 gwei for a test
 	if s.BinaryResult.IsNewMarket {
 		s.BinaryResult.MaxBNBICanBuy = big.NewInt(1000000000)
 
-		amountTknVictimWillBuy1 := _getAmountOut(s.BinaryResult.MaxBNBICanBuy, s.BinaryResult.Rbnb1, s.BinaryResult.Rtkn1)
+		amountTknVictimWillBuy1 := getAmountOut(s.BinaryResult.MaxBNBICanBuy, s.BinaryResult.Rbnb1, s.BinaryResult.Rtkn1)
 		s.BinaryResult.AmountTknIWillBuy = amountTknVictimWillBuy1
 	}
 

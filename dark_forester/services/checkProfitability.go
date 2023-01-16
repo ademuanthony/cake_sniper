@@ -30,7 +30,7 @@ func getMaxTradeAmountForSlippage(reserveBnb *big.Int, slippage float64) *big.In
 	}
 
 	reserveEther := formatEthWeiToEther(reserveBnb)
-	amountIn := ((slippage * reserveEther / (100 - slippage))) / 1.0025
+	amountIn := (slippage * reserveEther / (100 - slippage)) / 1.0025
 
 	return global.EtherToWei(big.NewFloat(amountIn))
 }
@@ -39,7 +39,7 @@ func slippage(txValue, amountOutMinVictim, Rbnb0, Rtkn0 *big.Int, decimals int64
 	if amountOutMinVictim.Int64() == 0 {
 		return 5
 	}
-	currentAmountOut := _getAmountOut(txValue, Rbnb0, Rtkn0)
+	currentAmountOut := getAmountOut(txValue, Rbnb0, Rtkn0)
 	// 100 * (cAm - minAm)/minAm
 	cAmountFl := _formatEthWeiToEther(currentAmountOut, decimals)
 	minAmountFl := _formatEthWeiToEther(amountOutMinVictim, decimals)

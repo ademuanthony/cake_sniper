@@ -3,7 +3,7 @@ from brownie import *
 #///////////// TESTS ////////////////////////////////////////
 
 # i always used the BUNNY token to do tests
-bunny = "0x97A143545c0F8200222C051aC0a2Fc93ACBE6bA2"
+bunny = "0x97a143545c0f8200222c051ac0a2fc93acbe6ba2"
 
 
 #///////////// EXPECTATIONS //////////////////////////////////////
@@ -13,10 +13,12 @@ RESERVE_IN = 300 # amount of BNB liquidity that will be added on PCS by the team
 RESERVE_OUT = 88888 # amount of token liquidity that will be added on PCS by the team
 
 #///////////// CONSTANT ////////////////////////////////////////
-TRIGGER_ADDRESS_MAINNET = "0x4375Eb1E65C176999Ed6Aa907993b4aF6A0843F0" # addy changed for public repo
+TRIGGER_ADDRESS_MAINNET = "0x7EAc6d726800e9b32cB36F7D0C6E2B1310756781" # addy changed for public repo
 TRIGGER_ADDRESS_TESTNET = "0x39695B38c6d4e5F73acE974Fd0f9F6766c2E5544" # addy changed for public repo
 CAKE_FACTORY_ADDRESS = "0xcA143Ce32Fe78f1f7019d7d551a6402fC5350c73"
 CAKE_ROUTER_ADDRESS = "0x10ED43C718714eb63d5aA57B78B54704E256024E"
+DFC_PAIR_ADDRESS = "0x0187fFa6760855eC13B06F89410016f30B3018c3"
+DFC_ADDRESS = "0x97a143545c0f8200222c051ac0a2fc93acbe6ba2"
 BUSD_WBNB_PAIR_ADDRESS = "0x58F876857a02D6762E0101bb5C46A8c1ED44Dc16"
 WBNB_ADDRESS = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"
 BUSD_ADDRESS = "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56"
@@ -40,6 +42,7 @@ BEEBOOKTEMPPATH = "./dark_forester/global/bee_book_temp.json"
 SELLERROUNDS = 3
 SELLERNUMBERBNB = 0.15
 SELLERBOOKPATH = "./dark_forester/global/seller_book.json"
+TRIGGERBOOKPATH = "./dark_forester/global/trigger_book.json"
 SELLERBOOKTEMPPATH = "./dark_forester/global/seller_book_temp.json"
 
 #///////////// SNIPE VARIABLES ///////////////////////////////
