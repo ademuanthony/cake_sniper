@@ -130,6 +130,21 @@ def sellOff():
     me = accounts.add(seller["pk"])
     sell(seller["trigger"], me)
 
+def retrieveFunds():
+  sellers = loadSellers()
+  tokenAddress = input("enter the token address: ")
+  for seller in sellers:
+    me = accounts.add(seller["pk"])
+    trigger = interface.ITrigger2(seller["trigger"])
+    triggerBalance = interface.ERC20(tokenAddress).balanceOf(trigger)
+    if triggerBalance == 0:
+      continue
+    tx = trigger.emmergencyWithdrawTkn(tokenAddress, triggerBalance, {"from": me, "gas_limit": 750000})
+    if tx.status == 1:
+      print(f"{triggerBalance} moved from {seller['trigger']}")
+    else:
+      print(f"tx failed for {trigger['trigger']}")
+
 def create_account():
     new_account = web3.eth.account.create()
     new_account = accounts.add(new_account.key.hex())
@@ -201,7 +216,7 @@ def viewTriggerBalance():
 
 def main():
   dfcPriceInBnb()
-  choice = input('what do you want to do? \n1 = add triggers; \n2 = run market makers \n3 = view book status \n4 = sell off: ')
+  choice = input('what do you want to do? \n1 = add triggers; \n2 = run market makers \n3 = view book status \n4 = sell off \n5 = retrieve funds: ')
   if choice == '1':
     deployTrigger()
     return
@@ -211,6 +226,8 @@ def main():
     viewTriggerBalance()
   if choice == '4':
     sellOff()
+  if choice == '5':
+    retrieveFunds()
   else:
     print(f'{currentTime()} - invalid choice')
 
