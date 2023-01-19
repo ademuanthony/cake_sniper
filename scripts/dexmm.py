@@ -90,7 +90,6 @@ def runMarketMakers():
   lastPrice = dfcPriceInBnb()
   start = time.time()
   circleDuration = random.randint(4 * 60 * 60, 30 * 60 * 60)
-  sellProbability = int(input('Enter sell probability: '))
 
   while True:
     caller = sellers[index%len(sellers)]
