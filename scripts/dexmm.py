@@ -42,13 +42,15 @@ def buy(triggerAddress, account, amountIn):
   else: 
     print(f"{currentTime()} - buy failed")
 
-def sell(triggerAddress, account):
+def sell(triggerAddress, account, sellOf):
   dfc = interface.ERC20(DFC_ADDRESS)
   balance = dfc.balanceOf(triggerAddress)
   print(f'{currentTime()} - dfc bal {triggerAddress} is {balance/1e8}')
   if balance/1e8 < 1000:
     return
   amountIn = random.randint(80, 100) * balance/100
+  if sellOf:
+    amountIn = balance
   me = account
   trigger = interface.ITrigger2(triggerAddress)
   sellTx = trigger.swapTokensForExactETH(web3.toChecksumAddress(bunny), amountIn, 0, {"from": me, "gas_limit": 750000})
@@ -88,7 +90,7 @@ def runMarketMakers():
   lastPrice = dfcPriceInBnb()
   start = time.time()
   circleDuration = random.randint(4 * 60 * 60, 30 * 60 * 60)
-  sellProbability = 20
+  sellProbability = int(input('Enter sell probability: '))
 
   while True:
     caller = sellers[index%len(sellers)]
@@ -96,39 +98,24 @@ def runMarketMakers():
 
     try:
       me = accounts.add(caller["pk"])
-      currentPrice = dfcPriceInBnb()
-
-      if random.randint(1, 100) <= sellProbability:
-        if currentPrice > lastPrice * 1.01:
-          sell(caller["trigger"], me)
-        else:
-          print(f'{currentTime()} - not a good price to sell')
+      wbnb = interface.ERC20(WBNB_ADDRESS)
+      bnbBalance = wbnb.balanceOf(caller["trigger"])
+      if bnbBalance > 0:
+        buy(caller["trigger"], me, bnbBalance)
       else:
-        amount = random.randint(900, 25000) * 1e13
-        buy(caller["trigger"], me, amount)
+        sell(caller["trigger"], me, True)
     except Exception as e:
       print(f'{currentTime()} - Trigger {caller["address"]} action failed, will rest for a while and try again - {str(e)}')
     
-    waitTime = random.randint(15, 180)
+    waitTime = random.randint(5, 45)
     print(f'{currentTime()} - sleeping for {waitTime}\n------------------------------\n')
     time.sleep(waitTime)
-
-    if start + circleDuration <= time.time():
-      if currentPrice > lastPrice:
-        sellProbability = 80
-        circleDuration = random.randint(2 * 60 * 60, 12 * 60 * 60)
-      else:
-        sellProbability = 20
-        circleDuration = random.randint(4 * 60 * 60, 30 * 60 * 60)
-
-      lastPrice = currentPrice
-      start = time.time()
 
 def sellOff():
   sellers = loadSellers()
   for seller in sellers:
     me = accounts.add(seller["pk"])
-    sell(seller["trigger"], me)
+    sell(seller["trigger"], me, True)
 
 def retrieveFunds():
   sellers = loadSellers()
@@ -144,6 +131,20 @@ def retrieveFunds():
       print(f"{triggerBalance} moved from {seller['trigger']}")
     else:
       print(f"tx failed for {trigger['trigger']}")
+
+def fundTriggersFromSender():
+  sellers = loadSellers()
+  tokenAddress = input("enter the token address: ")
+  for seller in sellers:
+    me = accounts.add(seller["pk"])
+    senderBalance = interface.ERC20(tokenAddress).balanceOf(me.address)
+    if senderBalance == 0:
+      continue
+    tx = interface.ERC20(tokenAddress).transfer(seller["trigger"], senderBalance, {"from": me, "gas_limit": 750000})
+    if tx.status == 1:
+      print(f"{senderBalance} moved to {seller['trigger']}")
+    else:
+      print(f"tx failed for {seller['trigger']}")
 
 def create_account():
     new_account = web3.eth.account.create()
@@ -216,7 +217,7 @@ def viewTriggerBalance():
 
 def main():
   dfcPriceInBnb()
-  choice = input('what do you want to do? \n1 = add triggers; \n2 = run market makers \n3 = view book status \n4 = sell off \n5 = retrieve funds: ')
+  choice = input('what do you want to do? \n1 = add triggers; \n2 = run market makers \n3 = view book status \n4 = sell off \n5 = retrieve funds \n6 = Fund triggers: ')
   if choice == '1':
     deployTrigger()
     return
@@ -228,6 +229,8 @@ def main():
     sellOff()
   if choice == '5':
     retrieveFunds()
+  if choice == '6':
+    fundTriggersFromSender()
   else:
     print(f'{currentTime()} - invalid choice')
 
