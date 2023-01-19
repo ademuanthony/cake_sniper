@@ -116,6 +116,16 @@ def sellOff():
     me = accounts.add(seller["pk"])
     sell(seller["trigger"], me, True)
 
+def buyOut():
+  sellers = loadSellers()
+  for seller in sellers:
+    me = accounts.add(seller["pk"])
+    wbnb = interface.ERC20(WBNB_ADDRESS)
+    bnbBalance = wbnb.balanceOf(seller["trigger"])
+    if bnbBalance > 0:
+      buy(seller["trigger"], me, bnbBalance)
+
+
 def retrieveFunds():
   sellers = loadSellers()
   tokenAddress = input("enter the token address: ")
@@ -216,7 +226,7 @@ def viewTriggerBalance():
 
 def main():
   dfcPriceInBnb()
-  choice = input('what do you want to do? \n1 = add triggers; \n2 = run market makers \n3 = view book status \n4 = sell off \n5 = retrieve funds \n6 = Fund triggers: ')
+  choice = input('what do you want to do? \n1 = add triggers; \n2 = run market makers \n3 = view book status \n4 = sell off \n5 = retrieve funds \n6 = Fund triggers \n7 = buy out: ')
   if choice == '1':
     deployTrigger()
     return
@@ -230,6 +240,8 @@ def main():
     retrieveFunds()
   if choice == '6':
     fundTriggersFromSender()
+  if choice == '7':
+    buyOut()
   else:
     print(f'{currentTime()} - invalid choice')
 
