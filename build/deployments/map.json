@@ -1,9 +1,14 @@
 {
   "56": {
+    "DexSwap": [
+      "0x6ee4Fb76E8634B6025816eaEF2320234B0799a01",
+      "0x37Ef65fAD146F87dfc366765396f219C04c78e92"
+    ],
     "SandwichRouter": [
       "0x2B88aFc52AddD2c75a669Dde4353a9Ec01Dba435"
     ],
     "Trigger2": [
+      "0x491c9a94F119A6f3D004D17C82d869fB85E3eB32",
       "0x53a00Be7ce9ed75418362899Ae5D04DAC0cD68C5",
       "0x1921f0bF9dd2C1f99fd9B5d8680fF34180775Bd5",
       "0xc3b3fe8F24a52B043c2f08443db461dE5D0a72b3",

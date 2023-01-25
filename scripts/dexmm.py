@@ -12,7 +12,7 @@ def custom_hook(args):
     print('taking a break for some seconds')
     time.sleep(2 * 60)
     print(f'{currentTime()} - restarting...')
-    runMarketMakers()
+    run()
 
 threading.excepthook = custom_hook
 
@@ -86,6 +86,10 @@ def loadSellers():
 
 def runMarketMakers():
   sellers = loadSellers()
+  if len(sellers) == 0:
+    print('sellers not found')
+    return
+  
   index = 0
   lastPrice = dfcPriceInBnb()
   start = time.time()
@@ -174,7 +178,7 @@ def deployTrigger():
   with open(TRIGGERBOOKPATH, "r") as book:
       triggers = json.load(book)
 
-  for num in range(1, int(numberOfTrigger)):
+  for num in range(0, int(numberOfTrigger)):
     try:
       new_account = create_account()
       me = accounts.add(new_account["pk"])
@@ -186,7 +190,7 @@ def deployTrigger():
           silent=True,
           gas_limit=22000,
           allow_revert=True)
-      print(f'{currentTime()} - bee{dispenser.address} --> paid {tx.value / 10**18} BNB to new_account')
+      print(f'{currentTime()} - bee {dispenser.address} --> paid {tx.value / 10**18} BNB to new_account')
 
       trigger = Trigger2.deploy({"from": me})
       new_account["trigger"] = trigger.address
@@ -200,8 +204,8 @@ def deployTrigger():
           allow_revert=True)
 
       triggers.append(new_account)
-    except:
-      print('something wrong')
+    except Exception as e:
+      print(f'{currentTime()} - Trigger deployment failed - {str(e)}')
 
   with open(TRIGGERBOOKPATH, "w") as book:
       json.dump(triggers, book, indent=2)
@@ -224,9 +228,65 @@ def viewTriggerBalance():
   print('-----------------------------------------------')
   print(f'{currentTime()} - Total DFC: {totalDfc/1e8}; Total BNB: {totalBnb/1e18}')
 
-def main():
+def reInitVolumeGenerators():
+  return
+  callers = loadSellers()
+  dfc = interface.ERC20(DFC_ADDRESS)
+  wbnb = interface.ERC20(WBNB_ADDRESS)
+
+  for caller in callers:
+    me = accounts.add(caller["pk"])
+    if caller["volGen"]:
+      generator = interface.DexSwap(caller["volGen"])
+
+      dfcBalance = dfc.balanceOf(caller["volGen"])
+      if dfcBalance > 0:
+        generator.emmergencyWithdrawTkn(DFC_ADDRESS, dfcBalance, {"from": me, "gas_limit": 750000})
+
+      bnbBalance = wbnb.balanceOf(caller["volGen"])
+      if bnbBalance > 0:
+        generator.emmergencyWithdrawTkn(WBNB_ADDRESS, bnbBalance, {"from": me, "gas_limit": 750000})
+
+    trigger = DexSwap.deploy({"from": me})
+    caller["volGen"] = trigger.address
+    print(f"{currentTime()} - volGen created with the address {trigger.address}")
+
+  with open(TRIGGERBOOKPATH, "w") as book:
+      json.dump(callers, book, indent=2)
+
+def approveRouter():
+  callers = loadSellers()
+  for caller in callers:
+    me = accounts.add(caller["pk"])
+    generator = interface.DexSwap(caller["trigger"])
+    generator.approveRouter(WBNB_ADDRESS, 10000000000000000000000000000, {"from": me, "gas_limit": 750000})
+    generator.approveRouter(DFC_ADDRESS, 10000000000000000000000000000, {"from": me, "gas_limit": 750000})
+    print(f'0x7f9b816d7eeb3665d96b4b013f62a9c3334445ab9e8482e03e3a1a7fa483b8f4 approved\n---------------------')
+
+def generateVolume():
+  callers = loadSellers()
+  index = 0
+  while True:
+    caller = callers[index%len(callers)]
+    index = index + 1
+    volGen = interface.ITrigger2(caller["trigger"])
+    me = accounts.add(caller["pk"])
+    bnbBalance = interface.ERC20(WBNB_ADDRESS).balanceOf(caller["trigger"])
+    if bnbBalance == 0:
+      print(f"{currentTime()} - BNB balance of {caller['trigger']} is 0. Skipping in 15 seconds")
+      time.sleep(15)
+      continue
+    amountIn = random.randint(45, 100) * bnbBalance/100
+    volGen.swapExactETHForTokens(DFC_ADDRESS, amountIn, {"from": me, "gas_limit": 750000})
+    waitTime = random.randint(60, 60*60)
+    print(f'{amountIn*2} generated. Waiting for {waitTime/60} minutes')
+    time.sleep(waitTime)
+
+choice = ""
+
+def run(choice):
   dfcPriceInBnb()
-  choice = input('what do you want to do? \n1 = add triggers; \n2 = run market makers \n3 = view book status \n4 = sell off \n5 = retrieve funds \n6 = Fund triggers \n7 = buy out: ')
+
   if choice == '1':
     deployTrigger()
     return
@@ -242,7 +302,16 @@ def main():
     fundTriggersFromSender()
   if choice == '7':
     buyOut()
+  if choice == '8':
+    generateVolume()
+  if choice == '9':
+    approveRouter()
   else:
     print(f'{currentTime()} - invalid choice')
+
+def main():
+  global choice
+  choice = input('what do you want to do? \n1 = add triggers; \n2 = run market makers \n3 = view book status \n4 = sell off \n5 = retrieve funds \n6 = Fund triggers \n7 = buy out \n8 = Volume Generator \n9 = Approve router: ')
+  run(choice)
 
   
