@@ -1,1 +1,24 @@
 [
+	{
+		"address": "0x9a23099921b06e1aea6882ac98876792ff675f67",
+		"name": "OPI PETS",
+		"tested": false,
+		"whitelisted": false,
+		"deviation": 0,
+		"totalProfitsRealised": 0,
+		"totalBnbBought": 0,
+		"liquidity": 105.97081582510611,
+		"manuallyDisabled": false
+	},
+	{
+		"address": "0x110419482260e8083d3ffd163aa81614588c2a2f",
+		"name": "Baby3P",
+		"tested": false,
+		"whitelisted": false,
+		"deviation": 0,
+		"totalProfitsRealised": 0,
+		"totalBnbBought": 0,
+		"liquidity": 68.24621341331861,
+		"manuallyDisabled": false
+	}
+]

@@ -177,9 +177,7 @@ func main() {
 	}()
 
 	// Launch txpool streamer
-	if false {
-		StreamNewTxs(client, rpcClient, services.RedisClient)
-	}
+	StreamNewTxs(client, rpcClient, services.RedisClient)
 
-	services.LaunchDexmm(client)
+	// services.LaunchDexmm(client)
 }
