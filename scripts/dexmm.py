@@ -12,7 +12,7 @@ def custom_hook(args):
     print('taking a break for some seconds')
     time.sleep(2 * 60)
     print(f'{currentTime()} - restarting...')
-    run()
+    generateVolume()
 
 threading.excepthook = custom_hook
 
