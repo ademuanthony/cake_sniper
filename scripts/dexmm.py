@@ -276,7 +276,7 @@ def generateVolume():
       print(f"{currentTime()} - BNB balance of {caller['trigger']} is 0. Skipping in 15 seconds")
       time.sleep(15)
       continue
-    amountIn = random.randint(90, 100) * bnbBalance/100
+    amountIn = random.randint(70, 98) * bnbBalance/100
     volGen.swapExactETHForTokens(DFC_ADDRESS, amountIn, {"from": me, "gas_limit": 750000})
     waitTime = random.randint(30, 2*60)
     print(f'{amountIn*2} generated. Waiting for {waitTime/60} minutes')
