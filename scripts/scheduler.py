@@ -13,13 +13,16 @@ from eth_abi import encode_abi
 
 counter = itertools.count()
 
-#///////////// EXPECTATIONS //////////////////////////////////////
+# ///////////// EXPECTATIONS //////////////////////////////////////
+
+
 def _bnbPrice():
     assert chain.id == 56, "_bnbPrice: WRONG NETWORK. This function only works on bsc mainnet"
     pair_busd = interface.IPancakePair(BUSD_WBNB_PAIR_ADDRESS)
     (reserveUSD, reserveBNB, _) = pair_busd.getReserves()
     price_busd = reserveBNB / reserveUSD
     return round(price_busd, 2)
+
 
 def _quote(amin, reserveIn, reserveOut):
     if reserveIn == 0 and reserveOut == 0:
@@ -28,6 +31,7 @@ def _quote(amin, reserveIn, reserveOut):
     num = amountInWithFee * reserveOut
     den = reserveIn * 1000 + amountInWithFee
     return round(num / den)
+
 
 def _expectations(my_buy, external_buy, reserveIn, reserveOut, queue_number):
     i = 1
@@ -41,6 +45,7 @@ def _expectations(my_buy, external_buy, reserveIn, reserveOut, queue_number):
     bought_tokens = _quote(my_buy, reserveIn + addIn, reserveOut - subOut)
     price_per_token = my_buy / bought_tokens
     return bought_tokens, price_per_token, addIn
+
 
 def expectations(my_buy, external_buy, reserveIn, reserveOut, base_asset="BNB"):
 
@@ -62,7 +67,8 @@ def expectations(my_buy, external_buy, reserveIn, reserveOut, base_asset="BNB"):
 
     input("Press any key to continue, or ctrl+c to stop and try other expectation parameters")
 
-#///////////// SWARMER //////////////////////////////////////
+
+# ///////////// SWARMER //////////////////////////////////////
 ACCOUNTSLIST = []
 ACCOUNTINDEX = itertools.count()
 
@@ -90,6 +96,7 @@ def save_address_book(TEMPPATH, PATH):
     with open(PATH, "w") as final_address_book:
         json.dump(data, final_address_book, indent=2)
     print("Done!")
+
 
 def create_account():
     idx = next(ACCOUNTINDEX)
@@ -167,7 +174,7 @@ def _refund(entry, me):
 
 
 def refund(PATH):
-    me = accounts.load('press1')
+    me = accounts.load('dex-owner')
 
     with open(PATH, "r") as book:
         data = json.load(book)
@@ -197,7 +204,7 @@ def _checkBalances(entry):
     if balance / 10**18 > 0.0002:
 
         print(f'bee{entry["idx"]} : non empty balance: {balance/10**18} BNB')
-        return(balance, 1)
+        return (balance, 1)
     else:
         return (0, 0)
 
@@ -231,37 +238,41 @@ def swarmer(TEMPPATH, PATH, ROUNDS, NUMBERBNB):
     ipt = input("Initialise new swarm? ('y' for yes, any other key for no)")
 
     if ipt.lower() == "y":
-        _initSwarm(TEMPPATH, PATH,ROUNDS, NUMBERBNB )
+        _initSwarm(TEMPPATH, PATH, ROUNDS, NUMBERBNB)
     else:
         return
 
 
 def createBeeBook():
-    swarmer(BEEBOOKTEMPPATH, BEEBOOKPATH,BEEROUNDS, BEENUMBERBNB )
+    swarmer(BEEBOOKTEMPPATH, BEEBOOKPATH, BEEROUNDS, BEENUMBERBNB)
+
 
 def createSellersBook():
     print("(owner acc)")
-    me = accounts.load("press1")
+    me = accounts.load("dex-owner")
     trigger = interface.ITrigger2(TRIGGER_ADDRESS_MAINNET)
     swarmer(SELLERBOOKTEMPPATH, SELLERBOOKPATH, SELLERROUNDS, SELLERNUMBERBNB)
     print("authenticating seller book if not already done...")
-    
+
     with open(SELLERBOOKPATH, "r") as book:
         data = json.load(book)
 
         for entry in data:
-            address  = entry["address"]
+            address = entry["address"]
             if trigger.authenticatedSeller(address) == False:
                 print(f'authenticating seller{entry["idx"]}')
                 trigger.authenticateSeller(address, {"from": me})
-        
+
         for entry in data:
-            address  = entry["address"]
-            print(f'Address: {address}, Authenticated: {trigger.authenticatedSeller(address)}')
+            address = entry["address"]
+            print(
+                f'Address: {address}, Authenticated: {trigger.authenticatedSeller(address)}')
 
-#///////////// SEND  CONFIGURATION //////////////////////////////////////
+# ///////////// SEND  CONFIGURATION //////////////////////////////////////
 
-# censored function for the public repo as it was used to send dark_forester/global to my aws server 
+# censored function for the public repo as it was used to send dark_forester/global to my aws server
+
+
 def sendGlobalToDarkForester():
     ipt = input(
         "Send the /global folder to AWS server ? ('y' for yes, any other key for no)")
@@ -285,7 +296,7 @@ def sendGlobalToDarkForester():
 
         print("--> /global folder sucessfully sent!")
 
-#///////////// TRIGGER CONFIGURATION //////////////////////////////////////
+# ///////////// TRIGGER CONFIGURATION //////////////////////////////////////
 
 
 def configureTrigger():
@@ -309,17 +320,18 @@ def configureTrigger():
         trigger = interface.ITrigger2(TRIGGER_ADDRESS_MAINNET)
         trigger.configureSnipe(PAIRED_TOKEN, AMOUNT_IN_WBNB,
                                TOKEN_TO_BUY_ADDRESS, AMOUNT_OUT_MIN_TKN, {'from': me, "gas_price": "10 gwei"})
-        
 
         triggerBalance = interface.ERC20(WBNB_ADDRESS).balanceOf(trigger)
 
         if triggerBalance < AMOUNT_IN_WBNB:
 
-            amountToSendToTrigger = AMOUNT_IN_WBNB - triggerBalance + 1 
-            assert me.balance() >= amountToSendToTrigger + 10**18 , "STOPING EXECUTION: TRIGGER DOESNT HAVE THE REQUIRED WBNB AND OWNER BNB BALANCE INSUFFICIENT!"
+            amountToSendToTrigger = AMOUNT_IN_WBNB - triggerBalance + 1
+            assert me.balance() >= amountToSendToTrigger + \
+                10**18, "STOPING EXECUTION: TRIGGER DOESNT HAVE THE REQUIRED WBNB AND OWNER BNB BALANCE INSUFFICIENT!"
 
-            print(f'---> transfering {amountToSendToTrigger / 10**18} BNB to TRIGGER')
-            
+            print(
+                f'---> transfering {amountToSendToTrigger / 10**18} BNB to TRIGGER')
+
             me.transfer(trigger, amountToSendToTrigger)
 
         config = trigger.getSnipeConfiguration({'from': me})
@@ -333,6 +345,7 @@ def configureTrigger():
             f'---> Wbnb balance of trigger: {interface.ERC20(WBNB_ADDRESS).balanceOf(trigger)/10**18}')
         print(
             f'---> Token balance of admin: {tkn_balance_old/10**18 if tkn_balance_old != 0 else 0}\n\n')
+
 
 def main():
 

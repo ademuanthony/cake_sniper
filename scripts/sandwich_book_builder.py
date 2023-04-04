@@ -4,11 +4,13 @@ from variables import *
 import redis
 import json
 
-red = redis.StrictRedis('localhost', 6379, charset="utf-8", decode_responses=True)
+red = redis.StrictRedis(
+    'localhost', 6379, charset="utf-8", decode_responses=True)
 
-# open the analytic file. consolidate tne totalProfitsRealised / totalBnbBought for each market. 
-# Then extract data pulled from the sandwich monitor mode of dark_forester. 
+# open the analytic file. consolidate tne totalProfitsRealised / totalBnbBought for each market.
+# Then extract data pulled from the sandwich monitor mode of dark_forester.
 # Append all unknowned / to be tested  market to sandwich_book.json.
+
 
 def refineSandwichBook():
 
@@ -104,7 +106,7 @@ def mergeBothBooks():
 
 
 def testMarket():
-    me = accounts.load("press1")
+    me = accounts.load("dex-owner")
     bnbBought = 1000000000  # 1 GWEI
 
     trigger = interface.ITrigger2(TRIGGER_ADDRESS_MAINNET)
@@ -118,7 +120,7 @@ def testMarket():
             if markets[market]["tested"] == False:
                 try:
                     print(
-                    f'---> testing {markets[market]["name"]} coin ({market})')
+                        f'---> testing {markets[market]["name"]} coin ({market})')
                     buytx = trigger.swapExactETHForTokens(
                         web3.toChecksumAddress(market), bnbBought, 0, {"from": me, "gas_limit": 750000})
                     if buytx.status == 1:
@@ -136,7 +138,7 @@ def testMarket():
                                     WBNB_ADDRESS).balanceOf(trigger)
                                 bnbSold = newBalanceBnb - oldBalanceBnb
                                 deviation = ((bnbBought - bnbSold) /
-                                            bnbBought) * 100
+                                             bnbBought) * 100
                                 markets[market]["tested"] = True
                                 markets[market]["deviation"] = deviation
                                 filteredData[market] = markets[market]
@@ -156,27 +158,27 @@ def testMarket():
                             with open("./dark_forester/global/sandwich_book_temp.json", "w") as dest:
                                 json.dump(filteredData, dest, indent=2)
 
-                        
-
                     else:  # revert on buy
                         print("--> buy tx: failed")
                         markets[market]["tested"] = True
                         filteredData[market] = markets[market]
                         with open("./dark_forester/global/sandwich_book_temp.json", "w") as dest:
                             json.dump(filteredData, dest, indent=2)
-                    
+
                     publishMarketTestEvent(markets[market])
-                    
+
                 except Exception as e:
                     print("ERROR : "+str(e))
-                
+
     print("no more market to test sir")
+
 
 def publishMarketTestEvent(market):
     print('publishing tested event')
     if market["tested"] == True and market["deviation"] < 2 and market["deviation"] != 0:
         market["whitelisted"] = True
     red.publish('MARKET_TESTED', json.dumps(market))
+
 
 def printCurrrentWhitelisted():
     print("\nCURRENT BOOK : \n")
@@ -214,7 +216,7 @@ def main():
 
 
 # def main():
-#     me = accounts.load("press1")
+#     me = accounts.load("dex-owner")
 #     trigger = interface.ITrigger2(TRIGGER_ADDRESS_MAINNET)
 #     # selltx = trigger.sandwichOut("0x5b6ef1f87d5cec1e8508ddb5de7e895869e7a4a3", 0, {"from": me, "gas_limit": 750000})
 #     test = trigger.getSnipeConfiguration({"from": me})

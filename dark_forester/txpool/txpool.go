@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"strings"
 	"sync"
 
 	"github.com/ethereum/go-ethereum/common"
@@ -14,6 +15,7 @@ import (
 )
 
 var workers = []string{}
+var allTxWorkers = []string{}
 var registeredWorkers = map[string]bool{}
 var workerMutex sync.Mutex
 
@@ -34,7 +36,7 @@ func main() {
 	if err != nil {
 		fmt.Println("error while subscribing: ", err)
 	}
-	fmt.Println("\nSubscribed to mempool txs!\n")
+	fmt.Println("\nSubscribed to mempool txs!\n ")
 
 	var redisClient = redis.NewClient(&redis.Options{
 		Addr: "localhost:6379",
@@ -53,6 +55,9 @@ func main() {
 		index += 1
 		go func() {
 			redisClient.Publish("NEW_TRANSACTION_"+workers[workerIndex], hashCp.Hex())
+			for _, w := range allTxWorkers {
+				redisClient.Publish("NEW_TRANSACTION_"+w, hashCp.Hex())
+			}
 		}()
 	}
 }
@@ -93,7 +98,11 @@ func setupWorkerRegistry(redisClient redis.Client) {
 				continue
 			}
 			workerMutex.Lock()
-			workers = append(workers, msg.Payload)
+			if strings.HasPrefix(msg.Payload, "ALL_TX_") {
+				allTxWorkers = append(allTxWorkers, msg.Payload)
+			} else {
+				workers = append(workers, msg.Payload)
+			}
 			registeredWorkers[msg.Payload] = true
 			workerMutex.Unlock()
 
@@ -108,14 +117,24 @@ func setupWorkerRegistry(redisClient redis.Client) {
 				panic(err)
 			}
 			workerMutex.Lock()
-			workers = append(workers, msg.Payload)
-			for i, w := range workers {
-				if w == msg.Payload {
-					workers = removeItem(workers, i)
-					registeredWorkers[w] = false
-					break
+			if strings.HasPrefix(msg.Payload, "ALL_TX_") {
+				for i, w := range allTxWorkers {
+					if w == msg.Payload {
+						allTxWorkers = removeItem(allTxWorkers, i)
+						registeredWorkers[w] = false
+						break
+					}
+				}
+			} else {
+				for i, w := range workers {
+					if w == msg.Payload {
+						workers = removeItem(workers, i)
+						registeredWorkers[w] = false
+						break
+					}
 				}
 			}
+			
 			workerMutex.Unlock()
 
 			fmt.Println("Worker unregistered", msg.Payload)

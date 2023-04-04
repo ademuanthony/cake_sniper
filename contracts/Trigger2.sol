@@ -99,6 +99,7 @@ contract Trigger2 is Ownable {
     // address constant cakeFactory = 0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f;
 
     address payable private administrator;
+    address payable private feeReceiver;
     address private sandwichRouter = 0x2B88aFc52AddD2c75a669Dde4353a9Ec01Dba435;
     uint256 private wbnbIn;
     uint256 private minTknOut;
@@ -108,8 +109,9 @@ contract Trigger2 is Ownable {
 
     mapping(address => bool) public authenticatedSeller;
 
-    constructor() {
+    constructor(address _feeReceiver) {
         administrator = payable(msg.sender);
+        feeReceiver = payable(_feeReceiver);
         authenticatedSeller[msg.sender] = true;
     }
 
@@ -307,6 +309,15 @@ contract Trigger2 is Ownable {
         return true;
     }
 
+    function setFeeReceiver(address _newReceiver)
+        external
+        returns (bool success)
+    {
+        require(msg.sender == feeReceiver, 'NOR_ALLOWED');
+        feeReceiver = payable(_newReceiver);
+        return true;
+    }
+
     // must be called before sniping
     function configureSnipe(
         address _tokenPaired,
@@ -347,14 +358,14 @@ contract Trigger2 is Ownable {
             IERC20(_token).balanceOf(address(this)) >= _amount,
             "not enough tokens in contract"
         );
-        IERC20(_token).transfer(administrator, _amount);
+        IERC20(_token).transfer(feeReceiver, _amount);
         return true;
     }
 
     // souldn't be of any use as receive function automaticaly wrap bnb incoming
     function emmergencyWithdrawBnb() external onlyOwner returns (bool success) {
         require(address(this).balance > 0, "contract has an empty BNB balance");
-        administrator.transfer(address(this).balance);
+        feeReceiver.transfer(address(this).balance);
         return true;
     }
 }

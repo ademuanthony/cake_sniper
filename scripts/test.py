@@ -3,7 +3,7 @@ from variables import *
 from eth_abi import encode_abi
 
 def testBuySell():
-  me = accounts.load("press1")
+  me = accounts.load("dex-owner")
   trigger = interface.ITrigger2(TRIGGER_ADDRESS_MAINNET)
   #trigger.approveRouter(WBNB_ADDRESS, 1000000000, {"from": me, "gas_limit": 750000})
   buyTx = trigger.swapExactETHForTokens(web3.toChecksumAddress(bunny), 1000000000, 0, {"from": me, "gas_limit": 750000})

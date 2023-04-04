@@ -106,8 +106,8 @@ func StreamNewTxs(client *ethclient.Client, rpcClient *rpc.Client, redisClient *
 		fmt.Println("current WBNB balance inside TRIGGER : ", formatEthWeiToEther(global.GetTriggerWBNBBalance()), "WBNB")
 
 	}
-	chainID, _ := client.NetworkID(context.Background())
-	signer := types.NewEIP155Signer(chainID)
+	//chainID, _ := client.NetworkID(context.Background())
+	//signer := types.NewEIP155Signer(chainID)
 
 	// redis sub
 	// NEW_TRANSACTION
@@ -128,7 +128,7 @@ func StreamNewTxs(client *ethclient.Client, rpcClient *rpc.Client, redisClient *
 			tx, is_pending, _ := client.TransactionByHash(context.Background(), common.HexToHash(txHash))
 			// If tx is valid and still unconfirmed
 			if is_pending {
-				_, _ = signer.Sender(tx)
+				// _, _ = signer.Sender(tx)
 				go handleTransaction(tx, client)
 			}
 		}()
