@@ -1,0 +1,13 @@
+[psql]
+    dbname = "arbtrader"
+    host = "localhost"
+    user = "postgres"
+    pass = ""
+    sslmode = "disable"
+    whitelist=[
+        "pair",
+        "tokenSecurity",
+        "tradePosition",
+        "tradeTransaction",
+        "bnbRoute"
+    ]
